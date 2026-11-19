@@ -1,0 +1,46 @@
+# Setup OmniRelief
+
+Panduan sekali jalan untuk fondasi hari 1 sampai 2.
+
+## 1. Supabase project
+
+1. Buka https://supabase.com/dashboard/projects, buat project baru `omnirelief`.
+2. Catat `Project URL` dan `anon public key` dari Settings, API.
+3. Salin `.env.example` ke `.env.local`, isi URL dan anon key.
+4. `service_role key` hanya untuk RAJA: simpan di Vercel env dan GitHub secret, jangan ke `.env.local` yang bisa bocor ke client.
+
+## 2. Schema dan seed
+
+1. Buka SQL Editor project, jalankan `supabase/migrations/0001_schema.sql`.
+2. Jalankan `supabase/seed.sql`.
+3. Verifikasi cepat: `select * from v_publik_dashboard;` harus tampil 2 posko.
+
+## 3. Akun demo
+
+Buat di Authentication, Users, lalu tambah baris di `profil`:
+
+1. `bpbd@demo` peran BPBD.
+2. `gudang@demo` peran GUDANG.
+3. `posko-a@demo` peran POSKO, posko_id Posko Balai Desa Sari.
+4. `posko-b@demo` peran POSKO, posko_id Posko Sekolah Harapan.
+5. `tim@demo` peran TIM.
+
+Password bagikan internal saja, jangan commit.
+
+## 4. Vercel
+
+1. Push repo ke GitHub publik, import ke Vercel.
+2. Isi env production: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`.
+3. Deploy, catat URL `*.vercel.app` untuk submission.
+
+## 5. Keepalive anti pause
+
+1. Isi GitHub repo secrets: `SUPABASE_URL` dan `SUPABASE_ANON_KEY`.
+2. Workflow `supabase-keepalive.yml` jalan tiap hari 07.00 WIB plus bisa manual via workflow_dispatch.
+3. Cek tab Actions setelah push pertama, pastikan run hijau.
+
+## 6. Uji anti manipulasi (Bab 16.5)
+
+1. Coba UPDATE manifest terpublikasi via API dan via SQL langsung, keduanya harus gagal.
+2. Ubah satu angka di DB lalu verifikasi hash chain gagal.
+3. Buka halaman publik tanpa login, semua tampil tanpa data pribadi.
