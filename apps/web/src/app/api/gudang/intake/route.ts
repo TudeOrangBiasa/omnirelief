@@ -1,13 +1,17 @@
 import { randomInt } from "node:crypto";
 import { NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth";
+import { getProfil } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export function buatKodeSumbangan(tahun: number): string {
   return `DNT-${tahun}-${String(randomInt(0, 10000)).padStart(4, "0")}`;
 }
 export async function POST(request: Request) {
-  await requireRole(["GUDANG"]);
+  const profil = await getProfil();
+  if (!profil)
+    return NextResponse.json({ ok: false, galat: "belum masuk" }, { status: 401 });
+  if (profil.peran !== "GUDANG")
+    return NextResponse.json({ ok: false, galat: "khusus petugas gudang" }, { status: 403 });
   const body = (await request.json()) as {
     item_id?: unknown;
     jumlah?: unknown;
