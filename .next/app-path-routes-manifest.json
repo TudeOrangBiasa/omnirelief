@@ -1,0 +1,10 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/api/gudang/intake/route": "/api/gudang/intake",
+  "/beranda/page": "/beranda",
+  "/favicon.ico/route": "/favicon.ico",
+  "/gudang/page": "/gudang",
+  "/masuk/page": "/masuk",
+  "/page": "/"
+}

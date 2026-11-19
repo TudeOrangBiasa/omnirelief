@@ -1,0 +1,15 @@
+{
+  "node": {
+    "00b38f4cbdbbf7cb23fc37977a0301cb49c4e6917c": {
+      "workers": {
+        "app/beranda/page": {
+          "moduleId": 75228,
+          "async": false
+        }
+      },
+      "exportedName": "$$RSC_SERVER_ACTION_0",
+      "filename": "app/beranda/page.tsx"
+    }
+  },
+  "edge": {}
+}

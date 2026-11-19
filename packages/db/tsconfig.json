@@ -1,0 +1,6 @@
+{
+  "extends": "@omnirelief/config/tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true
+  }
+}

@@ -6,8 +6,8 @@ Panduan sekali jalan untuk fondasi hari 1 sampai 2.
 
 1. Buka https://supabase.com/dashboard/projects, buat project baru `omnirelief`.
 2. Catat `Project URL` dan `anon public key` dari Settings, API.
-3. Salin `.env.example` ke `.env.local`, isi URL dan anon key.
-4. `service_role key` hanya untuk RAJA: simpan di Vercel env dan GitHub secret, jangan ke `.env.local` yang bisa bocor ke client.
+3. Salin `apps/web/.env.example` ke `apps/web/.env`, isi URL dan anon key.
+4. `service_role key` hanya untuk server: isi di `apps/web/.env` lokal dan Vercel env, jangan commit.
 
 ## 2. Schema dan seed
 

@@ -1,0 +1,15 @@
+{
+  "node": {
+    "40b0cc4c796decadc1d76a53f3a82004bf3dbd827c": {
+      "workers": {
+        "app/masuk/page": {
+          "moduleId": 50221,
+          "async": false
+        }
+      },
+      "exportedName": "$$RSC_SERVER_ACTION_0",
+      "filename": "app/masuk/page.tsx"
+    }
+  },
+  "edge": {}
+}

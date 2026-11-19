@@ -1,0 +1,10 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/gudang/intake/route": "app/api/gudang/intake/route.js",
+  "/beranda/page": "app/beranda/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/gudang/page": "app/gudang/page.js",
+  "/masuk/page": "app/masuk/page.js",
+  "/page": "app/page.js"
+}
