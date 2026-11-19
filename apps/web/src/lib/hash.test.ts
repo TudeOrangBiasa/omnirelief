@@ -17,10 +17,10 @@ describe("rantai hash manifest", () => {
     expect(
       verifyManifest({
         kode: "MNF-2026-0001",
-        poskoKode: "PB-001",
+        poskoKode: "2",
         items: ITEMS,
         prevHash: GENESIS_HASH,
-        hash: "082cbccfb4cf33142171435b35fd9085f04368a3658ea0ec85a08a200bdc6b1e",
+        hash: "ef679a113709f5f1f1f60f0f3bad1920534f12fc246a93161ea757e3350b5837",
       })
     ).toBe(true);
   });
@@ -28,14 +28,14 @@ describe("rantai hash manifest", () => {
   it("menolak saat satu angka jumlah diubah", () => {
     const asli = hashManifest({
       kode: "MNF-2026-0001",
-      poskoKode: "PB-001",
+      poskoKode: "2",
       items: ITEMS,
       prevHash: GENESIS_HASH,
     });
     expect(
       verifyManifest({
         kode: "MNF-2026-0001",
-        poskoKode: "PB-001",
+        poskoKode: "2",
         items: [
           { batchKode: "DNT-2026-002", jumlah: 31 },
           { batchKode: "DNT-2026-001", jumlah: 10 },
@@ -49,7 +49,7 @@ describe("rantai hash manifest", () => {
   it("rantai log terhubung ke hash manifest", () => {
     const manifestHash = hashManifest({
       kode: "MNF-2026-0001",
-      poskoKode: "PB-001",
+      poskoKode: "2",
       items: ITEMS,
       prevHash: GENESIS_HASH,
     });
@@ -59,7 +59,7 @@ describe("rantai hash manifest", () => {
       prevHash: manifestHash,
     });
     expect(logHash).toBe(
-      "4ef02bf7774dfd340a0a8dd05c0954e33db92c8cc256c788fdd4647cd4b5ca40"
+      "13a887eb320fb6d77ee5ffaf3d11eb61a2482a027aac47af06e60136d8747c0b"
     );
     expect(
       verifyLog({
