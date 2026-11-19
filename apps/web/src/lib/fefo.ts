@@ -4,7 +4,7 @@ export type BatchKandidat = {
   tersedia: number;
 };
 
-export function urutFEFO(batch: BatchKandidat[]): BatchKandidat[] {
+export function urutFEFO<T extends BatchKandidat>(batch: T[]): T[] {
   return [...batch].sort((a, b) => {
     if (a.kedaluwarsa === null && b.kedaluwarsa === null) return 0;
     if (a.kedaluwarsa === null) return 1;
@@ -28,4 +28,19 @@ export function ambilBatchFEFO(
     }
   }
   return hasil;
+}
+
+export type BatchSisa = BatchKandidat & { sisa: number };
+
+export function batchTerlewati(batch: BatchSisa[], dipilih: string[]): string[] {
+  const dipilihSet = new Set(dipilih);
+  const tersedia = urutFEFO(batch).filter((b) => b.sisa > 0);
+  const posisi = tersedia
+    .map((b, i) => (dipilihSet.has(b.kode) ? i : -1))
+    .filter((i) => i >= 0);
+  if (posisi.length === 0) return [];
+  const batas = Math.max(...posisi);
+  return tersedia
+    .filter((b, i) => i < batas && !dipilihSet.has(b.kode))
+    .map((b) => b.kode);
 }
