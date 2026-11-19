@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import BannerOffline from "@/components/banner-offline";
+import { kirimAntrean, tambahAntrean } from "@/lib/offline";
 
 type Tugas = {
   id: number;
@@ -35,11 +37,28 @@ export default function TugasTim() {
 
   useEffect(() => {
     void muat();
+    if (window.navigator.onLine) {
+      void kirimAntrean(window.localStorage, async (url, badan) => {
+        try {
+          const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(badan),
+          });
+          return res.ok;
+        } catch {
+          return false;
+        }
+      }).then((sisa) => {
+        if (sisa.length === 0) void muat();
+      });
+    }
   }, []);
 
   async function kirim(status: string, catatan: string | null, url: string, badan: object) {
     setGalat(null);
     setPesan(null);
+    const isi = badan as Record<string, unknown>;
     try {
       const res = await fetch(url, {
         method: "POST",
@@ -54,7 +73,13 @@ export default function TugasTim() {
         await muat();
       }
     } catch {
-      setGalat("Jaringan bermasalah. Coba lagi.");
+      tambahAntrean(
+        window.localStorage,
+        url.endsWith("/kendala") ? "kendala" : "status",
+        url,
+        isi
+      );
+      setPesan("Koneksi lemah, update tersimpan dan terkirim otomatis (Menunggu Sinkronisasi).");
     }
   }
 
@@ -62,6 +87,7 @@ export default function TugasTim() {
 
   return (
     <div className="flex flex-col gap-4">
+      <BannerOffline />
       {galat && (
         <p role="alert" className="rounded bg-[#FEE2E2] p-3 text-sm text-[#B91C1C]">
           {galat}

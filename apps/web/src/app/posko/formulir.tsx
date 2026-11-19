@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import BannerOffline from "@/components/banner-offline";
+import { kirimAntrean, tambahAntrean } from "@/lib/offline";
 
 type Laporan = {
   id: number;
@@ -37,15 +39,31 @@ export default function FormulirPosko() {
 
   useEffect(() => {
     void muat();
+    if (window.navigator.onLine) {
+      void kirimAntrean(window.localStorage, async (url, badan) => {
+        try {
+          const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(badan),
+          });
+          return res.ok;
+        } catch {
+          return false;
+        }
+      }).then((sisa) => {
+        if (sisa.length === 0) void muat();
+      });
+    }
   }, []);
 
   async function kirim(formData: FormData, draft: boolean) {
     setSibuk(true);
     setHasil(null);
     setGalat(null);
+    const badan: Record<string, number | boolean> = { draft };
+    for (const m of MEDAN) badan[m.nama] = Number(formData.get(m.nama) ?? 0);
     try {
-      const badan: Record<string, number | boolean> = { draft };
-      for (const m of MEDAN) badan[m.nama] = Number(formData.get(m.nama) ?? 0);
       const res = await fetch("/api/posko/laporan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -59,7 +77,8 @@ export default function FormulirPosko() {
         await muat();
       } else setGalat(data.galat ?? "Gagal menyimpan.");
     } catch {
-      setGalat("Jaringan bermasalah. Coba lagi.");
+      tambahAntrean(window.localStorage, "laporan", "/api/posko/laporan", badan);
+      setHasil("Koneksi lemah, laporan tersimpan dan terkirim otomatis (Menunggu Sinkronisasi).");
     } finally {
       setSibuk(false);
     }
@@ -67,6 +86,7 @@ export default function FormulirPosko() {
 
   return (
     <div className="flex flex-col gap-6">
+      <BannerOffline />
       {hasil && (
         <p role="status" className="rounded bg-[#DCFCE7] p-3 text-sm text-[#15803D]">
           {hasil}
