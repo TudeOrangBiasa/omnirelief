@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
   cacheComponents: false,
   typedRoutes: true,
   reactCompiler: true,
+  poweredByHeader: false,
 };
 
 export default withVarlock(nextConfig);

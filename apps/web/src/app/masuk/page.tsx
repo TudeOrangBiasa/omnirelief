@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { getProfil } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -8,6 +9,8 @@ export default async function MasukPage({
 }: {
   searchParams: Promise<{ gagal?: string }>;
 }) {
+  const profil = await getProfil().catch(() => null);
+  if (profil) redirect("/beranda");
   const { gagal } = await searchParams;
 
   async function signIn(formData: FormData) {
