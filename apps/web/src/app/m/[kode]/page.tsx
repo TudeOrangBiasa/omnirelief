@@ -44,6 +44,11 @@ export default async function ManifestPage({
     batch: { kode_sumbangan: string; item: { nama: string; satuan: string } | null } | null;
   }>(mentahItem);
 
+  const { data: mentahLog } = await admin
+    .from("manifest_log")
+    .select("status,catatan,dibuat_pada")
+    .eq("manifest_id", manifestId)
+    .order("dibuat_pada");
   const riwayat = baris<{ status: string; catatan: string | null; dibuat_pada: string }>(mentahLog);
 
   const { data: mentahBatal } = await admin
