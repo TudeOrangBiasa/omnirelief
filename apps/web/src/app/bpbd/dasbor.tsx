@@ -24,13 +24,23 @@ type Prioritas = {
   selisih: number;
 };
 
+type Pantau = {
+  id: number;
+  kode: string;
+  posko_nama: string;
+  batas_checkin: string;
+  log_terakhir: string | null;
+  ditandai: boolean;
+};
+
 export default function DasborBpbd() {
   const [antrean, setAntrean] = useState<Antrean[]>([]);
   const [prioritas, setPrioritas] = useState<Prioritas[]>([]);
+  const [pantau, setPantau] = useState<Pantau[]>([]);
   const [galat, setGalat] = useState<string | null>(null);
 
   async function muat() {
-    const [a, p] = await Promise.all([
+    const [a, p, w] = await Promise.all([
       fetch("/api/bpbd/antrean").then((r) => r.json()) as Promise<{
         ok: boolean;
         antrean?: Antrean[];
@@ -39,10 +49,15 @@ export default function DasborBpbd() {
         ok: boolean;
         prioritas?: Prioritas[];
       }>,
+      fetch("/api/bpbd/pantauan").then((r) => r.json()) as Promise<{
+        ok: boolean;
+        perlu_dicek?: Pantau[];
+      }>,
     ]);
     if (a.ok && a.antrean) setAntrean(a.antrean);
     if (p.ok && p.prioritas) setPrioritas(p.prioritas);
-    if (!a.ok || !p.ok) setGalat("Sebagian data gagal dimuat.");
+    if (w.ok && w.perlu_dicek) setPantau(w.perlu_dicek);
+    if (!a.ok || !p.ok || !w.ok) setGalat("Sebagian data gagal dimuat.");
   }
 
   useEffect(() => {
@@ -60,12 +75,49 @@ export default function DasborBpbd() {
     await muat();
   }
 
+  async function batalkan(manifest_id: number) {
+    const alasan = window.prompt("Alasan pembatalan publik:");
+    if (!alasan) return;
+    const res = await fetch("/api/bpbd/pembatalan", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ manifest_id, alasan }),
+    });
+    const data = (await res.json()) as { ok: boolean; galat?: string };
+    if (!data.ok) setGalat(data.galat ?? "Pembatalan gagal.");
+    await muat();
+  }
+
   return (
     <div className="flex flex-col gap-8">
       {galat && (
         <p role="alert" className="rounded bg-[#FEE2E2] p-3 text-sm text-[#B91C1C]">
           {galat}
         </p>
+      )}
+      {pantau.length > 0 && (
+        <section className="flex flex-col gap-2">
+          <h2 className="text-lg font-bold text-[#B91C1C]">
+            Perlu dicek ({pantau.length})
+          </h2>
+          {pantau.map((w) => (
+            <div key={w.id} className="rounded border border-[#B91C1C] p-3 text-sm">
+              <p className="font-semibold">
+                {w.kode} · {w.posko_nama}
+              </p>
+              <p className="text-[#5B6B7F]">
+                Batas check-in lewat · terakhir {w.log_terakhir ?? "-"}
+                {w.ditandai ? " · sudah ditandai otomatis" : ""}
+              </p>
+              <button
+                onClick={() => void batalkan(w.id)}
+                className="mt-2 min-h-12 w-full rounded bg-[#FEE2E2] font-semibold text-[#B91C1C]"
+              >
+                Batalkan manifest ini
+              </button>
+            </div>
+          ))}
+        </section>
       )}
       <section className="flex flex-col gap-2">
         <h2 className="text-lg font-bold text-[#0F3B5F]">

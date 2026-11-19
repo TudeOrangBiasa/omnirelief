@@ -93,3 +93,65 @@ export function validasiManifestDraft(body: Record<string, unknown>) {
     items,
   };
 }
+
+const STATUS_TIM = ["KELUAR_GUDANG", "DALAM_PERJALANAN", "TIBA", "CHECKIN"] as const;
+
+export function validasiStatusTim(body: Record<string, unknown>) {
+  const manifest_id = Number(body.manifest_id);
+  if (!Number.isInteger(manifest_id) || manifest_id <= 0)
+    return { ok: false as const, galat: "manifest_id tidak valid" };
+  const status = body.status;
+  if (typeof status !== "string" || !(STATUS_TIM as readonly string[]).includes(status))
+    return { ok: false as const, galat: "status tidak dikenal" };
+  const catatan = typeof body.catatan === "string" ? body.catatan.trim() : "";
+  return { ok: true as const, manifest_id, status, catatan: catatan === "" ? null : catatan };
+}
+
+export function validasiKendala(body: Record<string, unknown>) {
+  const manifest_id = Number(body.manifest_id);
+  if (!Number.isInteger(manifest_id) || manifest_id <= 0)
+    return { ok: false as const, galat: "manifest_id tidak valid" };
+  const kendala = typeof body.kendala === "string" ? body.kendala.trim() : "";
+  if (kendala === "") return { ok: false as const, galat: "kendala wajib diisi" };
+  const darurat = body.darurat === true;
+  return { ok: true as const, manifest_id, kendala, status: darurat ? "DARURAT" : "TERHAMBAT" };
+}
+
+export function validasiKonfirmasi(body: Record<string, unknown>) {
+  const manifest_id = Number(body.manifest_id);
+  if (!Number.isInteger(manifest_id) || manifest_id <= 0)
+    return { ok: false as const, galat: "manifest_id tidak valid" };
+  const catatan = typeof body.catatan === "string" ? body.catatan.trim() : "";
+  return { ok: true as const, manifest_id, catatan: catatan === "" ? null : catatan };
+}
+
+const JENIS_LAPOR = ["KURANG", "RUSAK", "TIDAK_SESUAI", "TIDAK_DITERIMA", "KIRIM_ULANG"] as const;
+
+export function validasiKetidaksesuaian(body: Record<string, unknown>) {
+  const manifest_id = Number(body.manifest_id);
+  if (!Number.isInteger(manifest_id) || manifest_id <= 0)
+    return { ok: false as const, galat: "manifest_id tidak valid" };
+  const jenis = body.jenis;
+  if (typeof jenis !== "string" || !(JENIS_LAPOR as readonly string[]).includes(jenis))
+    return { ok: false as const, galat: "jenis laporan tidak dikenal" };
+  const keterangan = typeof body.keterangan === "string" ? body.keterangan.trim() : "";
+  if (keterangan === "")
+    return { ok: false as const, galat: "keterangan wajib diisi" };
+  return { ok: true as const, manifest_id, jenis, keterangan };
+}
+
+export function validasiPembatalan(body: Record<string, unknown>) {
+  const manifest_id = Number(body.manifest_id);
+  if (!Number.isInteger(manifest_id) || manifest_id <= 0)
+    return { ok: false as const, galat: "manifest_id tidak valid" };
+  const alasan = typeof body.alasan === "string" ? body.alasan.trim() : "";
+  if (alasan === "") return { ok: false as const, galat: "alasan wajib diisi" };
+  const mentahPengganti = body.manifest_pengganti_id;
+  const manifest_pengganti_id =
+    mentahPengganti === undefined || mentahPengganti === null || mentahPengganti === ""
+      ? null
+      : Number(mentahPengganti);
+  if (manifest_pengganti_id !== null && (!Number.isInteger(manifest_pengganti_id) || manifest_pengganti_id <= 0))
+    return { ok: false as const, galat: "manifest pengganti tidak valid" };
+  return { ok: true as const, manifest_id, alasan, manifest_pengganti_id };
+}

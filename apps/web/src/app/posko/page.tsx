@@ -1,4 +1,5 @@
 import { requireRole } from "@/lib/auth";
+import BantuanPosko from "./bantuan";
 import FormulirPosko from "./formulir";
 
 export default async function PoskoPage() {
@@ -13,6 +14,7 @@ export default async function PoskoPage() {
         </p>
       </div>
       <FormulirPosko />
+      <BantuanPosko />
     </main>
   );
 }
