@@ -1,9 +1,14 @@
-<!-- BEGIN:nextjs-agent-rules -->
+# OmniRelief — aturan repo
 
-## This is NOT the Next.js you know
+Sumber kebenaran konsep: `docs/OmniRelief-Dokumen-Tim-Lengkap.pdf`. Konflik soal deadline dan scope selalu dimenangkan dokumen itu.
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
-
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
-
-<!-- END:nextjs-agent-rules -->
+1. Setup satu perintah: `bun run setup`. Isi env Supabase di `apps/web/.env`, lihat `docs/SETUP.md`.
+2. Perintah harian: `bun run dev:web`, `bun run check-types`, `bun --filter web test`, `bun run build`.
+3. Satu file maksimal 1000 baris. Cek dengan `bun run check:loc`, gagalkan sebelum commit kalau merah.
+4. Stack dikunci: Next.js + Supabase + Vercel. Tidak ganti stack di tengah sprint (Bab 5 dokumen tim).
+5. Semua tulis database lewat API route Next.js pakai service role. Browser tidak pernah tulis langsung, RLS menolak update dan delete.
+6. Data terkunci hanya tambah riwayat, tidak ada edit diam-diam. Manifest terpublikasi dan log status append-only, tiap baris hash SHA-256 terikat ke hash sebelumnya (`apps/web/src/lib/hash.ts`, tulis lewat `apps/web/src/lib/riwayat.ts`).
+7. Hasil Supabase dibaca lewat tipe batas di `apps/web/src/lib/supabase/baris.ts`. Tidak ada `as` inline di akses member.
+8. Validator murni di `apps/web/src/lib/validasi.ts` agar bisa diuji tanpa Next. Rute hanya panggil.
+9. Bahasa UI Indonesia sederhana, tombol minimal 48px, status selalu warna plus label teks.
+10. Secret tidak pernah masuk repo. `apps/web/.env` gitignored, contoh di `apps/web/.env.example`.

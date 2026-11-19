@@ -1,5 +1,11 @@
 # Setup OmniRelief
 
+Setup repo satu perintah (install, env awal, generate tipe env):
+
+```bash
+bun run setup
+```
+
 Panduan sekali jalan untuk fondasi hari 1 sampai 2.
 
 ## 1. Supabase project
