@@ -44,12 +44,19 @@ export default async function ManifestPage({
     batch: { kode_sumbangan: string; item: { nama: string; satuan: string } | null } | null;
   }>(mentahItem);
 
-  const { data: mentahLog } = await admin
-    .from("manifest_log")
-    .select("status,catatan,dibuat_pada")
-    .eq("manifest_id", manifestId)
-    .order("dibuat_pada");
   const riwayat = baris<{ status: string; catatan: string | null; dibuat_pada: string }>(mentahLog);
+
+  const { data: mentahBatal } = await admin
+    .from("pembatalan")
+    .select("alasan,dibuat_pada")
+    .eq("manifest_id", manifestId);
+  const batal = baris<{ alasan: string; dibuat_pada: string }>(mentahBatal);
+
+  const { data: mentahLapor } = await admin
+    .from("ketidaksesuaian")
+    .select("jenis,keterangan,dibuat_pada")
+    .eq("manifest_id", manifestId);
+  const lapor = baris<{ jenis: string; keterangan: string; dibuat_pada: string }>(mentahLapor);
 
   const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host") ?? "";
@@ -61,7 +68,11 @@ export default async function ManifestPage({
     <main className="mx-auto flex min-h-screen w-full max-w-2xl flex-col gap-6 p-6">
       <div className="rounded border-2 border-[#0F3B5F] p-4">
         <p className="font-bold text-[#0F3B5F]">
-          TERKUNCI PUBLIK · tidak dapat diubah
+          {manifest.status === "TERKUNCI_PUBLIK"
+            ? "TERKUNCI PUBLIK · tidak dapat diubah"
+            : manifest.status === "DIBATALKAN"
+              ? "DIBATALKAN · lihat dokumen pembatalan"
+              : `${manifest.status} · lihat dokumen terkait`}
         </p>
         <h1 className="mt-1 text-2xl font-bold">{manifest.kode}</h1>
         <p className="text-sm text-[#5B6B7F]">
@@ -95,6 +106,30 @@ export default async function ManifestPage({
           ))}
         </ol>
       </section>
+      {batal.length > 0 && (
+        <section className="flex flex-col gap-2">
+          <h2 className="font-bold text-[#B91C1C]">Dokumen pembatalan</h2>
+          {batal.map((b, i) => (
+            <div key={i} className="rounded bg-[#FEE2E2] p-3 text-sm text-[#B91C1C]">
+              <p>{b.alasan}</p>
+              <p>{new Date(b.dibuat_pada).toLocaleString("id-ID")}</p>
+            </div>
+          ))}
+        </section>
+      )}
+      {lapor.length > 0 && (
+        <section className="flex flex-col gap-2">
+          <h2 className="font-bold text-[#B45309]">Laporan ketidaksesuaian</h2>
+          {lapor.map((l, i) => (
+            <div key={i} className="rounded bg-[#FEF3C7] p-3 text-sm text-[#B45309]">
+              <p className="font-semibold">{l.jenis}</p>
+              <p>
+                {l.keterangan} · {new Date(l.dibuat_pada).toLocaleString("id-ID")}
+              </p>
+            </div>
+          ))}
+        </section>
+      )}
       <section className="flex flex-col items-center gap-2">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={qr} alt={`QR manifest ${manifest.kode}`} width={256} height={256} />

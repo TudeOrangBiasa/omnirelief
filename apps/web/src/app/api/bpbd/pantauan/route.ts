@@ -18,7 +18,7 @@ export async function GET() {
   const { data: mentah } = await admin
     .from("manifest")
     .select("id,kode,tim,batas_checkin,posko:posko_id(nama)")
-    .eq("status", "TERKUNCI_PUBLIK")
+    .in("status", ["TERKUNCI_PUBLIK", "PUNYA_LAPORAN", "PUNYA_PENGGANTI"])
     .lt("batas_checkin", sekarang);
   const lewat = baris<{
     id: number;

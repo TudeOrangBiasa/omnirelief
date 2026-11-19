@@ -41,6 +41,7 @@ export default function TransparansiPage() {
             value={kodeManifest}
             onChange={(e) => setKodeManifest(e.target.value)}
             placeholder="Cari kode manifest (MNF-...)"
+            required
             className="min-h-12 flex-1 rounded border border-gray-300 p-3 text-sm"
           />
           <button className="min-h-12 rounded bg-[#0F3B5F] px-4 font-semibold text-white">
@@ -52,6 +53,7 @@ export default function TransparansiPage() {
             value={kodeSumbangan}
             onChange={(e) => setKodeSumbangan(e.target.value)}
             placeholder="Cari kode sumbangan (DNT-...)"
+            required
             className="min-h-12 flex-1 rounded border border-gray-300 p-3 text-sm"
           />
           <button className="min-h-12 rounded bg-[#0F3B5F] px-4 font-semibold text-white">
