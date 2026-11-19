@@ -2,8 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
+  // Sprint hackathon: rendering klasik agar force-dynamic dan cookies() stabil.
+  cacheComponents: false,
   turbopack: {
     rules: {
       "*.css": {
