@@ -29,3 +29,35 @@ export function hashLog(args: {
 }
 
 export const GENESIS_HASH = "GENESIS";
+
+export function verifyManifest(args: {
+  kode: string;
+  poskoKode: string;
+  items: { batchKode: string; jumlah: number }[];
+  prevHash: string;
+  hash: string;
+}): boolean {
+  return (
+    hashManifest({
+      kode: args.kode,
+      poskoKode: args.poskoKode,
+      items: args.items,
+      prevHash: args.prevHash,
+    }) === args.hash
+  );
+}
+
+export function verifyLog(args: {
+  manifestKode: string;
+  status: string;
+  prevHash: string;
+  hash: string;
+}): boolean {
+  return (
+    hashLog({
+      manifestKode: args.manifestKode,
+      status: args.status,
+      prevHash: args.prevHash,
+    }) === args.hash
+  );
+}
