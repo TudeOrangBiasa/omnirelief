@@ -35,12 +35,15 @@ export default function BannerOffline() {
         setAntre(hitungAntrean());
       }
     }
+    function saatBerubah() {
+      void segarkan();
+    }
     void segarkan();
-    window.addEventListener("online", () => void segarkan());
-    window.addEventListener("offline", () => void segarkan());
+    window.addEventListener("online", saatBerubah);
+    window.addEventListener("offline", saatBerubah);
     return () => {
-      window.removeEventListener("online", () => void segarkan());
-      window.removeEventListener("offline", () => void segarkan());
+      window.removeEventListener("online", saatBerubah);
+      window.removeEventListener("offline", saatBerubah);
     };
   }, []);
 

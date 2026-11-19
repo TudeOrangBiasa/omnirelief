@@ -1,0 +1,4 @@
+{
+  "$schema": "https://oxc.rs/docs/config.schema.json",
+  "jsPlugins": ["@shadcn/lint"]
+}
