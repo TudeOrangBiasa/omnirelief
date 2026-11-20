@@ -1,9 +1,9 @@
-import { RefreshIcon } from "@solar-icons/react/linear";
+import { Spinner } from "@omnirelief/ui/components/spinner";
 
 export default function Loader() {
   return (
     <div className="flex h-full items-center justify-center pt-8">
-      <RefreshIcon className="animate-spin" />
+      <Spinner className="size-6" />
     </div>
   );
 }

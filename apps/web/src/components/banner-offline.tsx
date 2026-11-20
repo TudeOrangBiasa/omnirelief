@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Alert, AlertDescription, AlertTitle } from "@omnirelief/ui/components/alert";
+import { WiFiOffIcon } from "@solar-icons/react/linear";
 import { kirimAntrean, muatAntrean } from "@/lib/offline";
 
 async function kirimNyata(url: string, badan: Record<string, unknown>): Promise<boolean> {
@@ -49,10 +51,17 @@ export default function BannerOffline() {
 
   if (daring && antre === 0) return null;
   return (
-    <p role="status" className="rounded bg-[#FEF3C7] p-3 text-sm text-[#B45309]">
-      {!daring
-        ? `Koneksi lemah, data tersimpan dan terkirim otomatis (${antre} antre).`
-        : `${antre} data menunggu sinkronisasi.`}
-    </p>
+    <Alert
+      role="status"
+      className="border-warning bg-warning-bg text-warning-badge-fg"
+    >
+      <WiFiOffIcon />
+      <AlertTitle>{!daring ? "Luring" : "Menunggu Sinkronisasi"}</AlertTitle>
+      <AlertDescription className="text-warning-badge-fg">
+        {!daring
+          ? `Koneksi lemah, data tersimpan dan terkirim otomatis (${antre} antre).`
+          : `${antre} data menunggu sinkronisasi.`}
+      </AlertDescription>
+    </Alert>
   );
 }
