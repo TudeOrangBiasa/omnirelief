@@ -198,13 +198,39 @@ export function zonaDasbor(pathname: string): boolean {
   );
 }
 
-const IKON_AKUN: NavItem["ikon"][] = ["profil", "pengaturan"];
+export type GrupSidebar = { judul: string; item: NavItem[] };
 
-/** Sidebar referensi: grup UTAMA di atas, grup AKUN di bawah pemisah. */
-export function grupSidebar(peran: NavPeran): { utama: NavItem[]; akun: NavItem[] } {
-  const semua = NAVIGASI_SIDEBAR[peran];
-  return {
-    utama: semua.filter((i) => !IKON_AKUN.includes(i.ikon)),
-    akun: semua.filter((i) => IKON_AKUN.includes(i.ikon)),
+/**
+ * Sidebar referensi: tiap menu masuk satu kategori berlabel.
+ * Brand + tombol ciutkan adalah grup sendiri di komponen (bukan di sini).
+ */
+export function grupSidebar(peran: NavPeran): GrupSidebar[] {
+  const grup: GrupSidebar[] = [];
+  const dorong = (judul: string, item: NavItem[]) => {
+    if (item.length > 0) grup.push({ judul, item });
   };
+  const semua = NAVIGASI_SIDEBAR[peran];
+  dorong(
+    "Utama",
+    semua.filter((i) => i.href === "/beranda")
+  );
+  dorong(
+    "Operasional",
+    semua.filter(
+      (i) =>
+        i.href !== "/beranda" &&
+        i.href !== "/transparansi" &&
+        i.ikon !== "profil" &&
+        i.ikon !== "pengaturan"
+    )
+  );
+  dorong(
+    "Pantau",
+    semua.filter((i) => i.href === "/transparansi")
+  );
+  dorong(
+    "Akun",
+    semua.filter((i) => i.ikon === "profil" || i.ikon === "pengaturan")
+  );
+  return grup;
 }

@@ -247,7 +247,7 @@ export default function BilahNav({ peran }: { peran: NavPeran }) {
   const diDasbor = zonaDasbor(path);
   const tab = NAVIGASI_TAB[peran];
   const lainnya = NAVIGASI_LAINNYA[peran];
-  const { utama, akun } = grupSidebar(peran);
+  const grup = grupSidebar(peran);
   const IkonCiut = ciut ? SidebarOpenIcon : SidebarCloseIcon;
 
   return (
@@ -256,8 +256,8 @@ export default function BilahNav({ peran }: { peran: NavPeran }) {
         <aside
           aria-label="Navigasi utama"
           className={cn(
-            "sticky top-16 hidden shrink-0 flex-col gap-1 self-start overflow-y-auto border-e border-border py-4 md:flex",
-            ciut ? "w-20 items-center px-2" : "w-60 px-4"
+            "sticky top-16 hidden shrink-0 flex-col self-start overflow-y-auto border-e border-border py-4 md:flex",
+            ciut ? "w-20 items-center gap-4 px-2" : "w-60 gap-4 px-4"
           )}
         >
           <div className={cn("flex min-h-12 items-center gap-2", ciut ? "flex-col" : "px-2")}>
@@ -287,30 +287,22 @@ export default function BilahNav({ peran }: { peran: NavPeran }) {
               <IkonCiut aria-hidden="true" className="size-5" />
             </button>
           </div>
-          {!ciut && (
-            <p className="t-micro px-3 pt-3 text-muted-foreground">Utama</p>
-          )}
-          {utama.map((item) => (
-            <ItemSidebar
-              key={item.href}
-              item={item}
-              ciut={ciut}
-              antrean={antrean}
-              aktif={tabAktif(path, hash, item.href)}
-            />
-          ))}
-          {akun.length > 1 && !ciut && (
-            <p className="t-micro border-t border-border px-3 pt-3 text-muted-foreground">Akun</p>
-          )}
-          {akun.length > 1 && ciut && <span aria-hidden="true" className="my-1 w-10 border-t border-border" />}
-          {akun.map((item) => (
-            <ItemSidebar
-              key={item.href}
-              item={item}
-              ciut={ciut}
-              antrean={antrean}
-              aktif={tabAktif(path, hash, item.href)}
-            />
+          {grup.map((g, i) => (
+            <section key={g.judul} aria-label={g.judul} className="flex w-full flex-col gap-1">
+              {!ciut && <p className="t-micro px-3 text-muted-foreground">{g.judul}</p>}
+              {ciut && i > 0 && (
+                <span aria-hidden="true" className="mx-auto w-10 border-t border-border" />
+              )}
+              {g.item.map((item) => (
+                <ItemSidebar
+                  key={item.href}
+                  item={item}
+                  ciut={ciut}
+                  antrean={antrean}
+                  aktif={tabAktif(path, hash, item.href)}
+                />
+              ))}
+            </section>
           ))}
         </aside>
       )}
