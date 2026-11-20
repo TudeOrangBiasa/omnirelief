@@ -42,7 +42,7 @@ import {
 } from "@solar-icons/react/bold-duotone";
 import {
   grupSidebar,
-  LABEL_PERAN,
+  LABEL_SINGKAT,
   NAVIGASI_LAINNYA,
   NAVIGASI_TAB,
   sembunyikanTabBar,
@@ -272,7 +272,7 @@ export default function BilahNav({ peran }: { peran: NavPeran }) {
               <p className="min-w-0 flex-1 leading-tight">
                 <span className="block truncate text-sm font-bold">OmniRelief</span>
                 <span className="block truncate text-xs font-normal text-muted-foreground">
-                  {LABEL_PERAN[peran]}
+                  {LABEL_SINGKAT[peran]}
                 </span>
               </p>
             )}
@@ -299,10 +299,10 @@ export default function BilahNav({ peran }: { peran: NavPeran }) {
               aktif={tabAktif(path, hash, item.href)}
             />
           ))}
-          {!ciut && (
+          {akun.length > 1 && !ciut && (
             <p className="t-micro border-t border-border px-3 pt-3 text-muted-foreground">Akun</p>
           )}
-          {ciut && <span aria-hidden="true" className="my-1 w-10 border-t border-border" />}
+          {akun.length > 1 && ciut && <span aria-hidden="true" className="my-1 w-10 border-t border-border" />}
           {akun.map((item) => (
             <ItemSidebar
               key={item.href}

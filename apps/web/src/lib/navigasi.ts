@@ -48,6 +48,16 @@ export function peranDariString(peran: string | null | undefined): NavPeran {
   return "PUBLIK";
 }
 
+/** Label pendek untuk brand sidebar agar tidak terpotong di 240px. */
+export const LABEL_SINGKAT: Record<NavPeran, string> = {
+  PUBLIK: "Pengunjung",
+  BPBD: "BPBD",
+  GUDANG: "Gudang",
+  POSKO: "Posko",
+  TIM: "Tim distribusi",
+  ADMIN: "Admin",
+};
+
 /** Sidebar desktop per peran, selalu diawali Beranda. */
 export const NAVIGASI_SIDEBAR: Record<NavPeran, NavItem[]> = {
   PUBLIK: [
