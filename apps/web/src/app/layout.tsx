@@ -3,8 +3,11 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import "../index.css";
 import Header from "@/components/header";
+import BilahNav from "@/components/bilah-nav";
 import PendaftaranSw from "@/components/pendaftaran-sw";
 import Providers from "@/components/providers";
+import { getProfil } from "@/lib/auth";
+import { LABEL_PERAN, peranDariString } from "@/lib/navigasi";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,18 +33,24 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export const dynamic = "force-dynamic";
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const profil = await getProfil().catch(() => null);
+  const peran = peranDariString(profil?.peran ?? null);
+
   return (
     <html lang="id" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
-          <div className="grid grid-rows-[auto_1fr] h-svh">
-            <Header />
-            {children}
+          <Header nama={profil?.nama ?? null} peranLabel={LABEL_PERAN[peran]} />
+          <div className="mx-auto flex w-full max-w-5xl items-start">
+            <BilahNav peran={peran} />
+            <div className="min-w-0 flex-1 pb-28 md:pb-0">{children}</div>
           </div>
         </Providers>
         <PendaftaranSw />

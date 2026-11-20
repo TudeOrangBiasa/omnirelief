@@ -119,7 +119,7 @@ export default function TugasTim() {
         </Card>
       ))}
       {aktif && (
-        <Card>
+        <Card id="check-in" className="scroll-mt-20">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               Update {aktif.kode}

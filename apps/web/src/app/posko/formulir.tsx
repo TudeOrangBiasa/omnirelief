@@ -89,7 +89,7 @@ export default function FormulirPosko() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div id="lapor" className="flex scroll-mt-20 flex-col gap-6">
       <BannerOffline />
       {hasil && (
         <p role="status" className="rounded-xl bg-success-bg p-3 text-sm text-success">

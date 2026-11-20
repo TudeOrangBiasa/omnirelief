@@ -82,7 +82,7 @@ export default function BantuanPosko() {
   }
 
   return (
-    <section className="flex flex-col gap-2">
+    <section id="bantuan" aria-label="Bantuan untuk posko ini" className="flex scroll-mt-20 flex-col gap-2">
       <h2 className="text-lg font-bold text-primary">Bantuan untuk posko ini</h2>
       {pesan && (
         <p role="status" className="rounded-xl bg-success-bg p-3 text-sm text-success">

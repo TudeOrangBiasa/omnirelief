@@ -77,7 +77,7 @@ export default function Home() {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-2xl flex-col gap-10 p-6">
-      <section className="flex flex-col gap-4 pt-6">
+      <section id="cek-kode" aria-label="Cek kode kiriman" className="flex scroll-mt-20 flex-col gap-4 pt-6">
         <Badge className="w-fit" variant="outline">
           Sistem supply chain pangan darurat
         </Badge>
