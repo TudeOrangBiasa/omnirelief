@@ -6,7 +6,7 @@ export type NavPeran = "PUBLIK" | "BPBD" | "GUDANG" | "POSKO" | "TIM" | "ADMIN";
 export type NavItem = {
   href: string;
   label: string;
-  /** Nama ikon lucide, dipetakan ke komponen di bilah-nav. */
+  /** Nama ikon solar, dipetakan ke komponen di bilah-nav. */
   ikon:
     | "beranda"
     | "cek"

@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 import {
-  ClipboardCheck,
-  PackageCheck,
-  QrCode,
-  Search,
-  ShieldAlert,
-  Truck,
-} from "lucide-react";
+  ClipboardCheckIcon,
+  LockKeyholeMinimalisticIcon,
+  MagnifierIcon,
+  QrCodeIcon,
+  ShieldWarningIcon,
+  TruckIcon,
+} from "@solar-icons/react/linear";
 import { Badge } from "@omnirelief/ui/components/badge";
 import { Button, buttonVariants } from "@omnirelief/ui/components/button";
 import { Card, CardContent } from "@omnirelief/ui/components/card";
@@ -24,25 +24,25 @@ type Baris = {
 
 const JANJI = [
   {
-    ikon: ClipboardCheck,
+    ikon: ClipboardCheckIcon,
     judul: "Terdata",
     isi: "Tiap paket tercatat dari gudang sampai posko, per batch plus kedaluwarsa.",
     href: "/transparansi",
   },
   {
-    ikon: Truck,
+    ikon: TruckIcon,
     judul: "Terverifikasi",
     isi: "Kebutuhan dari data penyintas terverifikasi, alokasi keluar duluan yang dekat kedaluwarsa.",
     href: "/transparansi",
   },
   {
-    ikon: PackageCheck,
+    ikon: LockKeyholeMinimalisticIcon,
     judul: "Terkunci",
     isi: "Manifest terpublikasi tidak bisa diubah. Koreksi hanya lewat dokumen publik baru.",
     href: "/transparansi",
   },
   {
-    ikon: ShieldAlert,
+    ikon: ShieldWarningIcon,
     judul: "Terbuka",
     isi: "Selisih kirim lawan terima dan laporan masalah tampil publik per posko.",
     href: "/transparansi",
@@ -105,7 +105,7 @@ export default function Home() {
             className="min-h-12 flex-1"
           />
           <Button type="submit" className="min-h-12 rounded-xl">
-            <Search /> Cek
+            <MagnifierIcon /> Cek
           </Button>
         </form>
         <div className="flex gap-2">
@@ -175,7 +175,7 @@ export default function Home() {
         <h2 className="text-lg font-bold text-primary">Cara cek dalam 3 langkah</h2>
         {LANGKAH.map((l, i) => (
           <div key={i} className="flex items-start gap-3 text-sm">
-            <QrCode className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
+            <QrCodeIcon className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
             <p>
               <strong>Langkah {i + 1}.</strong> {l}
             </p>

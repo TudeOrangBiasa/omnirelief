@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { WifiOff } from "lucide-react";
+import { WiFiOffIcon } from "@solar-icons/react/linear";
 import { hitungAntrean } from "@/components/banner-offline";
 
 export default function Header({
@@ -60,7 +60,7 @@ export default function Header({
               role="status"
               className="flex min-h-12 items-center gap-1.5 rounded-full bg-warning-bg px-3 text-xs font-semibold text-warning-badge-fg"
             >
-              <WifiOff aria-hidden="true" className="size-4" />
+              <WiFiOffIcon aria-hidden="true" className="size-4" />
               {!daring
                 ? `Luring${antre > 0 ? ` · ${antre} Menunggu Sinkronisasi` : ""}`
                 : `${antre} Menunggu Sinkronisasi`}

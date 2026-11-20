@@ -71,6 +71,7 @@ KartuPosko, TimelineHash (tanpa edit/hapus apa pun), ProgressAlokasi,
 BannerOffline (+deep-link pengaturan), BottomNav (≤4 tab + Lainnya, badge
 99+, sembunyi di detail/formulir), StepperAngka (rem-based), TabelPeran
 (sortir/cari/paginasi/50 per halaman/ekspor; aksi kritis inline, tanpa hover).
+Ikon: satu-satunya `@solar-icons/react` (ADR-0006, larang lucide); impor dari `@solar-icons/react/linear`, aktif navigasi dari `@solar-icons/react/bold-duotone`; default global (`size`, `strokeWidth`) di `SolarProvider`, tanpa `size`/`strokeWidth` repetitif; nama diverifikasi dari `dist` paket terpasang.
 Upper (`app/<route>/_components`): rakitan spesifik 1 page; dilarang diimpor
 page lain; validasi murni tetap di `lib/validasi.ts`.
 

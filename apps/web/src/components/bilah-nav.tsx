@@ -3,26 +3,43 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
-  ClipboardCheck,
-  ClipboardList,
-  Ellipsis,
-  Eye,
-  Home,
-  LifeBuoy,
-  LogIn,
-  MapPin,
-  PackagePlus,
-  PanelLeftClose,
-  PanelLeftOpen,
-  Search,
-  Send,
-  Settings,
-  ShieldCheck,
-  Truck,
-  User,
-  X,
-  type LucideIcon,
-} from "lucide-react";
+  BoxMinimalisticIcon,
+  ClipboardCheckIcon,
+  ClipboardListIcon,
+  CloseCircleIcon,
+  EyeIcon,
+  HelpIcon,
+  HomeIcon,
+  LoginIcon,
+  LogoutIcon,
+  MagnifierIcon,
+  MenuDotsIcon,
+  PointOnMapIcon,
+  SendSquareIcon,
+  SettingsIcon,
+  ShieldCheckIcon,
+  SidebarCloseIcon,
+  SidebarOpenIcon,
+  TruckIcon,
+  UserIcon,
+} from "@solar-icons/react/linear";
+import {
+  BoxMinimalisticIcon as BoxMinimalisticDuoIcon,
+  ClipboardCheckIcon as ClipboardCheckDuoIcon,
+  ClipboardListIcon as ClipboardListDuoIcon,
+  EyeIcon as EyeDuoIcon,
+  HelpIcon as HelpDuoIcon,
+  HomeIcon as HomeDuoIcon,
+  LoginIcon as LoginDuoIcon,
+  LogoutIcon as LogoutDuoIcon,
+  MagnifierIcon as MagnifierDuoIcon,
+  PointOnMapIcon as PointOnMapDuoIcon,
+  SendSquareIcon as SendSquareDuoIcon,
+  SettingsIcon as SettingsDuoIcon,
+  ShieldCheckIcon as ShieldCheckDuoIcon,
+  TruckIcon as TruckDuoIcon,
+  UserIcon as UserDuoIcon,
+} from "@solar-icons/react/bold-duotone";
 import {
   grupSidebar,
   LABEL_PERAN,
@@ -35,23 +52,42 @@ import {
   type NavPeran,
 } from "@/lib/navigasi";
 import { cn } from "@omnirelief/ui/lib/utils";
+type Ikon = typeof HomeIcon;
 
-const IKON: Record<NavItem["ikon"], LucideIcon> = {
-  beranda: Home,
-  cek: Search,
-  transparansi: Eye,
-  masuk: LogIn,
-  verifikasi: ClipboardCheck,
-  kirim: Send,
-  catat: PackagePlus,
-  lapor: ClipboardList,
-  bantuan: LifeBuoy,
-  tugas: Truck,
-  checkin: MapPin,
-  admin: ShieldCheck,
-  pengaturan: Settings,
-  profil: User,
-  keluar: LogIn,
+const IKON_LIN: Record<NavItem["ikon"], Ikon> = {
+  beranda: HomeIcon,
+  cek: MagnifierIcon,
+  transparansi: EyeIcon,
+  masuk: LoginIcon,
+  verifikasi: ClipboardCheckIcon,
+  kirim: SendSquareIcon,
+  catat: BoxMinimalisticIcon,
+  lapor: ClipboardListIcon,
+  bantuan: HelpIcon,
+  tugas: TruckIcon,
+  checkin: PointOnMapIcon,
+  admin: ShieldCheckIcon,
+  pengaturan: SettingsIcon,
+  profil: UserIcon,
+  keluar: LogoutIcon,
+};
+
+const IKON_DUO: Record<NavItem["ikon"], Ikon> = {
+  beranda: HomeDuoIcon,
+  cek: MagnifierDuoIcon,
+  transparansi: EyeDuoIcon,
+  masuk: LoginDuoIcon,
+  verifikasi: ClipboardCheckDuoIcon,
+  kirim: SendSquareDuoIcon,
+  catat: BoxMinimalisticDuoIcon,
+  lapor: ClipboardListDuoIcon,
+  bantuan: HelpDuoIcon,
+  tugas: TruckDuoIcon,
+  checkin: PointOnMapDuoIcon,
+  admin: ShieldCheckDuoIcon,
+  pengaturan: SettingsDuoIcon,
+  profil: UserDuoIcon,
+  keluar: LogoutDuoIcon,
 };
 
 function Lencana({ jumlah }: { jumlah: number }) {
@@ -75,7 +111,7 @@ function ItemTab({
   aktif: boolean;
   antrean: number;
 }) {
-  const Ikon = IKON[item.ikon];
+  const Ikon = aktif ? IKON_DUO[item.ikon] : IKON_LIN[item.ikon];
   return (
     <a
       href={item.href}
@@ -93,7 +129,7 @@ function ItemTab({
       )}
     >
       <span className="relative">
-        <Ikon aria-hidden="true" className="size-6" strokeWidth={aktif ? 2.5 : 2} />
+        <Ikon aria-hidden="true" className="size-6" />
         {item.lencana === "antrean" && (
           <span className="absolute -top-2 -end-3">
             <Lencana jumlah={antrean} />
@@ -116,7 +152,7 @@ function ItemSidebar({
   antrean: number;
   ciut: boolean;
 }) {
-  const Ikon = IKON[item.ikon];
+  const Ikon = aktif ? IKON_DUO[item.ikon] : IKON_LIN[item.ikon];
   return (
     <a
       href={item.href}
@@ -134,7 +170,7 @@ function ItemSidebar({
       )}
     >
       <span className="relative shrink-0">
-        <Ikon aria-hidden="true" className="size-5" strokeWidth={aktif ? 2.5 : 2} />
+        <Ikon aria-hidden="true" className="size-5" />
         {ciut && item.lencana === "antrean" && (
           <span className="absolute -top-2 -end-2">
             <Lencana jumlah={antrean} />
@@ -212,7 +248,7 @@ export default function BilahNav({ peran }: { peran: NavPeran }) {
   const tab = NAVIGASI_TAB[peran];
   const lainnya = NAVIGASI_LAINNYA[peran];
   const { utama, akun } = grupSidebar(peran);
-  const IkonCiut = ciut ? PanelLeftOpen : PanelLeftClose;
+  const IkonCiut = ciut ? SidebarOpenIcon : SidebarCloseIcon;
 
   return (
     <>
@@ -301,7 +337,7 @@ export default function BilahNav({ peran }: { peran: NavPeran }) {
               aria-label="Menu lainnya"
               className="flex min-h-16 flex-col items-center justify-center gap-0.5 px-1 text-xs font-medium text-muted-foreground"
             >
-              <Ellipsis aria-hidden="true" className="size-6" />
+              <MenuDotsIcon aria-hidden="true" className="size-6" />
               Lainnya
             </button>
           </div>
@@ -323,7 +359,7 @@ export default function BilahNav({ peran }: { peran: NavPeran }) {
           />
           <div className="absolute inset-x-0 bottom-0 flex flex-col gap-1 rounded-t-2xl border-t border-border bg-background p-4 pb-6">
             {lainnya.map((item) => {
-              const Ikon = IKON[item.ikon];
+              const Ikon = IKON_LIN[item.ikon];
               return (
                 <a
                   key={item.href}
@@ -342,7 +378,7 @@ export default function BilahNav({ peran }: { peran: NavPeran }) {
               autoFocus
               className="mt-2 flex min-h-12 items-center justify-center gap-2 rounded-xl bg-secondary text-sm font-semibold text-secondary-foreground"
             >
-              <X aria-hidden="true" className="size-5" />
+              <CloseCircleIcon aria-hidden="true" className="size-5" />
               Tutup
             </button>
           </div>
