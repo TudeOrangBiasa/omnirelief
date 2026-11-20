@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Badge } from "@omnirelief/ui/components/badge";
+import { Button } from "@omnirelief/ui/components/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@omnirelief/ui/components/card";
 
 type Antrean = {
   id: number;
@@ -91,83 +94,95 @@ export default function DasborBpbd() {
   return (
     <div className="flex flex-col gap-8">
       {galat && (
-        <p role="alert" className="rounded bg-[#FEE2E2] p-3 text-sm text-[#B91C1C]">
+        <p role="alert" className="rounded-xl bg-destructive/10 p-3 text-sm text-destructive">
           {galat}
         </p>
       )}
       {pantau.length > 0 && (
         <section className="flex flex-col gap-2">
-          <h2 className="text-lg font-bold text-[#B91C1C]">
+          <h2 className="text-lg font-bold text-destructive">
             Perlu dicek ({pantau.length})
           </h2>
           {pantau.map((w) => (
-            <div key={w.id} className="rounded border border-[#B91C1C] p-3 text-sm">
-              <p className="font-semibold">
-                {w.kode} · {w.posko_nama}
-              </p>
-              <p className="text-[#5B6B7F]">
-                Batas check-in lewat · terakhir {w.log_terakhir ?? "-"}
-                {w.ditandai ? " · sudah ditandai otomatis" : ""}
-              </p>
-              <button
-                onClick={() => void batalkan(w.id)}
-                className="mt-2 min-h-12 w-full rounded bg-[#FEE2E2] font-semibold text-[#B91C1C]"
-              >
-                Batalkan manifest ini
-              </button>
-            </div>
+            <Card key={w.id} className="border-destructive">
+              <CardContent className="flex flex-col gap-2 p-4 text-sm">
+                <p className="font-semibold">
+                  {w.kode} · {w.posko_nama}
+                </p>
+                <p className="text-muted-foreground">
+                  Batas check-in lewat · terakhir {w.log_terakhir ?? "-"}
+                  {w.ditandai ? " · sudah ditandai otomatis" : ""}
+                </p>
+                <Button
+                  variant="destructive"
+                  onClick={() => void batalkan(w.id)}
+                  className="min-h-12 w-full"
+                >
+                  Batalkan manifest ini
+                </Button>
+              </CardContent>
+            </Card>
           ))}
         </section>
       )}
       <section className="flex flex-col gap-2">
-        <h2 className="text-lg font-bold text-[#0F3B5F]">
+        <h2 className="text-lg font-bold text-primary">
           Antrean verifikasi ({antrean.length})
         </h2>
         {antrean.length === 0 && (
-          <p className="text-sm text-[#5B6B7F]">Tidak ada antrean.</p>
+          <p className="text-muted-foreground text-sm">Tidak ada antrean.</p>
         )}
         {antrean.map((a) => (
-          <div key={a.id} className="rounded border border-gray-200 p-3 text-sm">
-            <p className="font-semibold">{a.posko?.nama ?? "Posko?"}</p>
-            <p className="text-[#5B6B7F]">
-              Total {a.bayi + a.balita + a.ibu_hamil + a.lansia + a.disabilitas + a.umum} jiwa ·{" "}
-              {new Date(a.dibuat_pada).toLocaleString("id-ID")}
-            </p>
-            <div className="mt-2 flex gap-2">
-              <button
-                onClick={() => void putuskan(a.id, "DISETUJUI")}
-                className="min-h-12 flex-1 rounded bg-[#15803D] font-semibold text-white"
-              >
-                Setujui
-              </button>
-              <button
-                onClick={() => void putuskan(a.id, "MINTA_REVISI")}
-                className="min-h-12 flex-1 rounded bg-[#FEF3C7] font-semibold text-[#B45309]"
-              >
-                Minta revisi
-              </button>
-              <button
-                onClick={() => void putuskan(a.id, "DITOLAK")}
-                className="min-h-12 flex-1 rounded bg-[#FEE2E2] font-semibold text-[#B91C1C]"
-              >
-                Tolak
-              </button>
-            </div>
-          </div>
+          <Card key={a.id}>
+            <CardHeader>
+              <CardTitle className="text-base">{a.posko?.nama ?? "Posko?"}</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-2 text-sm">
+              <p className="text-muted-foreground">
+                Total {a.bayi + a.balita + a.ibu_hamil + a.lansia + a.disabilitas + a.umum} jiwa ·{" "}
+                {new Date(a.dibuat_pada).toLocaleString("id-ID")}
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => void putuskan(a.id, "DISETUJUI")}
+                  className="min-h-12 flex-1 bg-success text-white hover:bg-success/80"
+                >
+                  Setujui
+                </Button>
+                <Button
+                  onClick={() => void putuskan(a.id, "MINTA_REVISI")}
+                  className="min-h-12 flex-1 bg-warning-bg text-warning hover:bg-warning-bg"
+                >
+                  Minta revisi
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => void putuskan(a.id, "DITOLAK")}
+                  className="min-h-12 flex-1"
+                >
+                  Tolak
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </section>
       <section className="flex flex-col gap-2">
-        <h2 className="text-lg font-bold text-[#0F3B5F]">Prioritas kebutuhan</h2>
+        <h2 className="text-lg font-bold text-primary">Prioritas kebutuhan</h2>
         {prioritas.map((p) => (
-          <div key={p.posko_id} className="rounded border border-gray-200 p-3 text-sm">
-            <p className="font-semibold">{p.posko_nama}</p>
-            <p className="text-[#5B6B7F]">
-              Butuh {p.butuh} · Dikirim {p.dikirim} · Diterima {p.diterima}
-            </p>
-            <p className={p.selisih > 0 ? "font-bold text-[#B91C1C]" : "font-bold text-[#15803D]"}>
-              {p.selisih > 0 ? `Kurang ${p.selisih}` : "Aman"}
-            </p>
-          </div>
+          <Card key={p.posko_id}>
+            <CardContent className="flex flex-col gap-2 p-4 text-sm">
+              <p className="font-semibold">{p.posko_nama}</p>
+              <p className="text-muted-foreground">
+                Butuh {p.butuh} · Dikirim {p.dikirim} · Diterima {p.diterima}
+              </p>
+              {p.selisih > 0 ? (
+                <Badge variant="destructive">Kurang {p.selisih}</Badge>
+              ) : (
+                <Badge className="border-transparent bg-success-bg text-success">Aman</Badge>
+              )}
+            </CardContent>
+          </Card>
         ))}
       </section>
     </div>
