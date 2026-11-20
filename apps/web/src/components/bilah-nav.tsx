@@ -183,7 +183,7 @@ function ItemSidebar({
   );
 }
 
-export default function BilahNav({ peran }: { peran: NavPeran }) {
+export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: string | null }) {
   const pathname = usePathname();
   const [hash, setHash] = useState("");
   const [lainnyaBuka, setLainnyaBuka] = useState(false);
@@ -250,17 +250,19 @@ export default function BilahNav({ peran }: { peran: NavPeran }) {
   const grup = grupSidebar(peran);
   const IkonCiut = ciut ? SidebarOpenIcon : SidebarCloseIcon;
 
+  const inisial = (nama ?? "?").trim().charAt(0).toUpperCase() || "?";
+
   return (
     <>
       {diDasbor && (
         <aside
           aria-label="Navigasi utama"
           className={cn(
-            "sticky top-16 hidden shrink-0 flex-col self-start overflow-y-auto border-e border-border py-4 md:flex",
-            ciut ? "w-20 items-center gap-4 px-2" : "w-60 gap-4 px-4"
+            "sticky top-16 hidden shrink-0 flex-col self-start overflow-y-auto border-e border-border py-6 md:flex",
+            ciut ? "w-20 items-center gap-6 px-2" : "w-64 gap-6 px-6"
           )}
         >
-          <div className={cn("flex min-h-12 items-center gap-2", ciut ? "flex-col" : "px-2")}>
+          <div className={cn("flex min-h-12 items-center gap-3", ciut ? "flex-col" : "px-1")}>
             <a
               href="/beranda"
               aria-label="OmniRelief work zone"
@@ -287,6 +289,7 @@ export default function BilahNav({ peran }: { peran: NavPeran }) {
               <IkonCiut aria-hidden="true" className="size-5" />
             </button>
           </div>
+          <span aria-hidden="true" className={cn("border-t border-border", ciut ? "w-10" : "-mx-6")} />
           {grup.map((g, i) => (
             <section key={g.judul} aria-label={g.judul} className="flex w-full flex-col gap-1">
               {!ciut && <p className="t-micro px-3 text-muted-foreground">{g.judul}</p>}
@@ -304,6 +307,35 @@ export default function BilahNav({ peran }: { peran: NavPeran }) {
               ))}
             </section>
           ))}
+          {nama && (
+            <>
+              <span aria-hidden="true" className={cn("border-t border-border", ciut ? "w-10" : "-mx-6")} />
+              <a
+                href="/profil"
+                aria-label={`Profil ${nama}`}
+                title={ciut ? nama : undefined}
+                className={cn(
+                  "flex min-h-12 items-center gap-3 rounded-xl text-sm",
+                  ciut ? "w-12 justify-center" : "px-3"
+                )}
+              >
+                <span
+                  aria-hidden="true"
+                  className="flex size-8 shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-bold text-secondary-foreground"
+                >
+                  {inisial}
+                </span>
+                {!ciut && (
+                  <span className="min-w-0 flex-1 leading-tight">
+                    <span className="block truncate font-semibold">{nama}</span>
+                    <span className="block truncate text-xs font-normal text-muted-foreground">
+                      {LABEL_SINGKAT[peran]}
+                    </span>
+                  </span>
+                )}
+              </a>
+            </>
+          )}
         </aside>
       )}
 

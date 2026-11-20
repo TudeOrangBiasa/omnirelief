@@ -49,7 +49,7 @@ export default async function RootLayout({
         <Providers>
           <Header nama={profil?.nama ?? null} peranLabel={LABEL_PERAN[peran]} />
           <div className="mx-auto flex w-full max-w-5xl items-start">
-            <BilahNav peran={peran} />
+            <BilahNav peran={peran} nama={profil?.nama ?? null} />
             <div className="min-w-0 flex-1 pb-28 md:pb-0">{children}</div>
           </div>
         </Providers>
