@@ -12,3 +12,4 @@ Sumber kebenaran konsep: `docs/OmniRelief-Dokumen-Tim-Lengkap.pdf`. Konflik soal
 8. Validator murni di `apps/web/src/lib/validasi.ts` agar bisa diuji tanpa Next. Rute hanya panggil.
 9. Bahasa UI Indonesia sederhana, tombol minimal 48px, status selalu warna plus label teks. Komponen shadcn plus token semantik, light saja, tanpa mode gelap.
 10. Secret tidak pernah masuk repo. `apps/web/.env` gitignored, contoh di `apps/web/.env.example`.
+11. Selera visual dan token UI: `docs/desain/design.md` (napas, datar, sorot-tunggal). Nilai token hanya di `packages/ui/src/styles/globals.css`, jangan diduplikasi.
