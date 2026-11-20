@@ -284,15 +284,10 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
               <IkonCiut aria-hidden="true" className="size-5" />
             </button>
           </div>
-          <span aria-hidden="true" className={cn("border-t border-border", ciut ? "w-10" : "-mx-6")} />
+          <span aria-hidden="true" className="mx-auto w-10 border-t border-border" />
           {grup.map((g, i) => (
             <Fragment key={g.judul}>
-              {i > 0 && (
-                <span
-                  aria-hidden="true"
-                  className={cn("border-t border-border", ciut ? "mx-auto w-10" : "-mx-6")}
-                />
-              )}
+              {i > 0 && <span aria-hidden="true" className="mx-auto w-10 border-t border-border" />}
               <section
                 aria-label={g.judul}
                 className={cn("flex w-full flex-col gap-1", ciut && "items-center")}
@@ -311,7 +306,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
           ))}
           {nama && (
             <>
-              <span aria-hidden="true" className={cn("border-t border-border", ciut ? "w-10" : "-mx-6")} />
+              <span aria-hidden="true" className="mx-auto w-10 border-t border-border" />
               <a
                 href="/profil"
                 aria-label={`Profil ${nama}`}
