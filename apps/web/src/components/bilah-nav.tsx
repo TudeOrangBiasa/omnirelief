@@ -188,6 +188,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
   const [hash, setHash] = useState("");
   const [lainnyaBuka, setLainnyaBuka] = useState(false);
   const [antrean, setAntrean] = useState(0);
+  const [menuBuka, setMenuBuka] = useState(false);
   const [ciut, setCiut] = useState(false);
 
   useEffect(() => {
@@ -223,6 +224,22 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
     return () => window.removeEventListener("keydown", saatTombol);
   }, [lainnyaBuka]);
 
+  useEffect(() => {
+    if (!menuBuka) return;
+    function tutupLuar(e: MouseEvent) {
+      if (!(e.target as HTMLElement).closest("[data-menu-akun]")) setMenuBuka(false);
+    }
+    function tutupLepas(e: KeyboardEvent) {
+      if (e.key === "Escape") setMenuBuka(false);
+    }
+    document.addEventListener("mousedown", tutupLuar);
+    window.addEventListener("keydown", tutupLepas);
+    return () => {
+      document.removeEventListener("mousedown", tutupLuar);
+      window.removeEventListener("keydown", tutupLepas);
+    };
+  }, [menuBuka]);
+
 
   useEffect(() => {
     try {
@@ -249,6 +266,12 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
   const lainnya = NAVIGASI_LAINNYA[peran];
   const grup = grupSidebar(peran);
   const IkonCiut = ciut ? SidebarOpenIcon : SidebarCloseIcon;
+  const cocokAda = grup.some((g) => g.item.some((i) => tabAktif(path, hash, i.href)));
+  const cocokTabAda = tab.some((i) => tabAktif(path, hash, i.href));
+  const aktifItem = (href: string) =>
+    tabAktif(path, hash, href) || (!cocokAda && diDasbor && href === "/beranda");
+  const aktifTab = (href: string) =>
+    tabAktif(path, hash, href) || (!cocokTabAda && diDasbor && href === "/beranda");
 
   const inisial = (nama ?? "?").trim().charAt(0).toUpperCase() || "?";
 
@@ -259,10 +282,10 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
           aria-label="Navigasi utama"
           className={cn(
             "sticky top-16 hidden shrink-0 flex-col self-start overflow-y-auto border-e border-border py-6 md:flex",
-            ciut ? "w-20 items-center gap-6 px-2" : "w-64 gap-6 px-6"
+            ciut ? "w-20 items-center gap-3 px-2" : "w-64 gap-3 px-6"
           )}
         >
-          <div className={cn("flex min-h-12 items-center gap-3", ciut ? "flex-col" : "px-1")}>
+          <div className={cn("flex min-h-12 items-center gap-3", ciut && "flex-col")}>
             <a
               href="/beranda"
               aria-label="OmniRelief work zone"
@@ -284,21 +307,24 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
               <IkonCiut aria-hidden="true" className="size-5" />
             </button>
           </div>
-          <span aria-hidden="true" className="mx-auto w-10 border-t border-border" />
+          <span aria-hidden="true" className="mx-auto w-36 border-t border-border" />
           {grup.map((g, i) => (
             <Fragment key={g.judul}>
-              {i > 0 && <span aria-hidden="true" className="mx-auto w-10 border-t border-border" />}
+              {i > 0 && (
+                <span aria-hidden="true" className="mx-auto w-36 border-t border-border" />
+              )}
               <section
                 aria-label={g.judul}
                 className={cn("flex w-full flex-col gap-1", ciut && "items-center")}
               >
+                {!ciut && <p className="t-micro px-3 text-muted-foreground">{g.judul}</p>}
                 {g.item.map((item) => (
                   <ItemSidebar
                     key={item.href}
                     item={item}
                     ciut={ciut}
                     antrean={antrean}
-                    aktif={tabAktif(path, hash, item.href)}
+                    aktif={aktifItem(item.href)}
                   />
                 ))}
               </section>
@@ -306,31 +332,67 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
           ))}
           {nama && (
             <>
-              <span aria-hidden="true" className="mx-auto w-10 border-t border-border" />
-              <a
-                href="/profil"
-                aria-label={`Profil ${nama}`}
-                title={ciut ? nama : undefined}
-                className={cn(
-                  "flex min-h-12 items-center gap-3 rounded-xl text-sm",
-                  ciut ? "w-12 justify-center" : "px-3"
-                )}
-              >
-                <span
-                  aria-hidden="true"
-                  className="flex size-8 shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-bold text-secondary-foreground"
+              <span aria-hidden="true" className="mx-auto w-36 border-t border-border" />
+              <div data-menu-akun className={cn("relative", ciut ? "flex flex-col items-center" : "flex min-h-12 items-center gap-3")}>
+                <a
+                  href="/profil"
+                  aria-label={`Profil ${nama}`}
+                  title={ciut ? nama : undefined}
+                  className={cn(
+                    "flex min-h-12 items-center gap-3 rounded-xl text-sm",
+                    ciut ? "w-12 justify-center" : "min-w-0 flex-1"
+                  )}
                 >
-                  {inisial}
-                </span>
-                {!ciut && (
-                  <span className="min-w-0 flex-1 leading-tight">
-                    <span className="block truncate font-semibold">{nama}</span>
-                    <span className="block truncate text-xs font-normal text-muted-foreground">
-                      {LABEL_SINGKAT[peran]}
-                    </span>
+                  <span
+                    aria-hidden="true"
+                    className="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-bold text-secondary-foreground"
+                  >
+                    {inisial}
                   </span>
+                  {!ciut && (
+                    <span className="min-w-0 flex-1 leading-tight">
+                      <span className="block truncate font-semibold">{nama}</span>
+                      <span className="block truncate text-xs font-normal text-muted-foreground">
+                        {LABEL_SINGKAT[peran]}
+                      </span>
+                    </span>
+                  )}
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setMenuBuka((v) => !v)}
+                  aria-expanded={menuBuka}
+                  aria-label="Menu akun"
+                  title="Menu akun"
+                  className="flex min-h-12 min-w-12 items-center justify-center rounded-xl text-muted-foreground"
+                >
+                  <MenuDotsIcon aria-hidden="true" className="size-5" />
+                </button>
+                {menuBuka && (
+                  <div
+                    role="menu"
+                    aria-label="Menu akun"
+                    className="absolute right-0 bottom-full z-10 mb-2 w-48 rounded-xl border border-border bg-background p-1"
+                  >
+                    <a
+                      role="menuitem"
+                      href="/profil"
+                      onClick={() => setMenuBuka(false)}
+                      className="flex min-h-12 items-center rounded-lg px-3 text-sm font-medium"
+                    >
+                      Profil
+                    </a>
+                    <a
+                      role="menuitem"
+                      href="/pengaturan"
+                      onClick={() => setMenuBuka(false)}
+                      className="flex min-h-12 items-center rounded-lg px-3 text-sm font-medium"
+                    >
+                      Pengaturan
+                    </a>
+                  </div>
                 )}
-              </a>
+              </div>
             </>
           )}
         </aside>
@@ -348,7 +410,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
                 key={item.href}
                 item={item}
                 antrean={antrean}
-                aktif={tabAktif(pathname ?? "/", hash, item.href)}
+                aktif={aktifTab(item.href)}
               />
             ))}
             <button

@@ -70,32 +70,27 @@ export const NAVIGASI_SIDEBAR: Record<NavPeran, NavItem[]> = {
     { href: "/bpbd", label: "Verifikasi", ikon: "verifikasi", lencana: "antrean" },
     { href: "/bpbd/kirim", label: "Buat manifest", ikon: "kirim" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
-    { href: "/pengaturan", label: "Pengaturan", ikon: "pengaturan" },
   ],
   GUDANG: [
     { href: "/beranda", label: "Beranda", ikon: "beranda" },
     { href: "/gudang", label: "Catat sumbangan", ikon: "catat" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
-    { href: "/pengaturan", label: "Pengaturan", ikon: "pengaturan" },
   ],
   POSKO: [
     { href: "/beranda", label: "Beranda", ikon: "beranda" },
     { href: "/posko#lapor", label: "Lapor", ikon: "lapor" },
     { href: "/posko#bantuan", label: "Bantuan", ikon: "bantuan" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
-    { href: "/pengaturan", label: "Pengaturan", ikon: "pengaturan" },
   ],
   TIM: [
     { href: "/beranda", label: "Beranda", ikon: "beranda" },
     { href: "/tim", label: "Tugas", ikon: "tugas", lencana: "antrean" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
-    { href: "/pengaturan", label: "Pengaturan", ikon: "pengaturan" },
   ],
   ADMIN: [
     { href: "/beranda", label: "Beranda", ikon: "beranda" },
     { href: "/admin", label: "Admin", ikon: "admin" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
-    { href: "/pengaturan", label: "Pengaturan", ikon: "pengaturan" },
   ],
 };
 
