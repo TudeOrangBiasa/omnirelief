@@ -128,8 +128,7 @@ export default function BantuanPosko() {
               </div>
             )}
             {laporId === b.id && (
-              <div className="flex flex-col gap-2">
-                <Select value={jenis} onValueChange={setJenis}>
+                <Select value={jenis} onValueChange={(v) => setJenis(v ?? "KURANG")}>
                   <SelectTrigger className="min-h-12">
                     <SelectValue placeholder="Jenis masalah" />
                   </SelectTrigger>
