@@ -177,3 +177,24 @@ export function tabAktif(pathname: string, hash: string, href: string): boolean 
   if (jangkar === undefined) return hash === "" || hash === "#";
   return hash === `#${jangkar}`;
 }
+
+/**
+ * Sidebar hanya tampil di zona dasbor (work zone internal).
+ * Halaman publik (landing, transparansi, detail, masuk) hanya pakai top-nav.
+ */
+export function zonaDasbor(pathname: string): boolean {
+  return ["/beranda", "/bpbd", "/gudang", "/posko", "/tim", "/pengaturan", "/profil", "/admin"].some(
+    (dasar) => pathname === dasar || pathname.startsWith(`${dasar}/`)
+  );
+}
+
+const IKON_AKUN: NavItem["ikon"][] = ["profil", "pengaturan"];
+
+/** Sidebar referensi: grup UTAMA di atas, grup AKUN di bawah pemisah. */
+export function grupSidebar(peran: NavPeran): { utama: NavItem[]; akun: NavItem[] } {
+  const semua = NAVIGASI_SIDEBAR[peran];
+  return {
+    utama: semua.filter((i) => !IKON_AKUN.includes(i.ikon)),
+    akun: semua.filter((i) => IKON_AKUN.includes(i.ikon)),
+  };
+}

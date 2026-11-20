@@ -12,6 +12,8 @@ import {
   LogIn,
   MapPin,
   PackagePlus,
+  PanelLeftClose,
+  PanelLeftOpen,
   Search,
   Send,
   Settings,
@@ -22,11 +24,13 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import {
+  grupSidebar,
+  LABEL_PERAN,
   NAVIGASI_LAINNYA,
-  NAVIGASI_SIDEBAR,
   NAVIGASI_TAB,
   sembunyikanTabBar,
   tabAktif,
+  zonaDasbor,
   type NavItem,
   type NavPeran,
 } from "@/lib/navigasi";
@@ -101,11 +105,54 @@ function ItemTab({
   );
 }
 
+function ItemSidebar({
+  item,
+  aktif,
+  antrean,
+  ciut,
+}: {
+  item: NavItem;
+  aktif: boolean;
+  antrean: number;
+  ciut: boolean;
+}) {
+  const Ikon = IKON[item.ikon];
+  return (
+    <a
+      href={item.href}
+      aria-current={aktif ? "page" : undefined}
+      title={ciut ? item.label : undefined}
+      aria-label={
+        item.lencana === "antrean" && antrean > 0
+          ? `${item.label}, ${antrean} menunggu`
+          : item.label
+      }
+      className={cn(
+        "flex min-h-12 items-center gap-3 rounded-xl text-sm",
+        ciut ? "w-12 justify-center" : "px-3",
+        aktif ? "bg-primary-bg font-bold text-primary" : "font-medium text-muted-foreground"
+      )}
+    >
+      <span className="relative shrink-0">
+        <Ikon aria-hidden="true" className="size-5" strokeWidth={aktif ? 2.5 : 2} />
+        {ciut && item.lencana === "antrean" && (
+          <span className="absolute -top-2 -end-2">
+            <Lencana jumlah={antrean} />
+          </span>
+        )}
+      </span>
+      {!ciut && <span className="flex-1">{item.label}</span>}
+      {!ciut && item.lencana === "antrean" && <Lencana jumlah={antrean} />}
+    </a>
+  );
+}
+
 export default function BilahNav({ peran }: { peran: NavPeran }) {
   const pathname = usePathname();
   const [hash, setHash] = useState("");
   const [lainnyaBuka, setLainnyaBuka] = useState(false);
   const [antrean, setAntrean] = useState(0);
+  const [ciut, setCiut] = useState(false);
 
   useEffect(() => {
     function segarkanHash() {
@@ -140,38 +187,98 @@ export default function BilahNav({ peran }: { peran: NavPeran }) {
     return () => window.removeEventListener("keydown", saatTombol);
   }, [lainnyaBuka]);
 
-  const sembunyi = sembunyikanTabBar(pathname ?? "/");
+
+  useEffect(() => {
+    try {
+      setCiut(window.localStorage.getItem("omnirelief-bilah") === "ciut");
+    } catch {
+      /* abaikan: privat mode */
+    }
+  }, []);
+
+  function alihLebar() {
+    setCiut((v) => {
+      try {
+        window.localStorage.setItem("omnirelief-bilah", v ? "lebar" : "ciut");
+      } catch {
+        /* abaikan */
+      }
+      return !v;
+    });
+  }
+  const path = pathname ?? "/";
+  const sembunyi = sembunyikanTabBar(path);
+  const diDasbor = zonaDasbor(path);
   const tab = NAVIGASI_TAB[peran];
   const lainnya = NAVIGASI_LAINNYA[peran];
+  const { utama, akun } = grupSidebar(peran);
+  const IkonCiut = ciut ? PanelLeftOpen : PanelLeftClose;
 
   return (
     <>
-      <aside
-        aria-label="Navigasi utama"
-        className="sticky top-16 hidden w-60 shrink-0 flex-col gap-1 overflow-y-auto border-e border-border p-4 md:flex"
-      >
-        {NAVIGASI_SIDEBAR[peran].map((item) => {
-          const Ikon = IKON[item.ikon];
-          const aktif = tabAktif(pathname ?? "/", hash, item.href);
-          return (
+      {diDasbor && (
+        <aside
+          aria-label="Navigasi utama"
+          className={cn(
+            "sticky top-16 hidden shrink-0 flex-col gap-1 self-start overflow-y-auto border-e border-border py-4 md:flex",
+            ciut ? "w-20 items-center px-2" : "w-60 px-4"
+          )}
+        >
+          <div className={cn("flex min-h-12 items-center gap-2", ciut ? "flex-col" : "px-2")}>
             <a
-              key={item.href}
-              href={item.href}
-              aria-current={aktif ? "page" : undefined}
-              className={cn(
-                "flex min-h-12 items-center gap-3 rounded-xl px-4 text-sm",
-                aktif
-                  ? "bg-primary-bg font-bold text-primary"
-                  : "font-medium text-muted-foreground"
-              )}
+              href="/beranda"
+              aria-label="OmniRelief work zone"
+              className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-base font-bold text-primary-foreground"
             >
-              <Ikon aria-hidden="true" className="size-5" />
-              {item.label}
-              {item.lencana === "antrean" && <Lencana jumlah={antrean} />}
+              O
             </a>
-          );
-        })}
-      </aside>
+            {!ciut && (
+              <p className="min-w-0 flex-1 leading-tight">
+                <span className="block truncate text-sm font-bold">OmniRelief</span>
+                <span className="block truncate text-xs font-normal text-muted-foreground">
+                  {LABEL_PERAN[peran]}
+                </span>
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={alihLebar}
+              aria-expanded={!ciut}
+              aria-label={ciut ? "Bentangkan navigasi" : "Ciutkan navigasi"}
+              title={ciut ? "Bentangkan" : "Ciutkan"}
+              className="flex min-h-12 min-w-12 items-center justify-center rounded-xl text-muted-foreground"
+            >
+              <IkonCiut aria-hidden="true" className="size-5" />
+            </button>
+          </div>
+          {!ciut && (
+            <p className="t-micro px-3 pt-3 text-muted-foreground">Utama</p>
+          )}
+          {utama.map((item) => (
+            <ItemSidebar
+              key={item.href}
+              item={item}
+              ciut={ciut}
+              antrean={antrean}
+              aktif={tabAktif(path, hash, item.href)}
+            />
+          ))}
+          {!ciut && (
+            <p className="t-micro border-t border-border px-3 pt-3 text-muted-foreground">Akun</p>
+          )}
+          {ciut && <span aria-hidden="true" className="my-1 w-10 border-t border-border" />}
+          {akun.map((item) => (
+            <ItemSidebar
+              key={item.href}
+              item={item}
+              ciut={ciut}
+              antrean={antrean}
+              aktif={tabAktif(path, hash, item.href)}
+            />
+          ))}
+        </aside>
+      )}
+
 
       {!sembunyi && (
         <nav
@@ -214,7 +321,7 @@ export default function BilahNav({ peran }: { peran: NavPeran }) {
             onClick={() => setLainnyaBuka(false)}
             className="absolute inset-0 cursor-default bg-foreground/40"
           />
-          <div className="absolute inset-x-0 bottom-0 flex flex-col gap-1 rounded-t-3xl border-t border-border bg-background p-4 pb-6">
+          <div className="absolute inset-x-0 bottom-0 flex flex-col gap-1 rounded-t-2xl border-t border-border bg-background p-4 pb-6">
             {lainnya.map((item) => {
               const Ikon = IKON[item.ikon];
               return (
