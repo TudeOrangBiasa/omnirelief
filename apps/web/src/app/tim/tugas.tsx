@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react";
 import BannerOffline from "@/components/banner-offline";
+import { Badge } from "@omnirelief/ui/components/badge";
+import { Button } from "@omnirelief/ui/components/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@omnirelief/ui/components/card";
+import { Textarea } from "@omnirelief/ui/components/textarea";
 import { kirimAntrean, tambahAntrean } from "@/lib/offline";
-
 type Tugas = {
   id: number;
   kode: string;
@@ -89,73 +92,84 @@ export default function TugasTim() {
     <div className="flex flex-col gap-4">
       <BannerOffline />
       {galat && (
-        <p role="alert" className="rounded bg-[#FEE2E2] p-3 text-sm text-[#B91C1C]">
+        <p role="alert" className="rounded-xl bg-destructive/10 p-3 text-sm text-destructive">
           {galat}
         </p>
       )}
       {pesan && (
-        <p role="status" className="rounded bg-[#DCFCE7] p-3 text-sm text-[#15803D]">
+        <p role="status" className="rounded-xl bg-success-bg p-3 text-sm text-success">
           {pesan}
         </p>
       )}
       {tugas.map((t) => (
-        <button
+        <Card
           key={t.id}
           onClick={() => setPilih(t.id)}
-          className={`rounded border p-3 text-left text-sm ${pilih === t.id ? "border-[#0F3B5F] border-2" : "border-gray-200"}`}
+          className={`cursor-pointer text-left ${pilih === t.id ? "border-2 border-primary" : ""}`}
         >
-          <p className="font-bold">
-            {t.kode} · {t.posko_nama}
-          </p>
-          <p className="text-[#5B6B7F]">
-            Terakhir: {t.log_terakhir?.status ?? "-"}
-            {t.batas_checkin ? ` · batas check-in ${new Date(t.batas_checkin).toLocaleString("id-ID")}` : ""}
-          </p>
-        </button>
+          <CardContent className="flex flex-col gap-1 p-4 text-sm">
+            <p className="font-bold">
+              {t.kode} · {t.posko_nama}
+            </p>
+            <p className="text-muted-foreground">
+              Terakhir: {t.log_terakhir?.status ?? "-"}
+              {t.batas_checkin ? ` · batas check-in ${new Date(t.batas_checkin).toLocaleString("id-ID")}` : ""}
+            </p>
+          </CardContent>
+        </Card>
       ))}
       {aktif && (
-        <div className="rounded border border-gray-300 p-4">
-          <p className="font-bold text-sm">Update {aktif.kode}</p>
-          <div className="mt-2 grid grid-cols-2 gap-2">
-            {AKSI.map((a) => (
-              <button
-                key={a.status}
-                onClick={() => void kirim(a.status, null, "/api/tim/status", { manifest_id: aktif.id, status: a.status })}
-                className="min-h-12 rounded bg-[#0F3B5F] font-semibold text-white text-sm"
-              >
-                {a.label}
-              </button>
-            ))}
-          </div>
-          <textarea
-            value={kendala}
-            onChange={(e) => setKendala(e.target.value)}
-            placeholder="Tulis kendala di lapangan"
-            className="mt-3 min-h-12 w-full rounded border border-gray-300 p-3 text-sm"
-          />
-          <label className="mt-2 flex min-h-12 items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={darurat}
-              onChange={(e) => setDarurat(e.target.checked)}
-              className="h-5 w-5"
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              Update {aktif.kode}
+              {aktif.batas_checkin && new Date(aktif.batas_checkin) < new Date() && (
+                <Badge variant="destructive">Lewat batas</Badge>
+              )}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3 text-sm">
+            <div className="grid grid-cols-2 gap-2">
+              {AKSI.map((a) => (
+                <Button
+                  key={a.status}
+                  onClick={() => void kirim(a.status, null, "/api/tim/status", { manifest_id: aktif.id, status: a.status })}
+                  className="min-h-12"
+                >
+                  {a.label}
+                </Button>
+              ))}
+            </div>
+            <Textarea
+              value={kendala}
+              onChange={(e) => setKendala(e.target.value)}
+              placeholder="Tulis kendala di lapangan"
+              className="min-h-12"
             />
-            Darurat (butuh SOP darurat BPBD)
-          </label>
-          <button
-            onClick={() =>
-              void kirim("kendala", null, "/api/tim/kendala", {
-                manifest_id: aktif.id,
-                kendala,
-                darurat,
-              })
-            }
-            disabled={kendala.trim() === ""}
-            className="mt-2 min-h-12 w-full rounded bg-[#FEF3C7] font-semibold text-[#B45309] disabled:opacity-50"
-          >
-            Lapor kendala
-          </button>
-        </div>
+            <label className="flex min-h-12 items-center gap-2">
+              <input
+                type="checkbox"
+                checked={darurat}
+                onChange={(e) => setDarurat(e.target.checked)}
+                className="h-5 w-5 accent-destructive"
+              />
+              Darurat (butuh SOP darurat BPBD)
+            </label>
+            <Button
+              onClick={() =>
+                void kirim("kendala", null, "/api/tim/kendala", {
+                  manifest_id: aktif.id,
+                  kendala,
+                  darurat,
+                })
+              }
+              disabled={kendala.trim() === ""}
+              className="min-h-12 w-full bg-warning-bg text-warning hover:bg-warning-bg"
+            >
+              Lapor kendala
+            </Button>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
