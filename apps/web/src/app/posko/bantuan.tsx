@@ -1,7 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
+import { Badge } from "@omnirelief/ui/components/badge";
+import { Button } from "@omnirelief/ui/components/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@omnirelief/ui/components/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@omnirelief/ui/components/select";
+import { Textarea } from "@omnirelief/ui/components/textarea";
 type Bantuan = {
   id: number;
   kode: string;
@@ -73,69 +83,82 @@ export default function BantuanPosko() {
 
   return (
     <section className="flex flex-col gap-2">
-      <h2 className="text-lg font-bold text-[#0F3B5F]">Bantuan untuk posko ini</h2>
+      <h2 className="text-lg font-bold text-primary">Bantuan untuk posko ini</h2>
       {pesan && (
-        <p role="status" className="rounded bg-[#DCFCE7] p-3 text-sm text-[#15803D]">
+        <p role="status" className="rounded-xl bg-success-bg p-3 text-sm text-success">
           {pesan}
         </p>
       )}
       {galat && (
-        <p role="alert" className="rounded bg-[#FEE2E2] p-3 text-sm text-[#B91C1C]">
+        <p role="alert" className="rounded-xl bg-destructive/10 p-3 text-sm text-destructive">
           {galat}
         </p>
       )}
       {bantuan.length === 0 && (
-        <p className="text-sm text-[#5B6B7F]">Belum ada kiriman.</p>
+        <p className="text-muted-foreground text-sm">Belum ada kiriman.</p>
       )}
       {bantuan.map((b) => (
-        <div key={b.id} className="rounded border border-gray-200 p-3 text-sm">
-          <p className="font-semibold">{b.kode}</p>
-          <p className="text-[#5B6B7F]">Terakhir: {b.log_terakhir?.status ?? "-"}</p>
-          {b.log_terakhir?.status !== "DITERIMA" && (
-            <div className="mt-2 flex gap-2">
-              <button
-                onClick={() => void konfirmasi(b.id)}
-                className="min-h-12 flex-1 rounded bg-[#15803D] font-semibold text-white"
-              >
-                Konfirmasi terima
-              </button>
-              <button
-                onClick={() => setLaporId(laporId === b.id ? null : b.id)}
-                className="min-h-12 flex-1 rounded border border-gray-300 font-semibold"
-              >
-                Lapor masalah
-              </button>
-            </div>
-          )}
-          {laporId === b.id && (
-            <div className="mt-2 flex flex-col gap-2">
-              <select
-                value={jenis}
-                onChange={(e) => setJenis(e.target.value)}
-                className="min-h-12 rounded border border-gray-300 p-3"
-              >
-                {JENIS.map((j) => (
-                  <option key={j} value={j}>
-                    {j}
-                  </option>
-                ))}
-              </select>
-              <textarea
-                value={keterangan}
-                onChange={(e) => setKeterangan(e.target.value)}
-                placeholder="Contoh: 10 paket rusak basah"
-                className="min-h-12 rounded border border-gray-300 p-3"
-              />
-              <button
-                onClick={() => void lapor(b.id)}
-                disabled={keterangan.trim() === ""}
-                className="min-h-12 rounded bg-[#FEE2E2] font-semibold text-[#B91C1C] disabled:opacity-50"
-              >
-                Kirim laporan publik
-              </button>
-            </div>
-          )}
-        </div>
+        <Card key={b.id}>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              {b.kode}
+              {b.log_terakhir?.status === "DITERIMA" ? (
+                <Badge className="border-transparent bg-success-bg text-success">Diterima</Badge>
+              ) : (
+                <Badge variant="outline">{b.log_terakhir?.status ?? "Baru"}</Badge>
+              )}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-2 text-sm">
+            {b.log_terakhir?.status !== "DITERIMA" && (
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => void konfirmasi(b.id)}
+                  className="min-h-12 flex-1 bg-success text-white hover:bg-success/80"
+                >
+                  Konfirmasi terima
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setLaporId(laporId === b.id ? null : b.id)}
+                  className="min-h-12 flex-1"
+                >
+                  Lapor masalah
+                </Button>
+              </div>
+            )}
+            {laporId === b.id && (
+              <div className="flex flex-col gap-2">
+                <Select value={jenis} onValueChange={setJenis}>
+                  <SelectTrigger className="min-h-12">
+                    <SelectValue placeholder="Jenis masalah" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {JENIS.map((j) => (
+                      <SelectItem key={j} value={j}>
+                        {j}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Textarea
+                  value={keterangan}
+                  onChange={(e) => setKeterangan(e.target.value)}
+                  placeholder="Contoh: 10 paket rusak basah"
+                  className="min-h-12"
+                />
+                <Button
+                  variant="destructive"
+                  onClick={() => void lapor(b.id)}
+                  disabled={keterangan.trim() === ""}
+                  className="min-h-12"
+                >
+                  Kirim laporan publik
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       ))}
     </section>
   );
