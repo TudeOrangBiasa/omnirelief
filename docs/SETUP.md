@@ -8,6 +8,11 @@ bun run setup
 
 Panduan sekali jalan untuk fondasi hari 1 sampai 2.
 
+## 0. Project Supabase live
+
+Project `omnirelief`, ref `pmckelqxvfwbiuwlftod`, region ap-south-1, URL `https://pmckelqxvfwbiuwlftod.supabase.co`.
+Schema `supabase/migrations/0001_schema.sql`, seed `supabase/seed.sql`, akun `supabase/akun-demo.sql` sudah teraplikasi.
+Kunci API dan DB password tersimpan di Vercel env dan `apps/web/.env` lokal, tidak di repo.
 ## 1. Supabase project
 
 1. Buka https://supabase.com/dashboard/projects, buat project baru `omnirelief`.
