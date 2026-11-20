@@ -1,4 +1,7 @@
 {
   "$schema": "https://oxc.rs/docs/config.schema.json",
-  "jsPlugins": ["@shadcn/lint"]
+  "jsPlugins": ["@shadcn/lint"],
+  "rules": {
+    "shadcn/no-arbitrary-values": "warn"
+  }
 }
