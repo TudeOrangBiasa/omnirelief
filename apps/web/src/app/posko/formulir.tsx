@@ -2,8 +2,12 @@
 
 import { useEffect, useState } from "react";
 import BannerOffline from "@/components/banner-offline";
+import { Badge } from "@omnirelief/ui/components/badge";
+import { Button } from "@omnirelief/ui/components/button";
+import { Card, CardContent } from "@omnirelief/ui/components/card";
+import { Input } from "@omnirelief/ui/components/input";
+import { Label } from "@omnirelief/ui/components/label";
 import { kirimAntrean, tambahAntrean } from "@/lib/offline";
-
 type Laporan = {
   id: number;
   bayi: number;
@@ -88,12 +92,12 @@ export default function FormulirPosko() {
     <div className="flex flex-col gap-6">
       <BannerOffline />
       {hasil && (
-        <p role="status" className="rounded bg-[#DCFCE7] p-3 text-sm text-[#15803D]">
+        <p role="status" className="rounded-xl bg-success-bg p-3 text-sm text-success">
           {hasil}
         </p>
       )}
       {galat && (
-        <p role="alert" className="rounded bg-[#FEE2E2] p-3 text-sm text-[#B91C1C]">
+        <p role="alert" className="rounded-xl bg-destructive/10 p-3 text-sm text-destructive">
           {galat}
         </p>
       )}
@@ -102,53 +106,62 @@ export default function FormulirPosko() {
         className="flex flex-col gap-4"
       >
         {MEDAN.map((m) => (
-          <label key={m.nama} className="flex flex-col gap-1 text-sm">
-            {m.label}
-            <input
+          <div key={m.nama} className="flex flex-col gap-1">
+            <Label htmlFor={`posko-${m.nama}`}>{m.label}</Label>
+            <Input
+              id={`posko-${m.nama}`}
               name={m.nama}
               type="number"
               min={0}
               defaultValue={0}
               required
-              className="min-h-12 rounded border border-gray-300 p-3"
+              className="min-h-12"
             />
-          </label>
+          </div>
         ))}
         <div className="flex gap-3">
-          <button
-            type="submit"
-            disabled={sibuk}
-            className="min-h-12 flex-1 rounded bg-[#0F3B5F] font-semibold text-white disabled:opacity-50"
-          >
+          <Button type="submit" disabled={sibuk} className="min-h-12 flex-1">
             {sibuk ? "Mengirim..." : "Kirim data"}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="outline"
             disabled={sibuk}
             onClick={(e) => {
               const form = (e.target as HTMLButtonElement).closest("form");
               if (form) void kirim(new FormData(form), true);
             }}
-            className="min-h-12 flex-1 rounded border border-gray-300 font-semibold disabled:opacity-50"
+            className="min-h-12 flex-1"
           >
             Simpan draf
-          </button>
+          </Button>
         </div>
       </form>
       <section className="flex flex-col gap-2">
-        <h2 className="text-lg font-bold text-[#0F3B5F]">Status laporan</h2>
+        <h2 className="text-lg font-bold text-primary">Status laporan</h2>
         {laporan.length === 0 && (
-          <p className="text-sm text-[#5B6B7F]">Belum ada laporan.</p>
+          <p className="text-muted-foreground text-sm">Belum ada laporan.</p>
         )}
         {laporan.map((l) => (
-          <div key={l.id} className="rounded border border-gray-200 p-3 text-sm">
-            <p className="font-semibold">
-              Total {l.bayi + l.balita + l.ibu_hamil + l.lansia + l.disabilitas + l.umum} jiwa
-            </p>
-            <p className="text-[#5B6B7F]">
-              {l.status} · {new Date(l.dibuat_pada).toLocaleString("id-ID")}
-            </p>
-          </div>
+          <Card key={l.id}>
+            <CardContent className="flex flex-col gap-1 p-4 text-sm">
+              <p className="font-semibold">
+                Total {l.bayi + l.balita + l.ibu_hamil + l.lansia + l.disabilitas + l.umum} jiwa
+              </p>
+              <p className="text-muted-foreground">
+                {new Date(l.dibuat_pada).toLocaleString("id-ID")}
+              </p>
+              {l.status === "DISETUJUI" ? (
+                <Badge className="w-fit border-transparent bg-success-bg text-success">Disetujui</Badge>
+              ) : l.status === "MINTA_REVISI" ? (
+                <Badge className="w-fit border-transparent bg-warning-bg text-warning">Minta revisi</Badge>
+              ) : l.status === "DITOLAK" ? (
+                <Badge variant="destructive" className="w-fit">Ditolak</Badge>
+              ) : (
+                <Badge variant="outline" className="w-fit">{l.status}</Badge>
+              )}
+            </CardContent>
+          </Card>
         ))}
       </section>
     </div>
