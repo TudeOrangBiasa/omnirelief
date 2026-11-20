@@ -1,7 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
+import { Button } from "@omnirelief/ui/components/button";
+import { Card, CardContent } from "@omnirelief/ui/components/card";
+import { Input } from "@omnirelief/ui/components/input";
+import { Label } from "@omnirelief/ui/components/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@omnirelief/ui/components/select";
 type Posko = { id: number; nama: string; wilayah: string };
 
 type Batch = {
@@ -91,80 +101,88 @@ export default function FormulirKirim() {
   return (
     <div className="flex flex-col gap-4">
       {galat && (
-        <p role="alert" className="rounded bg-[#FEE2E2] p-3 text-sm text-[#B91C1C]">
+        <p role="alert" className="rounded-xl bg-destructive/10 p-3 text-sm text-destructive">
           {galat}
         </p>
       )}
       {hasil ? (
-        <div className="rounded bg-[#DCFCE7] p-4 text-sm text-[#15803D]">
-          <p className="font-bold">Terkunci publik: {hasil.kode}</p>
-          <a href={hasil.url_publik} className="underline">
-            Buka halaman publik manifest
-          </a>
-        </div>
+        <Card className="border-transparent bg-success-bg">
+          <CardContent className="flex flex-col gap-1 p-4 text-sm text-success">
+            <p className="font-bold">Terkunci publik: {hasil.kode}</p>
+            <a href={hasil.url_publik} className="underline">
+              Buka halaman publik manifest
+            </a>
+          </CardContent>
+        </Card>
       ) : draf ? (
-        <div className="rounded border border-gray-300 p-4 text-sm">
-          <p className="font-bold">Draf {draf.kode} tersimpan.</p>
-          {draf.peringatan.length > 0 && (
-            <p className="mt-1 text-[#B45309]">
-              Peringatan FEFO: batch {draf.peringatan.join(", ")} kedaluwarsa lebih
-              dekat tapi tidak dipakai.
-            </p>
-          )}
-          <button
-            onClick={() => void publikasikan()}
-            disabled={sibuk}
-            className="mt-3 min-h-12 w-full rounded bg-[#0F3B5F] font-semibold text-white disabled:opacity-50"
-          >
-            {sibuk ? "Mengunci..." : "Publikasikan dan kunci"}
-          </button>
-        </div>
+        <Card>
+          <CardContent className="flex flex-col gap-2 p-4 text-sm">
+            <p className="font-bold">Draf {draf.kode} tersimpan.</p>
+            {draf.peringatan.length > 0 && (
+              <p className="text-warning">
+                Peringatan FEFO: batch {draf.peringatan.join(", ")} kedaluwarsa lebih
+                dekat tapi tidak dipakai.
+              </p>
+            )}
+            <Button
+              onClick={() => void publikasikan()}
+              disabled={sibuk}
+              className="min-h-12 w-full"
+            >
+              {sibuk ? "Mengunci..." : "Publikasikan dan kunci"}
+            </Button>
+          </CardContent>
+        </Card>
       ) : (
         <>
-          <label className="flex flex-col gap-1 text-sm">
-            Posko tujuan
-            <select
-              value={poskoId}
-              onChange={(e) => setPoskoId(e.target.value)}
-              className="min-h-12 rounded border border-gray-300 p-3"
-            >
-              <option value="">Pilih posko</option>
-              {posko.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.nama} ({p.wilayah})
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="flex flex-col gap-1 text-sm">
-            Tim distribusi
-            <input
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="kirim-posko">Posko tujuan</Label>
+            <Select value={poskoId} onValueChange={(v) => setPoskoId(v ?? "")}>
+              <SelectTrigger id="kirim-posko" className="min-h-12">
+                <SelectValue placeholder="Pilih posko" />
+              </SelectTrigger>
+              <SelectContent>
+                {posko.map((p) => (
+                  <SelectItem key={p.id} value={String(p.id)}>
+                    {p.nama} ({p.wilayah})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="kirim-tim">Tim distribusi</Label>
+            <Input
+              id="kirim-tim"
               value={tim}
               onChange={(e) => setTim(e.target.value)}
               placeholder="Tim Antar 1"
-              className="min-h-12 rounded border border-gray-300 p-3"
+              className="min-h-12"
             />
-          </label>
+          </div>
           {baris.map((r, i) => (
             <div key={i} className="flex gap-2">
-              <select
-                value={r.batch_id}
-                onChange={(e) => {
+              <Select
+                value={String(r.batch_id)}
+                onValueChange={(v) => {
                   const ganti = [...baris];
-                  ganti[i] = { ...r, batch_id: Number(e.target.value) };
+                  ganti[i] = { ...r, batch_id: Number(v) };
                   setBaris(ganti);
                 }}
-                className="min-h-12 flex-1 rounded border border-gray-300 p-3 text-sm"
               >
-                <option value={0}>Pilih batch</option>
-                {batch.map((b) => (
-                  <option key={b.id} value={b.id}>
-                    {b.kode_sumbangan} · {b.item_nama} · sisa {b.sisa}
-                    {b.kedaluwarsa ? ` · exp ${b.kedaluwarsa}` : ""}
-                  </option>
-                ))}
-              </select>
-              <input
+                <SelectTrigger className="min-h-12 flex-1">
+                  <SelectValue placeholder="Pilih batch" />
+                </SelectTrigger>
+                <SelectContent>
+                  {batch.map((b) => (
+                    <SelectItem key={b.id} value={String(b.id)}>
+                      {b.kode_sumbangan} · {b.item_nama} · sisa {b.sisa}
+                      {b.kedaluwarsa ? ` · exp ${b.kedaluwarsa}` : ""}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Input
                 type="number"
                 min={1}
                 value={r.jumlah || ""}
@@ -174,23 +192,24 @@ export default function FormulirKirim() {
                   ganti[i] = { ...r, jumlah: Number(e.target.value) };
                   setBaris(ganti);
                 }}
-                className="min-h-12 w-28 rounded border border-gray-300 p-3"
+                className="min-h-12 w-28"
               />
             </div>
           ))}
-          <button
+          <Button
+            variant="outline"
             onClick={() => setBaris([...baris, { batch_id: 0, jumlah: 0 }])}
-            className="min-h-12 rounded border border-gray-300 font-semibold"
+            className="min-h-12"
           >
             Tambah batch
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => void buatDraf()}
             disabled={sibuk || poskoId === "" || tim.trim() === ""}
-            className="min-h-12 rounded bg-[#0F3B5F] font-semibold text-white disabled:opacity-50"
+            className="min-h-12"
           >
             {sibuk ? "Menyimpan..." : "Simpan draf"}
-          </button>
+          </Button>
         </>
       )}
     </div>
