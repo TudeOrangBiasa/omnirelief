@@ -271,12 +271,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
               O
             </a>
             {!ciut && (
-              <p className="min-w-0 flex-1 leading-tight">
-                <span className="block truncate text-sm font-bold">OmniRelief</span>
-                <span className="block truncate text-xs font-normal text-muted-foreground">
-                  {LABEL_SINGKAT[peran]}
-                </span>
-              </p>
+              <p className="min-w-0 flex-1 truncate text-sm font-bold">OmniRelief</p>
             )}
             <button
               type="button"
