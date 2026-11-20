@@ -3,7 +3,7 @@
 Nilai (satu-satunya kebenaran): `packages/ui/src/styles/globals.css`
 (`:root` + `@theme inline` + `.t-*` + `.garis-rambut` + `.animate-enter`).
 Asal gaya: rre.com — capture `docs/referensi/rre/baru-*` (13 file) + catatan
-`docs/desain/rre-0*.md`; rincian jakub.kr/details-that-make-interfaces-feel-better.
+`docs/desain/rre-0*.md`; rincian jakub.kr/details-that-make-interfaces-feel-better + isyarat motion-gestures + seret drag-gesture + morph shared-layout.
 Aturan repo: `AGENTS.md` butir 9–11; istilah `GLOSSARY.md`.
 
 Tiga kata: **napas** (ritme lega 128/64), **datar** (flat, garis rambut,
@@ -52,8 +52,25 @@ tanpa elevasi), **sorot-tunggal** (satu highlight primer per layar).
    bobot tebal; judul kartu = ukuran body.
 2. Judul `.t-balance`, paragraf `.t-pretty`; angka berubah `.t-angka`;
    radius konsentris (luar = dalam + padding); ikon disejajarkan optis.
-3. Gerak: transisi untuk interaksi (bisa diinterupsi); `.animate-enter` +
-   `--stagger` hanya adegan sekali-jalan; keluar lebih halus dari masuk;
+3. Gerak isyarat (motion/drag/shared-layout, CSS dulu tanpa dep baru):
+   tiap gesture dijawab fisik seketika — hover menegaskan, tekan menyusut
+   (`active:scale-97`), fokus halus `:focus-visible` tanpa gerak besar;
+   keluar lebih halus dari masuk; hanya properti utas-kompositor
+   (`transform`, `opacity`, `filter`); transisi bisa diinterupsi, tanpa
+   keyframe untuk interaksi; spring tanpa pantulan (kurva repo
+   `cubic-bezier(0.25, 0.46, 0.45, 0.94)`); tap setara keyboard
+   (tombol asli agar Enter/Space memicu aksi yang sama); seret terkunci satu
+   sumbu dalam wadah `overflow-clip`, berbatas + hambatan tepi minimal
+   (lewat batas snap balik); tanpa momentum untuk aksi-sapuan — berhenti di
+   keputusan pengguna; titik-commit ~½ jarak snap (kurang tutup, lebih buka);
+   aksi tampil bertahap satu per ambang (`opacity` + `scale`); tiap aksi seret
+   wajib ada jalur non-seret (tombol fokus, `aria-label`); morph satu identitas
+   yang bergerak — pil filter aktif meluncur antar opsi, kartu membesar jadi
+   dialog — bukan unmount+mount dengan fade; elemen bergerak tanpa `opacity`,
+   konten sekitar boleh fade+blur halus per state; posisi/ukuran/radius
+   diinterpolasi sebagai nilai, bukan kelas diskrit; satu nama per grup;
+   native via View Transitions API (`view-transition-name`, fallback tampil
+   seketika); `.animate-enter` + `--stagger` hanya adegan sekali-jalan;
    tunduk `prefers-reduced-motion`. Foto selalu `.bingkai-foto`.
 4. Tepat satu sorotan primer per layar (CTA navy ATAU banner kritis).
    Merah: selisih/Perlu Dicek/revisi/tolak/batal/danger. Kuning: FEFO ≤ 7 hari,
