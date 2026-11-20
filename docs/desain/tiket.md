@@ -7,7 +7,7 @@ IA acuan: `docs/desain/arsitektur-pages.md` (14 routes). Rincian visual per chec
 
 1. `P0-01 Shell navigasi desktop` — Tambah sidebar per peran + header (avatar → `/profil`, badge offline) di `apps/web/src/app/layout.tsx` + `components/header`. Dependen: audit mobile-tab-bar (peer). Kriteria juri: semua.
 2. `P0-02 Bottom-nav mobile 4 tab + Lainnya` — Tab per peran sesuai §2 arsitektur (ikon + label, aktif tegas, badge angka antrean), sembunyi di `/m/*`, `/s/*`, dan mode formulir. Dependen: audit mobile-tab-bar (peer).
-3. `P0-03 Landing CTA tunggal` — Satu CTA primer + CTA bawah berulang, kolom kode auto-deteksi MNF/DNT; tanpa CTA ganda sejajar. Dependen: audit landing (peer). Juri: — (masuk alur).
+3. `P0-03 Landing CTA tunggal` — DIKERJAKAN TERAKHIR setelah P0-16 (desain landing ditetapkan belakangan; dasbor + fitur utama dulu). Satu CTA primer + CTA bawah berulang, kolom kode auto-deteksi MNF/DNT; tanpa CTA ganda sejajar. Dependen: audit landing (peer). Juri: — (masuk alur).
 4. `P0-04 Transparansi kartu selisih` — Kartu per posko: butuh/dikirim/diterima + badge Kurang merah / Aman hijau + cari 2 kolom + empty state. Dependen: audit transparansi (peer). Juri: 6.
 5. `P0-05 Detail manifest terkunci` — Badge TERKUNCI + hash pendek + QR + salin tautan + timeline append-only + kartu pembatalan/ketidaksesuaian; pastikan nol tombol edit/hapus. Dependen: audit transparansi grup (peer). Juri: 5, 6.
 6. `P0-06 Detail sumbangan` — Header `DNT-*` + sumber (hanya bila izin) + progress alokasi + daftar manifest pemakai. Dependen: audit transparansi grup (peer). Juri: 1.
@@ -35,6 +35,6 @@ IA acuan: `docs/desain/arsitektur-pages.md` (14 routes). Rincian visual per chec
 25. `P1-09 Budget halaman publik` — `/`, `/transparansi`, `/m/*`, `/s/*` di bawah 1,5 MB (cek build + tab jaringan, `docs/GOALS.md` U6).
 26. `P1-10 Glosarium di UI` — Label UI memakai istilah baku (selisih, Perlu Dicek, ketidaksesuaian, konfirmasi terima); sapu istilah lama (defisit, overdue, komplain, serah terima).
 
-Urutan kerja: P0-01 → P0-02 → P0-03…P0-16 berurutan (shell dulu, lalu publik, masuk/beranda, peran, pengaturan), baru P1-01…P1-10. Jangan kerjakan P1-01 sebelum P0-01/P0-02 (guard + nav bergantung shell).
+Urutan kerja: P0-01 → P0-02 → P0-04…P0-16 berurutan (shell dulu, lalu publik non-landing, masuk/beranda, peran, pengaturan), P0-03 landing dikerjakan terakhir, baru P1-01…P1-10. Jangan kerjakan P1-01 sebelum P0-01/P0-02 (guard + nav bergantung shell).
 
 Worksheet check-types: n/a (murni markdown, tanpa token).

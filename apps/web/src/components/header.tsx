@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { WiFiOffIcon } from "@solar-icons/react/linear";
 import { hitungAntrean } from "@/components/banner-offline";
+import { zonaDasbor } from "@/lib/navigasi";
 
 export default function Header({
   nama,
@@ -11,6 +13,7 @@ export default function Header({
   nama: string | null;
   peranLabel: string;
 }) {
+  const pathname = usePathname();
   const [daring, setDaring] = useState(true);
   const [antre, setAntre] = useState(0);
 
@@ -33,6 +36,10 @@ export default function Header({
   }, []);
 
   const inisial = (nama ?? "?").trim().charAt(0).toUpperCase() || "?";
+
+  // Top-nav publik (landing dkk) dicabut sementara: desain landing dikerjakan
+  // terakhir setelah dasbor + fitur utama (keputusan Nov 2026).
+  if (!zonaDasbor(pathname ?? "/")) return null;
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background">
