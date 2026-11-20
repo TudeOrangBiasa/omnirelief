@@ -39,8 +39,11 @@ tanpa elevasi), **sorot-tunggal** (satu highlight primer per layar).
 4. Tiga state tiap daftar (Rangka/Kosong+aksi/error+muat-ulang);
    tiap form error `role="alert"` + sebut bidang; sentuh `min-h-12`.
    Selesai bila 4 aturan §Rasa butir 4–6 terpenuhi.
-5. Bukti visual — screenshot browser tiap perubahan CSS/tata letak sebelum
-   diklaim selesai. Selesai bila file bukti ada di `docs/bukti-ui/`.
+5. Tayang sebelum-sesudah — tiap klaim selesai ditemani pasangan screenshot
+   SEBELUM vs SESUDAH langsung di chat (komponen `Image` dari `docs/bukti-ui/`).
+   Cakupan ikut ukuran perubahan: komponen → render komponennya saja; page →
+   halaman penuh dengan tiap section terlihat seperti di monitor.
+   Selesai bila pasangan gambar sudah tayang di balasan, bukan hanya file.
 
 ## Rasa yang dijaga
 
@@ -107,6 +110,9 @@ log audit, danger ketik.
 ## Verifikasi (cek sebelum klaim selesai)
 
 - Screenshot browser tiap layar berubah (`docs/bukti-ui/`).
+- Mekanisme: tangkap SEBELUM sebelum mengubah (atau pakai file bukti
+  sebelumnya), tangkap SESUDAH via agent-browser, simpan keduanya di
+  `docs/bukti-ui/`, tayangkan berdampingan di chat.
 - Harness throwaway untuk 26 skenario: badge panjang/wrap/shrink-0/99+/
   tumpuk-2+`+1`; kartu nama-100-karakter/angka-9-juta/0-dan-100/grid-320;
   timeline alasan-500/hash-pendek/100-baris/320px/kartu-campur;
