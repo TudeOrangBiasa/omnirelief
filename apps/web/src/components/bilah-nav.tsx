@@ -286,7 +286,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
           </div>
           <span aria-hidden="true" className={cn("border-t border-border", ciut ? "w-10" : "-mx-6")} />
           {grup.map((g, i) => (
-            <section key={g.judul} aria-label={g.judul} className="flex w-full flex-col gap-1">
+            <section key={g.judul} aria-label={g.judul} className={cn("flex w-full flex-col gap-1", ciut && "items-center")}>
               {!ciut && <p className="t-micro px-3 text-muted-foreground">{g.judul}</p>}
               {ciut && i > 0 && (
                 <span aria-hidden="true" className="mx-auto w-10 border-t border-border" />
