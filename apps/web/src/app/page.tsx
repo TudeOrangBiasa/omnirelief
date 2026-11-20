@@ -10,15 +10,20 @@ export default function Home() {
       </div>
       <div className="flex flex-col gap-3">
         <a
-          href="/masuk"
+          href="/transparansi"
           className="block min-h-12 rounded bg-[#0F3B5F] p-3 text-center font-semibold text-white"
+        >
+          Lihat transparansi per posko
+        </a>
+        <a
+          href="/masuk"
+          className="block min-h-12 rounded border border-gray-300 p-3 text-center font-semibold"
         >
           Masuk untuk relawan
         </a>
       </div>
       <p className="text-xs text-[#5B6B7F]">
-        Halaman cek publik dan dashboard transparansi menyusul di slice
-        berikutnya.
+        Tanpa login: cek dashboard, manifest, dan sumbangan lewat kode.
       </p>
     </main>
   );
