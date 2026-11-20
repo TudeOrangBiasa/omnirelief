@@ -26,7 +26,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "check-types": "turbo run check-types",
+    "check:ui": "bun scripts/check-ui.ts",
     "check:loc": "bun scripts/check-loc.ts",
     "setup": "bun install && cp -n apps/web/.env.example apps/web/.env; bun run env:generate",
     "db:push": "turbo run db:push -F @omnirelief/db --",
