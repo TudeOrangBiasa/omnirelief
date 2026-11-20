@@ -30,6 +30,9 @@ tanpa elevasi), **sorot-tunggal** (satu highlight primer per layar).
 2. Rakit dari komposit (§Komponen) — butuh varian baru? Tambah status/prop,
    jangan fork file. Warna baru dilarang: petakan ke token.
    Selesai bila tidak ada file `_components` yang diimpor page lain.
+   Primitif shadcn HANYA dari CLI resmi (`bunx shadcn add`); salinan tangan
+   dilarang; satu-satunya ubahan tangan yang sah adalah penggantian ikon
+   ke Solar (lucide tetap dilarang).
 3. Teks Indonesia + istilah GLOSSARY (`selisih`, `Perlu Dicek`,
    `ketidaksesuaian`, `konfirmasi terima`, `MNF-*`, `DNT-*`).
    Selesai bila sapu istilah asing nihil.
@@ -58,6 +61,12 @@ tanpa elevasi), **sorot-tunggal** (satu highlight primer per layar).
    tint tanpa fg-nya); badge ≥ 3.0.
 6. Fokus layar 1-2-3: status/kode dulu, angka kedua, riwayat/aksi ketiga.
    Landing: H1+kolom kode, CTA, statistik. Detail: badge status, angka, timeline.
+7. Satu kebenaran per layar — peran/status/label tak tampil ganda (peran
+   sekali di kartu akun, bukan di brand + kartu; avatar satu-satunya jalan
+   ke profil).
+8. Separator tick kecil rata tengah (40px, ~70% daftar) + padding atas-bawah
+   seimbang; bukan garis full-bleed. Jeda antar-zona seragam — diukur di
+   browser (bounding box + garis tengah), bukan dikira-kira.
 
 ## Komponen (props tertutup, satu file per modul)
 
