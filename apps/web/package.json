@@ -22,7 +22,6 @@
     "babel-plugin-react-compiler": "^1.0.0",
     "lucide-react": "catalog:",
     "next": "^16.4.6",
-    "next-themes": "catalog:",
     "qrcode": "^1.5.4",
     "react": "catalog:",
     "react-dom": "catalog:",
