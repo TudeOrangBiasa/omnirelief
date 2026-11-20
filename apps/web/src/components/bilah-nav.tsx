@@ -13,7 +13,7 @@ import {
   LoginIcon,
   LogoutIcon,
   MagnifierIcon,
-  MenuDotsIcon,
+  MenuDotsVerticalIcon,
   PointOnMapIcon,
   SendSquareIcon,
   SettingsIcon,
@@ -366,7 +366,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
                   title="Menu akun"
                   className="flex min-h-12 min-w-12 items-center justify-center rounded-xl text-muted-foreground"
                 >
-                  <MenuDotsIcon aria-hidden="true" className="size-5" />
+                  <MenuDotsVerticalIcon aria-hidden="true" className="size-5" />
                 </button>
                 {menuBuka && (
                   <div
@@ -420,7 +420,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
               aria-label="Menu lainnya"
               className="flex min-h-16 flex-col items-center justify-center gap-0.5 px-1 text-xs font-medium text-muted-foreground"
             >
-              <MenuDotsIcon aria-hidden="true" className="size-6" />
+              <MenuDotsVerticalIcon aria-hidden="true" className="size-6" />
               Lainnya
             </button>
           </div>
