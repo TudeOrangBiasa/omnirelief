@@ -128,6 +128,7 @@ export default function BantuanPosko() {
               </div>
             )}
             {laporId === b.id && (
+              <>
                 <Select value={jenis} onValueChange={(v) => setJenis(v ?? "KURANG")}>
                   <SelectTrigger className="min-h-12">
                     <SelectValue placeholder="Jenis masalah" />
@@ -154,7 +155,7 @@ export default function BantuanPosko() {
                 >
                   Kirim laporan publik
                 </Button>
-              </div>
+              </>
             )}
           </CardContent>
         </Card>
