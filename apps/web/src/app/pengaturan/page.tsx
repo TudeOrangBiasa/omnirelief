@@ -37,7 +37,6 @@ export default async function PengaturanPage() {
         </p>
       </div>
 
-      <style>{`.a11y-kontras{filter:contrast(1.25)}.a11y-gerak *,.a11y-gerak *::before,.a11y-gerak *::after{animation-duration:.01ms !important;transition-duration:.01ms !important}`}</style>
 
       <Card>
         <CardHeader>

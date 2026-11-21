@@ -105,11 +105,13 @@ function Lencana({ jumlah }: { jumlah: number }) {
 function ItemTab({
   item,
   aktif,
-  antrean,
+  menunggu,
+  pantau,
 }: {
   item: NavItem;
   aktif: boolean;
-  antrean: number;
+  menunggu: number;
+  pantau: number;
 }) {
   const Ikon = aktif ? IKON_DUO[item.ikon] : IKON_LIN[item.ikon];
   return (
@@ -117,8 +119,8 @@ function ItemTab({
       href={item.href}
       aria-current={aktif ? "page" : undefined}
       aria-label={
-        item.lencana === "antrean" && antrean > 0
-          ? `${item.label}, ${antrean} menunggu`
+        item.lencana === "antrean" && menunggu > 0
+          ? `${item.label}, ${menunggu} menunggu${pantau > 0 ? `, ${pantau} perlu dicek` : ""}`
           : item.label
       }
       className={cn(
@@ -132,7 +134,7 @@ function ItemTab({
         <Ikon aria-hidden="true" className="size-6" />
         {item.lencana === "antrean" && (
           <span className="absolute -top-2 -end-3">
-            <Lencana jumlah={antrean} />
+            <Lencana jumlah={menunggu} />
           </span>
         )}
       </span>
@@ -144,12 +146,14 @@ function ItemTab({
 function ItemSidebar({
   item,
   aktif,
-  antrean,
+  menunggu,
+  pantau,
   ciut,
 }: {
   item: NavItem;
   aktif: boolean;
-  antrean: number;
+  menunggu: number;
+  pantau: number;
   ciut: boolean;
 }) {
   const Ikon = aktif ? IKON_DUO[item.ikon] : IKON_LIN[item.ikon];
@@ -159,8 +163,8 @@ function ItemSidebar({
       aria-current={aktif ? "page" : undefined}
       title={ciut ? item.label : undefined}
       aria-label={
-        item.lencana === "antrean" && antrean > 0
-          ? `${item.label}, ${antrean} menunggu`
+        item.lencana === "antrean" && menunggu > 0
+          ? `${item.label}, ${menunggu} menunggu${pantau > 0 ? `, ${pantau} perlu dicek` : ""}`
           : item.label
       }
       className={cn(
@@ -171,14 +175,14 @@ function ItemSidebar({
     >
       <span className="relative shrink-0">
         <Ikon aria-hidden="true" className="size-5" />
-        {ciut && item.lencana === "antrean" && (
-          <span className="absolute -top-2 -end-2">
-            <Lencana jumlah={antrean} />
-          </span>
-        )}
+      {ciut && item.lencana === "antrean" && (
+        <span className="absolute -top-2 -end-2">
+          <Lencana jumlah={menunggu} />
+        </span>
+      )}
       </span>
       {!ciut && <span className="flex-1">{item.label}</span>}
-      {!ciut && item.lencana === "antrean" && <Lencana jumlah={antrean} />}
+      {!ciut && item.lencana === "antrean" && <Lencana jumlah={menunggu} />}
     </a>
   );
 }
@@ -188,6 +192,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
   const [hash, setHash] = useState("");
   const [lainnyaBuka, setLainnyaBuka] = useState(false);
   const [antrean, setAntrean] = useState(0);
+  const [pantau, setPantau] = useState(0);
   const [menuBuka, setMenuBuka] = useState(false);
   const [ciut, setCiut] = useState(false);
 
@@ -201,13 +206,24 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
   }, [pathname]);
 
   useEffect(() => {
-    if (peran !== "BPBD") return;
+    if (peran !== "BPBD") {
+      setAntrean(0);
+      setPantau(0);
+      return;
+    }
     let batal = false;
     fetch("/api/bpbd/antrean")
       .then((res) => (res.ok ? res.json() : null))
       .then((data: { ok: boolean; antrean?: unknown[] } | null) => {
         if (!batal && data?.ok && Array.isArray(data.antrean))
           setAntrean(data.antrean.length);
+      })
+      .catch(() => {});
+    fetch("/api/bpbd/pantauan")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { ok: boolean; perlu_dicek?: unknown[] } | null) => {
+        if (!batal && data?.ok && Array.isArray(data.perlu_dicek))
+          setPantau(data.perlu_dicek.length);
       })
       .catch(() => {});
     return () => {
@@ -323,7 +339,8 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
                     key={item.href}
                     item={item}
                     ciut={ciut}
-                    antrean={antrean}
+                    menunggu={antrean + pantau}
+                    pantau={pantau}
                     aktif={aktifItem(item.href)}
                   />
                 ))}
@@ -409,7 +426,8 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
               <ItemTab
                 key={item.href}
                 item={item}
-                antrean={antrean}
+                menunggu={antrean + pantau}
+                pantau={pantau}
                 aktif={aktifTab(item.href)}
               />
             ))}

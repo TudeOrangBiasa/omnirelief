@@ -1,5 +1,7 @@
 "use client";
 
+import type { Route } from "next";
+
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { HistoryIcon } from "@solar-icons/react/linear";
@@ -42,7 +44,7 @@ type Aktivitas = {
   id: string;
   judul: string;
   sub: string;
-  href: string;
+  href: Route;
   badge: { teks: string; varian: "default" | "destructive" | "outline" | "success" };
   waktu: string;
 };
@@ -51,7 +53,7 @@ type Ringkasan = { angka: string; label: string }[];
 
 const KUNCI_KUNJUNGAN = "omnirelief-kunjungan-terakhir";
 
-const PRIMER: Record<Peran, { label: string; href: string; kedua?: { label: string; href: string } }> = {
+const PRIMER: Record<Peran, { label: string; href: Route; kedua?: { label: string; href: Route } }> = {
   BPBD: {
     label: "Buat manifest",
     href: "/bpbd/kirim",
@@ -151,7 +153,7 @@ export default function IsiBeranda({
             id: `pantau-${x.id}`,
             judul: `${x.kode} · ${x.posko_nama}`,
             sub: "Perlu Dicek — hubungi tim lewat jalur darurat.",
-            href: `/m/${x.kode}`,
+            href: `/m/${x.kode}` as Route,
             badge: {
               teks: "Perlu Dicek",
               varian: "destructive",
@@ -165,7 +167,7 @@ export default function IsiBeranda({
               id: `antrean-${x.id}`,
               judul: `Snapshot ${x.posko?.nama ?? "posko"}`,
               sub: `Menunggu verifikasi sejak ${formatTanggal(x.dibuat_pada)}.`,
-              href: "/bpbd",
+              href: "/bpbd" as Route,
               badge: {
                 teks: "Menunggu",
                 varian: "outline",
@@ -204,7 +206,7 @@ export default function IsiBeranda({
             id: `batch-${b.id}`,
             judul: `${b.kode_sumbangan} · ${b.item_nama}`,
             sub: `Sisa ${b.sisa} ${b.satuan}${b.kedaluwarsa ? ` · kedaluwarsa ${formatTanggal(b.kedaluwarsa)}` : ""}.`,
-            href: `/s/${b.kode_sumbangan}`,
+            href: `/s/${b.kode_sumbangan}` as Route,
             badge: {
               teks: b.sisa > 0 ? "Tersedia" : "Habis",
               varian: b.sisa > 0 ? "outline" : "default",
@@ -244,7 +246,7 @@ export default function IsiBeranda({
               x.log_terakhir?.status === "DITERIMA"
                 ? `Dikonfirmasi terima ${formatTanggal(x.log_terakhir.dibuat_pada)}.`
                 : `Status terakhir: ${x.log_terakhir?.status ?? "baru dikirim"}.`,
-            href: `/m/${x.kode}`,
+            href: `/m/${x.kode}` as Route,
             badge: {
               teks:
                 x.log_terakhir?.status === "DITERIMA" ? "Diterima" : "Berjalan",
@@ -257,7 +259,7 @@ export default function IsiBeranda({
             id: `laporan-${x.id}`,
             judul: `Laporan penyintas #${x.id}`,
             sub: `Status verifikasi: ${x.status}.`,
-            href: "/posko",
+            href: "/posko" as Route,
             badge: {
               teks: x.status === "DISETUJUI" ? "Disetujui" : "Menunggu",
               varian: x.status === "DISETUJUI" ? "success" : "outline",
@@ -293,7 +295,7 @@ export default function IsiBeranda({
           id: `tugas-${t.id}`,
           judul: `${t.kode} · ${t.posko_nama}`,
           sub: `Status terakhir: ${t.log_terakhir?.status ?? "baru ditugaskan"}.`,
-          href: `/m/${t.kode}`,
+          href: `/m/${t.kode}` as Route,
           badge: {
             teks:
               t.batas_checkin !== null && t.batas_checkin < sekarang

@@ -208,8 +208,16 @@
     outline: 1px solid rgba(35, 46, 64, 0.1);
     outline-offset: -1px;
   }
+  .a11y-kontras {
+    filter: contrast(1.25);
+  }
+  .a11y-gerak *,
+  .a11y-gerak *::before,
+  .a11y-gerak *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
-
 @keyframes masuk {
   from {
     transform: translateY(8px);

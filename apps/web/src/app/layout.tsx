@@ -46,6 +46,11 @@ export default async function RootLayout({
   return (
     <html lang="id" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var a=JSON.parse(localStorage.getItem("omnirelief-aksesibilitas")||"{}");if(a.teks==="besar")document.documentElement.style.fontSize="112.5%";else if(a.teks==="sangat")document.documentElement.style.fontSize="125%";document.documentElement.classList.toggle("a11y-kontras",!!a.kontras);document.documentElement.classList.toggle("a11y-gerak",!!a.gerak)}catch(e){}})();`,
+          }}
+        />
         <Providers>
           <Header nama={profil?.nama ?? null} peranLabel={LABEL_PERAN[peran]} />
           <div className="mx-auto flex w-full max-w-5xl items-start">

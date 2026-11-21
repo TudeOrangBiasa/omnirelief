@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import type { Route } from "next";
 import { getProfil } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { Alert, AlertDescription, AlertTitle } from "@omnirelief/ui/components/alert";
@@ -18,29 +19,30 @@ export default async function ProfilPage({
   const profil = await getProfil();
   if (!profil) redirect("/masuk");
   const params = await searchParams;
-
+  const namaProfil = profil.nama;
+  const peranProfil = profil.peran;
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   const email = user?.email ?? "-";
-  const inisial = (profil.nama.trim().charAt(0).toUpperCase() || "?") as string;
+  const inisial = namaProfil.trim().charAt(0).toUpperCase() || "?";
 
   async function ubahPassword(formData: FormData) {
     "use server";
     const lama = String(formData.get("password_lama") ?? "");
     const baru = String(formData.get("password_baru") ?? "");
-    if (baru.length < 8) redirect("/profil?gagal=pendek");
+    if (baru.length < 8) redirect("/profil?gagal=pendek" as Route);
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user?.email) redirect("/masuk");
     const ulang = await supabase.auth.signInWithPassword({ email: user.email, password: lama });
-    if (ulang.error) redirect("/profil?gagal=salah");
+    if (ulang.error) redirect("/profil?gagal=salah" as Route);
     const { error } = await supabase.auth.updateUser({ password: baru });
-    if (error) redirect("/profil?gagal=gagal");
-    redirect("/profil?ok=1");
+    if (error) redirect("/profil?gagal=gagal" as Route);
+    redirect("/profil?ok=1" as Route);
   }
 
   return (
@@ -84,7 +86,7 @@ export default async function ProfilPage({
           <dl className="flex flex-col gap-1">
             <div className="flex gap-2">
               <dt className="text-muted-foreground">Nama:</dt>
-              <dd className="font-semibold">{profil.nama}</dd>
+              <dd className="font-semibold">{namaProfil}</dd>
             </div>
             <div className="flex gap-2">
               <dt className="text-muted-foreground">Email:</dt>
@@ -92,7 +94,7 @@ export default async function ProfilPage({
             </div>
             <div className="flex gap-2">
               <dt className="text-muted-foreground">Peran:</dt>
-              <dd className="font-semibold">{profil.peran}</dd>
+              <dd className="font-semibold">{peranProfil}</dd>
             </div>
           </dl>
         </CardContent>
