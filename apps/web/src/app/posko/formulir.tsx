@@ -20,6 +20,7 @@ type Laporan = {
   disabilitas: number;
   umum: number;
   status: string;
+  alasan: string | null;
   dibuat_pada: string;
 };
 
@@ -212,6 +213,11 @@ export default function FormulirPosko() {
                     terbaru.disabilitas + terbaru.umum}{" "}
                   jiwa). Periksa keenam angka lalu kirim ulang.
                 </span>
+                {terbaru.alasan && (
+                  <span className="rounded-lg bg-background/60 p-2 font-normal">
+                    Alasan BPBD: {terbaru.alasan}
+                  </span>
+                )}
                 <Button
                   type="button"
                   onClick={fokusFormulir}
@@ -225,6 +231,11 @@ export default function FormulirPosko() {
             {terbaru.status === "DITOLAK" && (
               <span className="flex flex-col gap-2">
                 <span>Laporan terakhir: Ditolak BPBD. Kirim data baru yang benar.</span>
+                {terbaru.alasan && (
+                  <span className="rounded-lg bg-background/60 p-2 font-normal">
+                    Alasan BPBD: {terbaru.alasan}
+                  </span>
+                )}
                 <Button
                   type="button"
                   onClick={fokusFormulir}

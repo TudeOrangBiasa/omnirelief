@@ -193,7 +193,7 @@ export default function SumbanganPage({
                 Terpakai {persen}%
               </Badge>
             )}
-            <Progress value={persen} className="mt-2">
+            <Progress value={persen} className="mt-2" indicatorClassName={penuh ? "bg-success" : undefined}>
               <ProgressLabel>Terpakai</ProgressLabel>
               <span className="ml-auto text-xs text-muted-foreground tabular-nums">{persen}%</span>
             </Progress>

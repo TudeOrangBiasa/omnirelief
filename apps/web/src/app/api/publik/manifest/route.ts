@@ -22,6 +22,8 @@ type LogRow = {
   status: string;
   catatan: string | null;
   dibuat_pada: string;
+  dibuat_oleh: string | null;
+  profil: { nama: string } | null;
 };
 
 export async function GET(request: Request) {
@@ -47,20 +49,29 @@ export async function GET(request: Request) {
 
   const { data: mentahItem } = await admin
     .from("manifest_item")
-    .select("jumlah,batch:batch_id(kode_sumbangan,item:item_id(nama,satuan))")
+    .select("jumlah,batch:batch_id(kode_sumbangan,kedaluwarsa,item:item_id(nama,satuan))")
     .eq("manifest_id", manifestId);
   const items = baris<
     ManifestItemRow & {
-      batch: { kode_sumbangan: string; item: { nama: string; satuan: string } | null } | null;
+      batch: {
+        kode_sumbangan: string;
+        kedaluwarsa: string | null;
+        item: { nama: string; satuan: string } | null;
+      } | null;
     }
   >(mentahItem);
 
   const { data: mentahLog } = await admin
     .from("manifest_log")
-    .select("status,catatan,dibuat_pada")
+    .select("status,catatan,dibuat_pada,dibuat_oleh,profil:dibuat_oleh(nama)")
     .eq("manifest_id", manifestId)
     .order("dibuat_pada");
-  const riwayat = baris<LogRow>(mentahLog);
+  const riwayat = baris<LogRow>(mentahLog).map((l) => ({
+    status: l.status,
+    catatan: l.catatan,
+    dibuat_pada: l.dibuat_pada,
+    aktor: l.profil?.nama ?? null,
+  }));
 
   const { data: mentahBatal } = await admin
     .from("pembatalan")
@@ -88,6 +99,7 @@ export async function GET(request: Request) {
         kode_sumbangan: i.batch?.kode_sumbangan ?? "?",
         item_nama: i.batch?.item?.nama ?? "?",
         satuan: i.batch?.item?.satuan ?? "",
+        kedaluwarsa: i.batch?.kedaluwarsa ?? null,
       })),
       riwayat,
       pembatalan: mentahBatal ?? [],

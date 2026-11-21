@@ -15,7 +15,7 @@ export async function POST(request: Request) {
   const admin = createAdminClient();
   const { data, error } = await admin
     .from("penyintas_snapshot")
-    .update({ status: valid.keputusan })
+    .update({ status: valid.keputusan, alasan: valid.alasan })
     .eq("id", valid.snapshot_id)
     .select("id")
     .single();

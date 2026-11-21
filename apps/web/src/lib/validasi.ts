@@ -47,7 +47,10 @@ export function validasiVerifikasi(body: Record<string, unknown>) {
       ok: false as const,
       galat: "keputusan harus DISETUJUI, MINTA_REVISI, atau DITOLAK",
     };
-  return { ok: true as const, snapshot_id, keputusan };
+  const catatan = typeof body.catatan === "string" ? body.catatan.trim() : "";
+  if (keputusan !== "DISETUJUI" && catatan.length < 5)
+    return { ok: false as const, galat: "alasan revisi atau penolakan minimal 5 huruf" };
+  return { ok: true as const, snapshot_id, keputusan, alasan: catatan === "" ? null : catatan };
 }
 
 export type ItemDraft = { batch_id: number; jumlah: number };

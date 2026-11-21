@@ -47,7 +47,7 @@ export async function GET() {
   const admin = createAdminClient();
   const { data, error } = await admin
     .from("penyintas_snapshot")
-    .select("id,bayi,balita,ibu_hamil,lansia,disabilitas,umum,status,dibuat_pada")
+    .select("id,bayi,balita,ibu_hamil,lansia,disabilitas,umum,status,alasan,dibuat_pada")
     .eq("posko_id", profil.posko_id)
     .order("dibuat_pada", { ascending: false })
     .limit(20);

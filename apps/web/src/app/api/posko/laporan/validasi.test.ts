@@ -55,15 +55,31 @@ describe("validasi laporan posko", () => {
 
 describe("validasi verifikasi BPBD", () => {
   it("menerima tiga keputusan sah", () => {
-    for (const keputusan of ["DISETUJUI", "MINTA_REVISI", "DITOLAK"]) {
-      expect(
-        validasiVerifikasi({ snapshot_id: 3, keputusan })
-      ).toEqual({ ok: true, snapshot_id: 3, keputusan });
-    }
+    expect(validasiVerifikasi({ snapshot_id: 3, keputusan: "DISETUJUI" })).toEqual({
+      ok: true,
+      snapshot_id: 3,
+      keputusan: "DISETUJUI",
+      alasan: null,
+    });
+    expect(
+      validasiVerifikasi({ snapshot_id: 3, keputusan: "MINTA_REVISI", catatan: "data ganda" })
+    ).toEqual({ ok: true, snapshot_id: 3, keputusan: "MINTA_REVISI", alasan: "data ganda" });
   });
 
   it("menolak id dan keputusan asing", () => {
     expect(validasiVerifikasi({ snapshot_id: 0, keputusan: "DISETUJUI" }).ok).toBe(false);
     expect(validasiVerifikasi({ snapshot_id: 1, keputusan: "HAPUS" }).ok).toBe(false);
+  });
+
+  it("mewajibkan alasan revisi dan penolakan", () => {
+    expect(validasiVerifikasi({ snapshot_id: 1, keputusan: "MINTA_REVISI" }).ok).toBe(false);
+    expect(validasiVerifikasi({ snapshot_id: 1, keputusan: "DITOLAK", catatan: "  " }).ok).toBe(
+      false
+    );
+    expect(validasiVerifikasi({ snapshot_id: 1, keputusan: "DITOLAK", catatan: "no" }).ok).toBe(
+      false
+    );
+    const hasil = validasiVerifikasi({ snapshot_id: 1, keputusan: "DITOLAK", catatan: "  data fiktif " });
+    expect(hasil.ok && hasil.alasan).toBe("data fiktif");
   });
 });

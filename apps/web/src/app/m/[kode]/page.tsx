@@ -48,12 +48,14 @@ type BarangRow = {
   kode_sumbangan: string;
   item_nama: string;
   satuan: string;
+  kedaluwarsa: string | null;
 };
 
 type RiwayatRow = {
   status: string;
   catatan: string | null;
   dibuat_pada: string;
+  aktor: string | null;
 };
 
 type BatalRow = {
@@ -283,6 +285,7 @@ export default function ManifestPage({
                     <TableHead>Barang</TableHead>
                     <TableHead>Jumlah</TableHead>
                     <TableHead>Batch</TableHead>
+                    <TableHead>Kedaluwarsa</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -294,6 +297,11 @@ export default function ManifestPage({
                       </TableCell>
                       <TableCell className="font-mono text-xs">
                         {b.kode_sumbangan}
+                      </TableCell>
+                      <TableCell className="text-xs">
+                        {b.kedaluwarsa
+                          ? new Date(b.kedaluwarsa).toLocaleDateString("id-ID")
+                          : "—"}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -322,7 +330,7 @@ export default function ManifestPage({
                   >
                     <p className="font-semibold">{r.status}</p>
                     <p className="text-muted-foreground">
-                      {r.catatan} · {tanggal(r.dibuat_pada)}
+                      {r.catatan} · oleh {r.aktor ?? "sistem"} · {tanggal(r.dibuat_pada)}
                     </p>
                   </li>
                 ))}
