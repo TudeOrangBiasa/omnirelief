@@ -81,6 +81,7 @@ export default function TugasTim() {
         return;
       }
       setTugas(data.tugas);
+      if (data.tugas.length === 1) setPilih(data.tugas[0].id);
       setStatus("siap");
     } catch {
       setStatus("gagal");
@@ -226,6 +227,7 @@ export default function TugasTim() {
           <p role="status" className="text-sm text-muted-foreground">
             {tugas.length} tugas hari ini
             {perluDicek > 0 ? ` · ${perluDicek} Perlu Dicek (lewat batas check-in)` : ""}
+            {pilih === null ? " · ketuk tugas untuk update status." : ""}
           </p>
           {tugas.map((t) => {
             const sisa = menitMenujuBatas(t);
@@ -233,7 +235,13 @@ export default function TugasTim() {
             return (
               <Card
                 key={t.id}
+                role="button"
+                tabIndex={0}
+                aria-pressed={pilih === t.id}
                 onClick={() => setPilih(t.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") setPilih(t.id);
+                }}
                 className={`cursor-pointer text-left ${pilih === t.id ? "border-2 border-primary" : ""}`}
               >
                 <CardContent className="flex flex-col gap-1 p-4 text-sm">

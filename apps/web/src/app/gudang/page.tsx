@@ -425,9 +425,9 @@ export default function GudangPage() {
                       {hari !== null && hari >= 0 && hari <= 7 && (
                         <Badge
                           variant="outline"
-                          className="mt-1 border-transparent bg-warning-bg text-warning"
+                          className="mt-1 flex w-fit items-center whitespace-nowrap border-transparent bg-warning-bg text-warning-badge-fg"
                         >
-                          FEFO: kedaluwarsa {hari} hari
+                          FEFO: {hari} hari lagi
                         </Badge>
                       )}
                     </TableCell>
