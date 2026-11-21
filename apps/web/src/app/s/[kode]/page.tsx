@@ -2,7 +2,13 @@
 
 import { use, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeftIcon, MagnifierIcon } from "@solar-icons/react/linear";
+import QRCode from "qrcode";
+import { toast } from "sonner";
+import {
+  ArrowLeftIcon,
+  CopyIcon,
+  MagnifierIcon,
+} from "@solar-icons/react/linear";
 import {
   Alert,
   AlertDescription,
@@ -64,6 +70,7 @@ export default function SumbanganPage({
   const { kode } = use(params);
   const [status, setStatus] = useState<StatusMuat>("memuat");
   const [sumbangan, setSumbangan] = useState<SumbanganApi | null>(null);
+  const [qr, setQr] = useState("");
 
   const muat = useCallback(() => {
     setStatus("memuat");
@@ -99,6 +106,35 @@ export default function SumbanganPage({
     muat();
   }, [muat]);
 
+  useEffect(() => {
+    if (status !== "siap" || !sumbangan) return;
+    let aktif = true;
+    setQr("");
+    QRCode.toDataURL(`${window.location.origin}/s/${sumbangan.kode_sumbangan}`, {
+      width: 256,
+      margin: 2,
+    })
+      .then((u) => {
+        if (aktif) setQr(u);
+      })
+      .catch(() => {
+        if (aktif) setQr("");
+      });
+    return () => {
+      aktif = false;
+    };
+  }, [status, sumbangan]);
+
+  async function salinTautan() {
+    const url = window.location.href;
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Tautan disalin");
+    } catch {
+      toast.error("Gagal menyalin tautan");
+    }
+  }
+
   const dipakai = sumbangan ? baris<PakaiRow>(sumbangan.dipakai) : [];
   const persen =
     sumbangan && sumbangan.jumlah > 0
@@ -107,7 +143,7 @@ export default function SumbanganPage({
   const penuh = !!sumbangan && sumbangan.jumlah > 0 && sumbangan.tersisa <= 0;
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-2xl flex-col gap-6 p-6">
+    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 p-6">
       <Link
         href="/transparansi"
         className="inline-flex min-h-12 items-center gap-2 text-sm text-primary underline"
@@ -160,79 +196,124 @@ export default function SumbanganPage({
 
       {status === "siap" && sumbangan && (
         <>
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-mono text-2xl">
-                {sumbangan.kode_sumbangan}
-              </CardTitle>
-              <CardDescription>
-                {sumbangan.jumlah} {sumbangan.satuan} {sumbangan.item_nama} ·
-                masuk {tanggal(sumbangan.tgl_masuk)}
-                {sumbangan.kedaluwarsa
-                  ? ` · kedaluwarsa ${tanggal(sumbangan.kedaluwarsa)}`
-                  : ""}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-2 text-sm">
-              <p className="text-muted-foreground">
-                Sumber: {sumbangan.sumber}
-              </p>
-            </CardContent>
-          </Card>
-
-          <section aria-labelledby="alokasi">
-            <h2 id="alokasi" className="text-lg font-bold text-primary">
-              Alokasi
-            </h2>
-            {penuh ? (
-              <Badge className="mt-2 border-transparent bg-success-bg text-success-badge-fg">
-                Penuh · 100%
-              </Badge>
-            ) : (
-              <Badge variant="outline" className="mt-2">
-                Terpakai {persen}%
-              </Badge>
-            )}
-            <Progress value={persen} className="mt-2" indicatorClassName={penuh ? "bg-success" : undefined}>
-              <ProgressLabel>Terpakai</ProgressLabel>
-              <span className="ml-auto text-xs text-muted-foreground tabular-nums">{persen}%</span>
-            </Progress>
-            <p role="status" className="mt-2 text-sm text-muted-foreground">
-              Dialokasikan {sumbangan.dialokasikan} dari {sumbangan.jumlah}{" "}
-              {sumbangan.satuan} · tersisa {sumbangan.tersisa}{" "}
-              {sumbangan.satuan}
+          <div>
+            <h1 className="font-mono text-2xl font-bold">
+              {sumbangan.kode_sumbangan}
+            </h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {sumbangan.jumlah} {sumbangan.satuan} {sumbangan.item_nama} ·
+              masuk {tanggal(sumbangan.tgl_masuk)}
+              {sumbangan.kedaluwarsa
+                ? ` · kedaluwarsa ${tanggal(sumbangan.kedaluwarsa)}`
+                : ""}
             </p>
-          </section>
+          </div>
 
-          <section aria-labelledby="pemakai">
-            <h2 id="pemakai" className="text-lg font-bold text-primary">
-              Dipakai di manifest ({dipakai.length})
-            </h2>
-            {dipakai.length === 0 ? (
-              <p className="mt-2 text-sm text-muted-foreground">
-                Belum dialokasikan ke manifest mana pun.
-              </p>
-            ) : (
-              <ul className="mt-2 flex flex-col gap-2">
-                {dipakai.map((p) => (
-                  <li key={p.kode}>
-                    <Link
-                      href={`/m/${p.kode}`}
-                      className="flex min-h-12 items-center justify-between gap-2 rounded-xl border bg-card p-3 text-sm"
-                    >
-                      <span className="font-mono font-semibold text-primary">
-                        {p.kode}
-                      </span>
-                      <span className="text-muted-foreground">
-                        {p.jumlah} {sumbangan.satuan} untuk {p.posko_nama}
-                        {p.tanggal ? ` · ${tanggal(p.tanggal)}` : ""}
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <div className="flex flex-col gap-6 lg:col-span-2">
+              <Card className="bg-white rounded-xl border border-slate-200 shadow-xs">
+                <CardHeader>
+                  <CardTitle>Alokasi</CardTitle>
+                  <CardDescription>
+                    Terpakai {sumbangan.dialokasikan} dari {sumbangan.jumlah} {sumbangan.satuan}.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-2">
+                  {penuh ? (
+                    <Badge className="rounded-full border-transparent bg-success-bg text-success-badge-fg">
+                      Penuh · 100%
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="rounded-full">
+                      Terpakai {persen}%
+                    </Badge>
+                  )}
+                  <Progress value={persen} indicatorClassName={penuh ? "bg-success" : undefined}>
+                    <ProgressLabel>Terpakai</ProgressLabel>
+                    <span className="ml-auto text-xs text-muted-foreground tabular-nums">{persen}%</span>
+                  </Progress>
+                  <p role="status" className="text-sm text-muted-foreground tabular-nums">
+                    Dialokasikan {sumbangan.dialokasikan} dari {sumbangan.jumlah}{" "}
+                    {sumbangan.satuan} · tersisa {sumbangan.tersisa}{" "}
+                    {sumbangan.satuan}
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white rounded-xl border border-slate-200 shadow-xs">
+                <CardHeader>
+                  <CardTitle>Dipakai di manifest ({dipakai.length})</CardTitle>
+                  <CardDescription>
+                    Daftar manifest yang memakai batch ini, dari hash chain.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {dipakai.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                      Belum dialokasikan ke manifest mana pun.
+                    </p>
+                  ) : (
+                    <ul className="flex flex-col gap-2">
+                      {dipakai.map((p) => (
+                        <li key={p.kode}>
+                          <Link
+                            href={`/m/${p.kode}`}
+                            className="flex min-h-12 items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white p-3 text-sm shadow-xs"
+                          >
+                            <span className="font-mono font-semibold text-primary">
+                              {p.kode}
+                            </span>
+                            <span className="text-right text-muted-foreground tabular-nums">
+                              {p.jumlah} {sumbangan.satuan} untuk {p.posko_nama}
+                              {p.tanggal ? ` · ${tanggal(p.tanggal)}` : ""}
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            <aside aria-label="Verifikasi publik" className="lg:col-span-1">
+              <div className="flex flex-col gap-6 lg:sticky lg:top-24">
+                <Card className="bg-white rounded-xl border border-slate-200 shadow-xs">
+                  <CardHeader className="items-center text-center">
+                    <CardTitle>Verifikasi Publik</CardTitle>
+                    <CardDescription>
+                      Pindai QR untuk membuka halaman ini
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex flex-col items-center gap-3 text-center">
+                    {qr ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={qr}
+                        alt={`QR sumbangan ${sumbangan.kode_sumbangan}`}
+                        width={256}
+                        height={256}
+                        className="size-64 rounded-xl border border-slate-200"
+                      />
+                    ) : (
+                      <Skeleton className="size-64 rounded-xl" />
+                    )}
+                    <Badge className="rounded-full border-transparent bg-success-bg text-success">
+                      TERCATAT dan TERLACAK
+                    </Badge>
+                    <p className="font-mono text-sm font-semibold">{sumbangan.kode_sumbangan}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Sumber: {sumbangan.sumber}
+                    </p>
+                    <Button onClick={salinTautan} className="min-h-12 w-full">
+                      <CopyIcon aria-hidden="true" />
+                      Salin Tautan
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </aside>
+          </div>
         </>
       )}
     </main>
