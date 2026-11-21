@@ -102,7 +102,7 @@ export default function IsiBeranda({
   const [ringkasan, setRingkasan] = useState<Ringkasan>([]);
   const [aktivitas, setAktivitas] = useState<Aktivitas[]>([]);
   const [baru, setBaru] = useState(0);
-
+  const [diperbarui, setDiperbarui] = useState("");
   const hitungBaru = useCallback((waktu: string[]) => {
     let terakhir: string | null = null;
     try {
@@ -311,6 +311,9 @@ export default function IsiBeranda({
         setAktivitas(daftar);
         hitungBaru(tugas.map((t) => t.log_terakhir?.dibuat_pada ?? ""));
       }
+      setDiperbarui(
+        new Intl.DateTimeFormat("id-ID", { hour: "2-digit", minute: "2-digit" }).format(new Date()),
+      );
       setStatus("siap");
     } catch {
       setStatus("gagal");
@@ -327,10 +330,13 @@ export default function IsiBeranda({
   return (
     <div className="flex flex-col gap-6">
       <section aria-label="Ringkasan sejak kunjungan terakhir">
-        <h2 className="text-lg font-bold text-primary">
+        <h1 className="text-lg font-bold text-primary">
           Halo, {nama} — sejak terakhir berkunjung
           {baru > 0 ? `, ada ${baru} pembaruan baru` : ""}
-        </h2>
+        </h1>
+        <p className="text-muted-foreground mt-1 text-xs">
+          Angka hari ini{diperbarui ? ` · diperbarui ${diperbarui}` : ""}
+        </p>
         {status === "memuat" && (
           <div role="status" aria-label="Memuat ringkasan" className="mt-3 grid grid-cols-3 gap-3">
             {[0, 1, 2].map((i) => (

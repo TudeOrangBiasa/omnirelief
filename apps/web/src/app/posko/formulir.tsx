@@ -117,8 +117,16 @@ export default function FormulirPosko() {
     }
   }
 
+  function fokusFormulir(): void {
+    document.getElementById("lapor")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.setTimeout(() => {
+      document.getElementById("posko-bayi")?.focus({ preventScroll: true });
+    }, 350);
+  }
+
   const sibuk = modeSibuk !== null;
   const terbaru = laporan.find((l) => l.status !== "DRAFT") ?? laporan[0] ?? null;
+  const jatah = laporan.find((l) => l.status === "DISETUJUI") ?? null;
 
   return (
     <div id="lapor" className="flex scroll-mt-20 flex-col gap-6">
@@ -195,11 +203,53 @@ export default function FormulirPosko() {
             {terbaru.status === "MENUNGGU_VERIFIKASI" &&
               "Laporan terakhir: Menunggu verifikasi BPBD."}
             {terbaru.status === "DISETUJUI" && "Laporan terakhir: Disetujui BPBD."}
-            {terbaru.status === "MINTA_REVISI" &&
-              "BPBD minta revisi laporan terakhir. Periksa angka lalu kirim ulang."}
-            {terbaru.status === "DITOLAK" && "Laporan terakhir: Ditolak BPBD. Kirim data baru yang benar."}
+            {terbaru.status === "MINTA_REVISI" && (
+              <span className="flex flex-col gap-2">
+                <span>
+                  BPBD minta revisi laporan{" "}
+                  {new Date(terbaru.dibuat_pada).toLocaleString("id-ID")} (
+                  {terbaru.bayi + terbaru.balita + terbaru.ibu_hamil + terbaru.lansia +
+                    terbaru.disabilitas + terbaru.umum}{" "}
+                  jiwa). Periksa keenam angka lalu kirim ulang.
+                </span>
+                <Button
+                  type="button"
+                  onClick={fokusFormulir}
+                  variant="outline"
+                  className="min-h-12 w-full border-warning text-warning"
+                >
+                  Perbaiki sekarang
+                </Button>
+              </span>
+            )}
+            {terbaru.status === "DITOLAK" && (
+              <span className="flex flex-col gap-2">
+                <span>Laporan terakhir: Ditolak BPBD. Kirim data baru yang benar.</span>
+                <Button
+                  type="button"
+                  onClick={fokusFormulir}
+                  variant="outline"
+                  className="min-h-12 w-full"
+                >
+                  Isi data baru
+                </Button>
+              </span>
+            )}
           </div>
         )}
+        <div
+          role="status"
+          aria-label="Status jatah"
+          className={
+            jatah
+              ? "rounded-xl bg-success-bg p-3 text-sm font-semibold text-success"
+              : "rounded-xl bg-muted p-3 text-sm font-semibold text-muted-foreground"
+          }
+        >
+          {jatah
+            ? `Jatah disetujui: ${jatah.bayi + jatah.balita + jatah.ibu_hamil + jatah.lansia + jatah.disabilitas + jatah.umum} jiwa dari snapshot ${new Date(jatah.dibuat_pada).toLocaleString("id-ID")}.`
+            : "Belum ada snapshot disetujui. Jatah dihitung setelah BPBD menyetujui laporan."}
+        </div>
         {laporan.length === 0 && (
           <p className="text-muted-foreground text-sm">Belum ada laporan.</p>
         )}

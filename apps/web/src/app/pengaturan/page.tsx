@@ -12,10 +12,13 @@ import {
   SettingsIcon,
   UserIcon,
 } from "@solar-icons/react/linear";
+import AksesibilitasForm from "./aksesibilitas";
+import NotifikasiForm from "./notifikasi";
 
 export const dynamic = "force-dynamic";
 
-const VERSI = "OmniRelief 1.0.0";
+const VERSI = process.env.NEXT_PUBLIC_APP_VERSION ?? "dev";
+const HASH = (process.env.VERCEL_GIT_COMMIT_SHA ?? "").slice(0, 7) || "lokal";
 
 export default async function PengaturanPage() {
   const profil = await getProfil();
@@ -58,27 +61,15 @@ export default async function PengaturanPage() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card id="notifikasi" className="scroll-mt-20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <BellIcon aria-hidden="true" className="size-5" />
             Notifikasi
           </CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col gap-1 text-sm">
-          <label className="flex min-h-12 cursor-pointer items-center gap-3">
-            <input type="checkbox" id="notif-tugas" className="h-5 w-5 accent-primary" />
-            Tugas baru untuk saya
-          </label>
-          <label className="flex min-h-12 cursor-pointer items-center gap-3">
-            <input type="checkbox" id="notif-dicek" className="h-5 w-5 accent-primary" />
-            Perlu Dicek (lewat batas check-in)
-          </label>
-          <label className="flex min-h-12 cursor-pointer items-center gap-3">
-            <input type="checkbox" id="notif-sinkron" className="h-5 w-5 accent-primary" />
-            Hasil sinkronisasi offline
-          </label>
-          <p role="status" id="notif-info" className="text-muted-foreground" />
+        <CardContent>
+          <NotifikasiForm />
         </CardContent>
       </Card>
 
@@ -89,36 +80,8 @@ export default async function PengaturanPage() {
             Aksesibilitas
           </CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col gap-3 text-sm">
-          <fieldset className="flex flex-col gap-1">
-            <legend className="font-semibold">Ukuran teks</legend>
-            <label className="flex min-h-12 cursor-pointer items-center gap-3">
-              <input type="radio" name="a11y-teks" value="biasa" className="h-5 w-5 accent-primary" />
-              Biasa
-            </label>
-            <label className="flex min-h-12 cursor-pointer items-center gap-3">
-              <input type="radio" name="a11y-teks" value="besar" className="h-5 w-5 accent-primary" />
-              Besar
-            </label>
-            <label className="flex min-h-12 cursor-pointer items-center gap-3">
-              <input
-                type="radio"
-                name="a11y-teks"
-                value="sangat"
-                className="h-5 w-5 accent-primary"
-              />
-              Sangat besar
-            </label>
-          </fieldset>
-          <label className="flex min-h-12 cursor-pointer items-center gap-3">
-            <input type="checkbox" id="a11y-kontras" className="h-5 w-5 accent-primary" />
-            Kontras tinggi
-          </label>
-          <label className="flex min-h-12 cursor-pointer items-center gap-3">
-            <input type="checkbox" id="a11y-gerak" className="h-5 w-5 accent-primary" />
-            Kurangi gerak dan animasi
-          </label>
-          <p role="status" id="a11y-info" className="text-muted-foreground" />
+        <CardContent>
+          <AksesibilitasForm />
         </CardContent>
       </Card>
 
@@ -172,7 +135,9 @@ export default async function PengaturanPage() {
           </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-1 text-sm text-muted-foreground">
-          <p>{VERSI}</p>
+          <p>
+            OmniRelief {VERSI} · build {HASH}
+          </p>
           <p>
             Data operasional milik command center BPBD. Data penyintas hanya agregat, tanpa nama
             per orang.
@@ -193,11 +158,6 @@ export default async function PengaturanPage() {
         </AlertDescription>
       </Alert>
 
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `(function(){try{var a=JSON.parse(localStorage.getItem("omnirelief-aksesibilitas")||"{}");var n=JSON.parse(localStorage.getItem("omnirelief-notifikasi")||"{}");function teks(v){document.documentElement.style.fontSize=v==="besar"?"112.5%":v==="sangat"?"125%":""}function terapkan(){var d=a||{};teks(d.teks||"biasa");document.documentElement.classList.toggle("a11y-kontras",!!d.kontras);document.documentElement.classList.toggle("a11y-gerak",!!d.gerak);var r=document.querySelector('input[name="a11y-teks"][value="'+(d.teks||"biasa")+'"]');if(r)r.checked=true;var k=document.getElementById("a11y-kontras");if(k)k.checked=!!d.kontras;var g=document.getElementById("a11y-gerak");if(g)g.checked=!!d.gerak;["tugas","dicek","sinkron"].forEach(function(j){var c=document.getElementById("notif-"+j);if(c)c.checked=n[j]!==false});var info=document.getElementById("a11y-info");if(info)info.textContent="Pilihan tersimpan di perangkat ini."}function simpan(){localStorage.setItem("omnirelief-aksesibilitas",JSON.stringify(a));localStorage.setItem("omnirelief-notifikasi",JSON.stringify(n))}document.querySelectorAll('input[name="a11y-teks"]').forEach(function(r){r.addEventListener("change",function(){a.teks=r.value;teks(r.value);simpan()})});var k=document.getElementById("a11y-kontras");if(k)k.addEventListener("change",function(){a.kontras=k.checked;document.documentElement.classList.toggle("a11y-kontras",k.checked);simpan()});var g=document.getElementById("a11y-gerak");if(g)g.addEventListener("change",function(){a.gerak=g.checked;document.documentElement.classList.toggle("a11y-gerak",g.checked);simpan()});["tugas","dicek","sinkron"].forEach(function(j){var c=document.getElementById("notif-"+j);if(c)c.addEventListener("change",function(){n[j]=c.checked;simpan();var i=document.getElementById("notif-info");if(i)i.textContent="Pilihan notifikasi tersimpan."})});terapkan()}catch(e){}})();`,
-        }}
-      />
     </main>
   );
 }
