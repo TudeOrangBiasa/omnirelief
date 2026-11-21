@@ -1,15 +1,12 @@
 import { redirect } from "next/navigation";
+import { LogoutIcon } from "@solar-icons/react/linear";
+import { Badge } from "@omnirelief/ui/components/badge";
+import { Button } from "@omnirelief/ui/components/button";
 import { getProfil } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import IsiBeranda from "./isi";
+
 export const dynamic = "force-dynamic";
-
-
-const TAUTAN: Record<string, { href: string; label: string }[]> = {
-  BPBD: [{ href: "/bpbd", label: "Buka dashboard BPBD" }],
-  GUDANG: [{ href: "/gudang", label: "Buka gudang" }],
-  POSKO: [{ href: "/posko", label: "Buka halaman posko" }],
-  TIM: [{ href: "/tim", label: "Buka tugas distribusi" }],
-};
 
 export default async function BerandaPage() {
   const profil = await getProfil();
@@ -23,33 +20,22 @@ export default async function BerandaPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center gap-6 p-6">
+    <main className="mx-auto flex min-h-screen w-full max-w-2xl flex-col gap-6 p-6">
       <div>
-        <h1 className="text-2xl font-bold text-[#0F3B5F]">
-          Halo, {profil.nama}
-        </h1>
-        <p className="mt-1 text-sm text-[#5B6B7F]">
-          Peran: {profil.peran}
+        <p className="text-muted-foreground text-sm">
+          Peran: <Badge variant="outline">{profil.peran}</Badge>
         </p>
       </div>
-      <div className="flex flex-col gap-3">
-        {(TAUTAN[profil.peran] ?? []).map((t) => (
-          <a
-            key={t.href}
-            href={t.href}
-            className="block min-h-12 rounded bg-[#0F3B5F] p-3 text-center font-semibold text-white"
-          >
-            {t.label}
-          </a>
-        ))}
-      </div>
+      <IsiBeranda nama={profil.nama} peran={profil.peran} />
       <form action={signOut}>
-        <button
+        <Button
           type="submit"
-          className="min-h-12 w-full rounded border border-gray-300 font-semibold"
+          variant="outline"
+          className="min-h-12 w-full gap-2"
         >
+          <LogoutIcon aria-hidden="true" />
           Keluar
-        </button>
+        </Button>
       </form>
     </main>
   );
