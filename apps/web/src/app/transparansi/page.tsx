@@ -104,7 +104,7 @@ export default function TransparansiPage() {
     <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-8 px-5 py-12 md:px-10 md:py-20">
       <div>
         <p className="t-micro text-primary">Tanpa login</p>
-        <h1 className="t-h1 t-balance mt-2 font-bold text-primary">Transparansi per posko</h1>
+        <h1 className="t-h1 t-balance mt-2 text-primary">Transparansi per posko</h1>
         <p className="t-pretty mt-2 max-w-xl text-muted-foreground">
           Jatah, pengiriman, penerimaan, dan selisih tiap daerah. Angka tidak digabung antar posko.
         </p>
@@ -117,9 +117,9 @@ export default function TransparansiPage() {
             placeholder="Cari kode manifest (MNF-...)"
             aria-label="Cari kode manifest"
             required
-            className="min-h-12 flex-1"
+            className="min-h-12 flex-1 rounded-xl"
           />
-          <Button type="submit" className="min-h-12" aria-label="Cek kode manifest">
+          <Button type="submit" className="min-h-12 rounded-xl" aria-label="Cek kode manifest">
             <MagnifierIcon aria-hidden="true" /> Cek
           </Button>
         </form>
@@ -130,9 +130,9 @@ export default function TransparansiPage() {
             placeholder="Cari kode sumbangan (DNT-...)"
             aria-label="Cari kode sumbangan"
             required
-            className="min-h-12 flex-1"
+            className="min-h-12 flex-1 rounded-xl"
           />
-          <Button type="submit" className="min-h-12" aria-label="Cek kode sumbangan">
+          <Button type="submit" className="min-h-12 rounded-xl" aria-label="Cek kode sumbangan">
             <MagnifierIcon aria-hidden="true" /> Cek
           </Button>
         </form>
@@ -140,7 +140,7 @@ export default function TransparansiPage() {
 
       <section aria-label="Ringkasan angka" className="grid grid-cols-2 gap-y-8 border-y border-border py-8 lg:grid-cols-4">
         <div className="flex flex-col gap-1 pr-4 md:pr-8">
-          <span className="t-h2 t-angka font-bold text-primary tabular-nums">{data.length}</span>
+          <span className="t-h2 t-angka text-primary tabular-nums">{data.length}</span>
           <span className="text-xs text-muted-foreground md:text-sm">Posko terpantau</span>
           {ringkas.kurang > 0 ? (
             <Badge variant="destructive" className="mt-1 w-fit rounded-full">{ringkas.kurang} kurang</Badge>
@@ -151,12 +151,12 @@ export default function TransparansiPage() {
           )}
         </div>
         <div className="flex flex-col gap-1 pr-4 md:pr-8 lg:border-l lg:border-border lg:pl-8">
-          <span className="t-h2 t-angka font-bold text-primary tabular-nums">{ringkas.totalButuh}</span>
+          <span className="t-h2 t-angka text-primary tabular-nums">{ringkas.totalButuh}</span>
           <span className="text-xs text-muted-foreground md:text-sm">Total butuh</span>
           <Badge variant="outline" className="mt-1 w-fit rounded-full">Jatah disetujui</Badge>
         </div>
         <div className="flex flex-col gap-1 pr-4 md:pr-8 lg:border-l lg:border-border lg:pl-8">
-          <span className="t-h2 t-angka font-bold text-primary tabular-nums">{ringkas.totalDiterima}</span>
+          <span className="t-h2 t-angka text-primary tabular-nums">{ringkas.totalDiterima}</span>
           <span className="text-xs text-muted-foreground md:text-sm">Total diterima</span>
           {ringkas.totalDiterima > 0 ? (
             <Badge variant="outline" className="mt-1 w-fit rounded-full border-transparent bg-success-bg text-success-badge-fg">
@@ -167,7 +167,7 @@ export default function TransparansiPage() {
           )}
         </div>
         <div className="flex flex-col gap-1 lg:border-l lg:border-border lg:pl-8">
-          <span className="t-h2 t-angka font-bold text-destructive tabular-nums">{ringkas.selisihTerbuka}</span>
+          <span className="t-h2 t-angka text-destructive tabular-nums">{ringkas.selisihTerbuka}</span>
           <span className="text-xs text-muted-foreground md:text-sm">Selisih terbuka</span>
           {ringkas.selisihTerbuka > 0 ? (
             <Badge variant="destructive" className="mt-1 w-fit rounded-full">Perlu kirim</Badge>
@@ -187,7 +187,7 @@ export default function TransparansiPage() {
             onChange={(e) => setCari(e.target.value)}
             placeholder="Cari posko atau wilayah..."
             aria-label="Cari posko"
-            className="min-h-12 flex-1"
+            className="min-h-12 flex-1 rounded-xl"
           />
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -280,7 +280,7 @@ export default function TransparansiPage() {
       {status === "siap" && tampil.length > 0 && (
         <section aria-label="Stok per posko">
           <p className="t-micro text-primary">Stok per posko</p>
-          <h2 className="t-h2 t-balance mt-2 font-bold text-primary">Diterima dibanding butuh</h2>
+          <h2 className="t-h2 t-balance mt-2 text-primary">Diterima dibanding butuh</h2>
           <ul className="mt-6 flex flex-col border-t border-border">
             {tampil.map((p) => {
               const persen = persenTerima(p.butuh, p.diterima);

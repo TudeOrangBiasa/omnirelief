@@ -92,14 +92,14 @@ export default function Home() {
       <section
         id="cek-kode"
         aria-label="Cek kode kiriman"
-        className="relative grid scroll-mt-20 gap-10 pb-16 pt-12 md:pt-20 lg:grid-cols-12 lg:gap-12"
+        className="relative grid scroll-mt-20 gap-10 section-napas lg:grid-cols-12 lg:gap-12"
       >
-        <AuroraBackground intensity="subtle" />
+        <AuroraBackground intensity="subtle" className="fixed inset-0" />
         <div className="relative flex flex-col gap-5 lg:col-span-7">
           <p className="t-micro text-primary">
             Sistem supply chain pangan darurat
           </p>
-          <h1 className="t-display t-balance font-bold text-primary">
+          <h1 className="t-display t-balance text-primary">
             Tiap paket tercatat, tiap posko terlihat
           </h1>
           <p className="t-body t-pretty max-w-xl text-muted-foreground">
@@ -192,7 +192,7 @@ export default function Home() {
         className="grid grid-cols-3 divide-x divide-border border-y border-border py-8"
       >
         <div className="flex flex-col gap-1 px-4 first:pl-0 md:px-8">
-          <span className="t-h2 t-angka font-bold text-primary">
+          <span className="t-h2 t-angka text-primary">
             {totalPosko === null ? "…" : totalPosko}
           </span>
           <span className="text-xs text-muted-foreground md:text-sm">
@@ -200,7 +200,7 @@ export default function Home() {
           </span>
         </div>
         <div className="flex flex-col gap-1 px-4 md:px-8">
-          <span className="t-h2 t-angka font-bold text-primary">
+          <span className="t-h2 t-angka text-primary">
             {totalDiterima === null ? "…" : totalDiterima}
           </span>
           <span className="text-xs text-muted-foreground md:text-sm">
@@ -208,7 +208,7 @@ export default function Home() {
           </span>
         </div>
         <div className="flex flex-col gap-1 px-4 md:px-8">
-          <span className="t-h2 t-angka font-bold text-destructive">
+          <span className="t-h2 t-angka text-destructive">
             {totalSelisih === null ? "…" : totalSelisih}
           </span>
           <span className="text-xs text-muted-foreground md:text-sm">
@@ -219,7 +219,7 @@ export default function Home() {
 
       <section aria-label="Empat janji anti-korupsi" className="section-napas">
         <p className="t-micro text-primary">Empat janji anti-korupsi</p>
-        <h2 className="t-h2 t-balance mt-2 max-w-2xl font-bold text-primary">
+        <h2 className="t-h2 t-balance mt-2 max-w-2xl text-primary">
           Uang dan barang publik harus bisa diikuti siapa saja
         </h2>
         <div className="mt-8 grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2">
@@ -254,7 +254,7 @@ export default function Home() {
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-5 py-16 md:px-10 md:py-24">
           <div>
             <p className="t-micro opacity-80">Verifikasi publik</p>
-            <h2 className="t-h2 t-balance mt-2 max-w-2xl font-bold">
+            <h2 className="t-h2 t-balance mt-2 max-w-2xl">
               Cek keaslian bantuan dalam 3 langkah
             </h2>
           </div>
@@ -263,7 +263,7 @@ export default function Home() {
               <li key={i} className="flex items-start gap-5 py-6">
                 <span
                   aria-hidden="true"
-                  className="t-h2 t-angka font-bold opacity-60"
+                  className="t-h2 t-angka opacity-60"
                 >
                   {String(i + 1).padStart(2, "0")}
                 </span>
@@ -286,7 +286,7 @@ export default function Home() {
         <Card>
           <CardContent className="flex flex-col items-start gap-4 p-6 md:flex-row md:items-center md:justify-between md:p-8">
             <div>
-              <h2 className="t-h2 font-bold text-primary">
+              <h2 className="t-h2 text-primary">
                 Pegang kode? Langsung cek.
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">

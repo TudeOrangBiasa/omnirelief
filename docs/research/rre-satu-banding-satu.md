@@ -15,7 +15,7 @@
 | H2 section | `h2`: 56px / lh 56px / ls -2px / weight 400 ("The confidence to commit early") | `h2`: 40px / lh 46px / ls -1.4px / weight 700 ("Uang dan barang publik…") | DEKAT (pola ls negatif dipertahankan; angka lebih kecil — penyebab: `--text-h2: clamp(1.5rem, 3vw, 2.5rem)` di `globals.css:55` + `font-bold` implementasi vs `.t-h2` weight 400 di `globals.css:201-206`) |
 | Body | `body`: 20px / lh 28px / weight 400; family `"RRE Monument Grotesk Trial", Arial, sans-serif`; bg `rgb(7,2,10)`, teks putih | `.t-body`: 20px / lh 28px (`1.25rem/1.75rem` di `globals.css:207-210`); family `"Inter Variable", sans-serif` (`globals.css:75`); bg `#ffffff`, teks `#232e40` (`globals.css:9-10`) | SAMA (ukuran + lh identik; family/bW dibalik sesuai peta terang di `docs/desain/rre-01-beranda.md:18-20`) |
 | Mikro/nav | Nav header `PORTFOLIO`/`TEAM`: 15px / weight 400 / tanpa text-transform (huruf kapital literal); CTA "our portfolio": 15px, padding 12px 16px, border 0, radius 0 | `.t-micro`: 12px (`0.75rem`), uppercase, ls `0.08em` (`globals.css:211-215`); tombol/filter shadcn `rounded-none`, shadow `none` (terukur di `/transparansi`: input/button `radius: 0px`, `shadow: none`) | DEKAT (pola "label uppercase kecil + CTA tanpa radius" ditiru; angka mikro 15px→12px + ls +0.08em — penyebab: peta di `rre-01-beranda.md:28-31`: "label segmen GLOSSARY uppercase 12–13px, ls +0.08em") |
-| Stat/angka | Pita `$2.5B+ / 125+ / 400+` 56px / weight 400 (sumber: `docs/desain/rre-01-beranda.md:32-34`, capture 2026-11-20 — `eval` 2026-11-22 tidak menemukan node angka mandiri, dilaporkan apa adanya) | Pita statistik `/`: section `grid-cols-3 divide-x` pad 32px/32px (terukur); peta angka 56px → `clamp(32px, 4vw, 56px)` warna primer (`rre-01-berbeda.md:32-34` maaf — `rre-01-beranda.md:32-34`) | DEKAT (pola angka-besar + label-kecil + pemisah garis dipakai; tanpa foto/overlay — penyebab: larangan foto dramatis, lihat §4) |
+| Stat/angka | Pita `$2.5B+ / 125+ / 400+` 56px / weight 400 (sumber: `docs/desain/rre-01-beranda.md:32-34`, capture 2026-11-20 — `eval` 2026-11-22 tidak menemukan node angka mandiri, dilaporkan apa adanya) | Pita statistik `/`: section `grid-cols-3 divide-x` pad 32px/32px (terukur); peta angka 56px → `clamp(32px, 4vw, 56px)` warna primer (`rre-01-beranda.md:32-34`) | DEKAT (pola angka-besar + label-kecil + pemisah garis dipakai; tanpa foto/overlay — penyebab: larangan foto dramatis, lihat bagian 4) |
 
 ## 2. Spasial: padding section, gutter, max-width (angka 1:1)
 
@@ -30,7 +30,7 @@
 
 | Dimensi | rre.com (primer browser) | OmniRelief (primer browser + repo) | Verdict + penyebab |
 |---|---|---|---|
-| Kartu editorial | bg transparan, radius 0px, shadow `none`, border `0px none` (terukur pada kartu induk tautan NEWS/PODCAST/BLOG) | shadcn Card terukur `radius: 0px`, `shadow: none`, border `1px solid rgb(215,221,231)` (= `--border #d7dde7`, `globals.css:44`); `.garis-rambut` = shadow cincin 1px `rgba(35,46,64,0.08)` + bayangan 1–2px (`globals.css:237-243`), menebal saat hover (`globals.css:244-249`) | SAMA POLA, BEDA ANGKA TOKEN (pola "datar, pemisah bukan elevasi" sama; radius repo 12–16 per `design.md:50-51` vs terukur 0px di komponen transparansi — implementasi shadcn `rounded-none` menyimpang dari token `--radius: 0.75rem` di `globals.css:52`; lihat §4) |
+| Kartu editorial | bg transparan, radius 0px, shadow `none`, border `0px none` (terukur pada kartu induk tautan NEWS/PODCAST/BLOG) | shadcn Card terukur `radius: 0px`, `shadow: none`, border `1px solid rgb(215,221,231)` (= `--border #d7dde7`, `globals.css:44`); `.garis-rambut` = shadow cincin 1px `rgba(35,46,64,0.08)` + bayangan 1–2px (`globals.css:237-243`), menebal saat hover (`globals.css:244-249`) | SAMA POLA, BEDA ANGKA TOKEN (pola "datar, pemisah bukan elevasi" sama; radius repo 12–16 per `design.md:50-51` vs terukur 0px di komponen transparansi — implementasi shadcn `rounded-none` menyimpang dari token `--radius: 0.75rem` di `globals.css:52`; lihat bagian 4) |
 | Judul kartu = ukuran body | 20px = body 20px (rre-01-beranda.md:37-40) | Aturan `design.md:16,51`: "judul = ukuran body", "judul kartu = ukuran body" | SAMA (aturan diadopsi verbatim) |
 
 ## 4. Lapisan background hero + gerak (primer browser)
@@ -58,7 +58,7 @@ Tiap butir dikutip verbatim + path:baris persis:
 
 ## 6. Aturan em-dash / tanda baca Indonesia
 
-- Hasil pencarian jujur: **tidak ditemukan aturan em-dash/tanda baca Indonesia** di `GLOSSARY.md` (69 baris, dibaca penuh — hanya berisi pasangan istilah↔hindari: posko, penyintas, snapshot penyintas, verifikasi, sumbangan `DNT-*`, batch, manifest `MNF-*`, selisih, check-in, Perlu Dicek, konfirmasi terima, ketidaksesuaian, pembatalan), `AGENTS.md` (15 baris, dibaca penuh), `docs/desain/design.md`, `docs/desain/riset-pola.md`, `docs/desain/arsitektur-komponen.md` (grep `em-dash|em dash|tanda baca|tanda hubung|Bahasa Indonesia` — nihil selain "UI Bahasa Indonesia sederhana" di `token-warna-oklch.md:6` dan `AGENTS.md:13` yang sudah dikutip di butir 9 §5).
+- Hasil pencarian jujur: **tidak ditemukan aturan em-dash/tanda baca Indonesia** di `GLOSSARY.md` (69 baris, dibaca penuh), `AGENTS.md` (15 baris, dibaca penuh), `docs/desain/design.md`, `docs/desain/riset-pola.md`, `docs/desain/arsitektur-komponen.md` (grep `em-dash|em dash|tanda baca|tanda hubung|Bahasa Indonesia` — nihil selain "UI Bahasa Indonesia sederhana" di `token-warna-oklch.md:6` dan `AGENTS.md:13` yang sudah dikutip di butir 9 bagian 5).
 - Satu-satunya aturan kemurnian teks yang tertulis: `design.md:36-38` — "Teks Indonesia + istilah GLOSSARY (`selisih`, `Perlu Dicek`, `ketidaksesuaian`, `konfirmasi terima`, `MNF-*`, `DNT-*`). Selesai bila sapu istilah asing nihil." Artinya: tidak ada divisor/divergen terdokumentasi soal em-dash — penulis bebas memakai tanda baca baku Indonesia (— / –) selama istilah GLOSSARY dipatuhi.
 
 ## 7. Tabel verdict per dimensi
@@ -78,7 +78,7 @@ Tiap butir dikutip verbatim + path:baris persis:
 | Background hero | BEDA DISENGAJA | Divisor butir 2 + 11 (tanpa video/foto dramatis, tanpa fixed-bg) |
 | Parallax | BEDA DISENGAJA | rre fixed `z=-1` (diam, bukan parallax); repo menolak reveal-on-scroll (divisor butir 2) |
 | Bahasa/istilah | SAMA ATURAN | Indonesia + GLOSSARY dikunci (`AGENTS.md:13`, `design.md:36-38`) |
-| Em-dash/tanda baca | TIDAK DIATUR | Tidak ada aturan tertulis (pencarian nihil, §6) — bukan divisor |
+| Em-dash/tanda baca | TIDAK DIATUR | Tidak ada aturan tertulis (pencarian nihil, bagian 6) — bukan divisor |
 
 ## 8. Sumber primer — daftar tutup
 

@@ -22,8 +22,9 @@ tanpa elevasi), **sorot-tunggal** (satu highlight primer per layar).
 8. Tidak diambil: mode gelap, radius/gap 0, reveal-on-scroll, parallax scroll,
    foto dramatis, label status polos, feed tanpa tanggal.
 9. Latar hidup terang: satu wash aurora animasi (blob blur + drift transform,
-   `motion-safe`, `aria-hidden`) sebagai background body; section duduk di
-   atasnya. Gerak datang dari drift blob, bukan scroll; tanpa video.
+   `motion-safe`, `aria-hidden`) sebagai background body `fixed`; section duduk
+   di atasnya. rre sendiri memakai lapisan `fixed z=-1` yang diam — gerak datang
+   dari drift blob/video, bukan parallax scroll; tanpa video.
 
 ## Langkah kerja UI baru
 
