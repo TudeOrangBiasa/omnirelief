@@ -168,7 +168,7 @@ export default function TugasTim() {
         >
           <p className="flex min-h-12 items-center gap-2">
             <WiFiOffIcon aria-hidden="true" className="size-5" />
-            {antre} Menunggu Sinkronisasi — terkirim otomatis saat daring.
+            {antre} Menunggu Sinkronisasi. Terkirim otomatis saat daring.
           </p>
           <div className="flex gap-2">
             <Button

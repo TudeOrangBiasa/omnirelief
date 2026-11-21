@@ -10,6 +10,6 @@ Sumber kebenaran konsep: `docs/OmniRelief-Dokumen-Tim-Lengkap.pdf`. Konflik soal
 6. Data terkunci hanya tambah riwayat, tidak ada edit diam-diam. Manifest terpublikasi dan log status append-only, tiap baris hash SHA-256 terikat ke hash sebelumnya (`apps/web/src/lib/hash.ts`, tulis lewat `apps/web/src/lib/riwayat.ts`).
 7. Hasil Supabase dibaca lewat tipe batas di `apps/web/src/lib/supabase/baris.ts`. Tidak ada `as` inline di akses member.
 8. Validator murni di `apps/web/src/lib/validasi.ts` agar bisa diuji tanpa Next. Rute hanya panggil.
-9. Bahasa UI Indonesia sederhana, tombol minimal 48px, status selalu warna plus label teks. Komponen shadcn plus token semantik, light saja, tanpa mode gelap.
+9. Bahasa UI Indonesia sederhana ikut `GLOSSARY.md` (istilah + kalimat pendek tanpa em-dash), tombol minimal 48px, status selalu warna plus label teks. Komponen shadcn plus token semantik, light saja, tanpa mode gelap.
 10. Secret tidak pernah masuk repo. `apps/web/.env` gitignored, contoh di `apps/web/.env.example`.
 11. Selera visual dan token UI: `docs/desain/design.md` (napas, datar, sorot-tunggal). Nilai token hanya di `packages/ui/src/styles/globals.css`, jangan diduplikasi.

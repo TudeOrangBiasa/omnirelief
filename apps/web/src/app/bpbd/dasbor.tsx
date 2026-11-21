@@ -396,7 +396,7 @@ export default function DasborBpbd() {
               <p className="text-sm text-muted-foreground">
                 {selisihTerbuka > 0
                   ? `jiwa kurang di ${poskoKritis} posko`
-                  : "jiwa kurang — semua posko aman"}
+                  : "Nol jiwa kurang. Semua posko aman"}
               </p>
             </CardContent>
           </Card>

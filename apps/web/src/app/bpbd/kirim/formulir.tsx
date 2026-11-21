@@ -74,8 +74,8 @@ function labelKedaluwarsa(b: Batch): { teks: string; lewat: boolean; dekat: bool
   }
   const tgl = new Date(b.kedaluwarsa).toLocaleDateString("id-ID");
   const hari = Math.ceil((new Date(b.kedaluwarsa).getTime() - Date.now()) / 86400000);
-  if (hari < 0) return { teks: `Kedaluwarsa ${tgl} — jangan dipakai`, lewat: true, dekat: false };
-  if (hari <= 7) return { teks: `Sisa ${hari} hari (${tgl}) — FEFO`, lewat: false, dekat: true };
+  if (hari < 0) return { teks: `Kedaluwarsa ${tgl}. Jangan dipakai`, lewat: true, dekat: false };
+  if (hari <= 7) return { teks: `Sisa ${hari} hari (${tgl}), FEFO`, lewat: false, dekat: true };
   return { teks: `Sisa ${hari} hari (${tgl})`, lewat: false, dekat: false };
 }
 

@@ -4,6 +4,10 @@ Sistem supply chain pangan darurat yang tercatat dari gudang sampai posko dan bi
 
 ## Language
 
+**Kalimat pendek**:
+Satu gagasan per kalimat. Pisahkan klausa dengan titik dua atau kalimat baru.
+_Avoid_: em-dash (—) di teks UI
+
 **Posko**:
 Tempat penampungan penyintas yang menjadi unit transparansi. Angka tidak pernah digabung antar posko.
 _Avoid_: lokasi, titik, site

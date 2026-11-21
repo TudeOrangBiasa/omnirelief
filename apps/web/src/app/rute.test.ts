@@ -30,7 +30,7 @@ describe("rute dapat dibuka", () => {
     const mati = kumpulkanTakTerrouting(akar);
     expect(
       mati,
-      `rute mati (folder _ tidak di-routing Next): ${mati.join(", ")} — pindahkan harness ke rute normal atau hapus`
+      `rute mati (folder _ tidak di-routing Next): ${mati.join(", ")}. Pindahkan harness ke rute normal atau hapus`
     ).toEqual([]);
   });
 });

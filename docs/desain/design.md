@@ -19,8 +19,11 @@ tanpa elevasi), **sorot-tunggal** (satu highlight primer per layar).
 5. Seluruh kartu/baris diklik ke detail (navigasi penuh, bukan modal).
 6. Footer tiga lapis: navigasi resmi + langganan + kontak + login portal.
 7. Label tipe uppercase tanpa pill untuk daftar editorial (bukan status).
-8. Tidak diambil: mode gelap, radius/gap 0, reveal-on-scroll, foto dramatis,
-   label status polos, feed tanpa tanggal.
+8. Tidak diambil: mode gelap, radius/gap 0, reveal-on-scroll, parallax scroll,
+   foto dramatis, label status polos, feed tanpa tanggal.
+9. Latar hidup terang: satu wash aurora animasi (blob blur + drift transform,
+   `motion-safe`, `aria-hidden`) sebagai background body; section duduk di
+   atasnya. Gerak datang dari drift blob, bukan scroll; tanpa video.
 
 ## Langkah kerja UI baru
 
@@ -33,9 +36,10 @@ tanpa elevasi), **sorot-tunggal** (satu highlight primer per layar).
    Primitif shadcn HANYA dari CLI resmi (`bunx shadcn add`); salinan tangan
    dilarang; satu-satunya ubahan tangan yang sah adalah penggantian ikon
    ke Solar (lucide tetap dilarang).
-3. Teks Indonesia + istilah GLOSSARY (`selisih`, `Perlu Dicek`,
-   `ketidaksesuaian`, `konfirmasi terima`, `MNF-*`, `DNT-*`).
-   Selesai bila sapu istilah asing nihil.
+3. Teks Indonesia + istilah dan tanda baca GLOSSARY (`selisih`, `Perlu Dicek`,
+   `ketidaksesuaian`, `konfirmasi terima`, `MNF-*`, `DNT-*`; kalimat pendek,
+   tanpa em-dash).
+   Selesai bila sapu istilah asing dan `—` di file baru nihil.
 4. Tiga state tiap daftar (Rangka/Kosong+aksi/error+muat-ulang);
    tiap form error `role="alert"` + sebut bidang; sentuh `min-h-12`.
    Selesai bila 4 aturan §Rasa butir 4–6 terpenuhi.
@@ -44,6 +48,11 @@ tanpa elevasi), **sorot-tunggal** (satu highlight primer per layar).
    Cakupan ikut ukuran perubahan: komponen → render komponennya saja; page →
    halaman penuh dengan tiap section terlihat seperti di monitor.
    Selesai bila pasangan gambar sudah tayang di balasan, bukan hanya file.
+6. Ukur 1:1 di browser — H1/H2/body, gutter, max-width, padding section,
+   radius kartu dicatat dari computed style (referensi dan hasil), bukan
+   kira-kira; konten selalu di atas grid kolom yang sama, tanpa lebar ad-hoc.
+   Selesai bila tabel banding tercatat di catatan riset dan tiap section
+   menempel grid yang sama di screenshot desktop + mobile.
 
 ## Rasa yang dijaga
 

@@ -48,7 +48,7 @@ export default async function ProfilPage({
       <div>
         <h1 className="text-2xl font-bold text-primary">Profil</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Data diri kamu. Tanpa hapus akun mandiri — minta admin bila akun harus dinonaktifkan.
+          Data diri kamu. Tanpa hapus akun mandiri. Minta admin bila akun harus dinonaktifkan.
         </p>
       </div>
       <Card>

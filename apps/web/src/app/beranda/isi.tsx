@@ -152,7 +152,7 @@ export default function IsiBeranda({
           ...pantau.map((x) => ({
             id: `pantau-${x.id}`,
             judul: `${x.kode} · ${x.posko_nama}`,
-            sub: "Perlu Dicek — hubungi tim lewat jalur darurat.",
+            sub: "Perlu Dicek. Hubungi tim lewat jalur darurat.",
             href: `/m/${x.kode}` as Route,
             badge: {
               teks: "Perlu Dicek",
@@ -331,8 +331,8 @@ export default function IsiBeranda({
     <div className="flex flex-col gap-6">
       <section aria-label="Ringkasan sejak kunjungan terakhir">
         <h1 className="text-lg font-bold text-primary">
-          Halo, {nama} — sejak terakhir berkunjung
-          {baru > 0 ? `, ada ${baru} pembaruan baru` : ""}
+          Halo, {nama}. Rangkuman kunjungan terakhir
+          {baru > 0 ? `: ${baru} pembaruan baru` : ""}
         </h1>
         <p className="text-muted-foreground mt-1 text-xs">
           Angka hari ini{diperbarui ? ` · diperbarui ${diperbarui}` : ""}

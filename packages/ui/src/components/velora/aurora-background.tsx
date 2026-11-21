@@ -12,8 +12,8 @@ const intensityClass = {
 };
 
 /**
- * Velora's signature animated aurora backdrop. Absolutely positioned —
- * place inside a `relative overflow-hidden` section.
+ * Velora's signature animated aurora backdrop. Absolutely positioned.
+ * Place inside a `relative overflow-hidden` section.
  */
 export function AuroraBackground({
   className,

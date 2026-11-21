@@ -117,10 +117,10 @@ export default function FormulirMasuk({
         <CardContent className="text-muted-foreground flex flex-col gap-1 text-sm">
           <p>Pilih salah satu email berikut lalu minta password ke pendamping demo:</p>
           <ul className="list-disc pl-5">
-            <li>bpbd@demo — command center</li>
-            <li>gudang@demo — pencatat batch</li>
-            <li>posko-a@demo — relawan posko</li>
-            <li>tim@demo — tim distribusi</li>
+            <li>bpbd@demo: command center</li>
+            <li>gudang@demo: pencatat batch</li>
+            <li>posko-a@demo: relawan posko</li>
+            <li>tim@demo: tim distribusi</li>
           </ul>
           <p>Password tidak ditulis di sini dan tidak diketik saat demo video.</p>
         </CardContent>
