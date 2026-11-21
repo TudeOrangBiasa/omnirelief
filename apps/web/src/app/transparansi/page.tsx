@@ -17,6 +17,7 @@ import {
 import { Input } from "@omnirelief/ui/components/input";
 import { Skeleton } from "@omnirelief/ui/components/skeleton";
 import { baris, type DashboardRow } from "@/lib/supabase/baris";
+import { ShaderBackground } from "@/components/motion/shader-background";
 
 type StatusMuat = "memuat" | "siap" | "gagal";
 type FilterStatus = "semua" | "kurang" | "aman";
@@ -101,7 +102,14 @@ export default function TransparansiPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-8 px-5 py-12 md:px-10 md:py-20">
+    <main className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-8 px-5 py-12 md:px-10 md:py-20">
+      <ShaderBackground
+        variant="mesh-gradient"
+        colors={["#F5F7FA", "#F5F7FA", "#F5F7FA", "#1B7FBFCC", "#0F3B5F80"]}
+        aria-hidden
+        className="pointer-events-none fixed inset-0"
+      />
+      <div className="relative flex min-h-0 flex-col gap-8">
       <div>
         <p className="t-micro text-primary">Tanpa login</p>
         <h1 className="t-h1 t-balance mt-2 text-primary">Transparansi per posko</h1>
@@ -328,6 +336,7 @@ export default function TransparansiPage() {
           </ul>
         </section>
       )}
+      </div>
     </main>
   );
 }

@@ -41,6 +41,7 @@ import {
 } from "@omnirelief/ui/components/table";
 import { baris, tunggal } from "@/lib/supabase/baris";
 import { formatHariLokal, formatTanggalLokal } from "@/lib/tanggal";
+import { ShaderBackground } from "@/components/motion/shader-background";
 
 type StatusMuat = "memuat" | "siap" | "kosong" | "gagal";
 
@@ -168,7 +169,14 @@ export default function ManifestPage({
   const dibatalkan = manifest?.status === "DIBATALKAN";
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 p-6">
+    <main className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 p-6">
+      <ShaderBackground
+        variant="mesh-gradient"
+        colors={["#F5F7FA", "#F5F7FA", "#F5F7FA", "#1B7FBFCC", "#0F3B5F80"]}
+        aria-hidden
+        className="pointer-events-none fixed inset-0"
+      />
+      <div className="relative flex min-h-0 flex-col gap-6">
       <Link
         href="/transparansi"
         className="inline-flex min-h-12 items-center gap-2 text-sm text-primary underline"
@@ -412,6 +420,7 @@ export default function ManifestPage({
           </div>
         </>
       )}
+      </div>
     </main>
   );
 }

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getProfil } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import FormulirMasuk from "./formulir";
+import { ShaderBackground } from "@/components/motion/shader-background";
 
 export const dynamic = "force-dynamic";
 
@@ -39,11 +40,19 @@ export default async function MasukPage({
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center gap-6 p-6">
+    <main className="relative mx-auto flex min-h-screen w-full max-w-md flex-col justify-center gap-6 p-6">
+      <ShaderBackground
+        variant="mesh-gradient"
+        colors={["#F5F7FA", "#F5F7FA", "#F5F7FA", "#1B7FBFCC", "#0F3B5F80"]}
+        aria-hidden
+        className="pointer-events-none fixed inset-0"
+      />
+      <div className="relative flex min-h-0 flex-col gap-6">
       <FormulirMasuk
         aksi={signIn}
         galat={gagal ? (PESAN_GAGAL[gagal] ?? PESAN_GAGAL.kredensial) : null}
       />
+      </div>
     </main>
   );
 }

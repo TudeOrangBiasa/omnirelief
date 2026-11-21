@@ -24,7 +24,9 @@ tanpa elevasi), **sorot-tunggal** (satu highlight primer per layar).
 9. Latar hidup terang: satu wash aurora animasi (blob blur + drift transform,
    `motion-safe`, `aria-hidden`) sebagai background body `fixed`; section duduk
    di atasnya. rre sendiri memakai lapisan `fixed z=-1` yang diam — gerak datang
-   dari drift blob/video, bukan parallax scroll; tanpa video.
+   dari drift blob/video, bukan parallax scroll; tanpa video. Konten di atas
+   kanvas wajib positioned (`relative` per section/wrapper) — teks statis
+   tenggelam di bawah kanvas; `-z-10` mati tertutup `SidebarInset`.
 
 ## Langkah kerja UI baru
 
