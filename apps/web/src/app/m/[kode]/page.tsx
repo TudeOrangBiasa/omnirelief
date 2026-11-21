@@ -1,147 +1,382 @@
-import { headers } from "next/headers";
-import { notFound } from "next/navigation";
+"use client";
+
+import { use, useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import QRCode from "qrcode";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { toast } from "sonner";
+import {
+  ArrowLeftIcon,
+  CopyIcon,
+  MagnifierIcon,
+} from "@solar-icons/react/linear";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@omnirelief/ui/components/alert";
+import { Badge } from "@omnirelief/ui/components/badge";
+import { Button } from "@omnirelief/ui/components/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@omnirelief/ui/components/card";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@omnirelief/ui/components/empty";
+import { Skeleton } from "@omnirelief/ui/components/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@omnirelief/ui/components/table";
 import { baris, tunggal } from "@/lib/supabase/baris";
 
-export default async function ManifestPage({
+type StatusMuat = "memuat" | "siap" | "kosong" | "gagal";
+
+type BarangRow = {
+  jumlah: number;
+  kode_sumbangan: string;
+  item_nama: string;
+  satuan: string;
+};
+
+type RiwayatRow = {
+  status: string;
+  catatan: string | null;
+  dibuat_pada: string;
+};
+
+type BatalRow = {
+  alasan: string;
+  dibuat_pada: string;
+};
+
+type LaporRow = {
+  jenis: string;
+  keterangan: string;
+  dibuat_pada: string;
+};
+
+type ManifestApi = {
+  kode: string;
+  status: string;
+  tim: string;
+  hash: string;
+  dipublikasikan_pada: string;
+  posko_nama: string;
+  wilayah: string;
+  items: unknown;
+  riwayat: unknown;
+  pembatalan: unknown;
+  ketidaksesuaian: unknown;
+};
+
+function tanggal(t: string) {
+  return new Date(t).toLocaleString("id-ID");
+}
+
+export default function ManifestPage({
   params,
 }: {
   params: Promise<{ kode: string }>;
 }) {
-  const { kode } = await params;
-  const admin = createAdminClient();
-  const { data: mentah } = await admin
-    .from("v_publik_manifest")
-    .select("*")
-    .eq("kode", kode)
-    .single();
-  const manifest = tunggal<{
-    kode: string;
-    status: string;
-    tim: string;
-    eta: string | null;
-    hash: string;
-    dipublikasikan_pada: string;
-    posko_nama: string;
-    wilayah: string;
-  }>(mentah);
-  if (!manifest) notFound();
+  const { kode } = use(params);
+  const [status, setStatus] = useState<StatusMuat>("memuat");
+  const [manifest, setManifest] = useState<ManifestApi | null>(null);
+  const [qr, setQr] = useState("");
 
-  const { data: mentahId } = await admin
-    .from("manifest")
-    .select("id")
-    .eq("kode", kode)
-    .single();
-  const manifestId = tunggal<{ id: number }>(mentahId)?.id ?? 0;
+  const muat = useCallback(() => {
+    setStatus("memuat");
+    setManifest(null);
+    fetch(`/api/publik/manifest?kode=${encodeURIComponent(kode)}`)
+      .then((r) => {
+        if (r.status === 404) {
+          setStatus("kosong");
+          return null;
+        }
+        if (!r.ok) {
+          setStatus("gagal");
+          return null;
+        }
+        return r.json();
+      })
+      .then((d: { ok: boolean; manifest?: unknown } | null) => {
+        if (d === null) return;
+        const m = tunggal<ManifestApi>(d.manifest);
+        if (d.ok && m) {
+          setManifest(m);
+          setStatus("siap");
+        } else if (!d.ok && !m) {
+          setStatus("kosong");
+        } else {
+          setStatus("gagal");
+        }
+      })
+      .catch(() => setStatus("gagal"));
+  }, [kode]);
 
-  const { data: mentahItem } = await admin
-    .from("manifest_item")
-    .select("jumlah,batch:batch_id(kode_sumbangan,item:item_id(nama,satuan))")
-    .eq("manifest_id", manifestId);
-  const items = baris<{
-    jumlah: number;
-    batch: { kode_sumbangan: string; item: { nama: string; satuan: string } | null } | null;
-  }>(mentahItem);
+  useEffect(() => {
+    muat();
+  }, [muat]);
 
-  const { data: mentahLog } = await admin
-    .from("manifest_log")
-    .select("status,catatan,dibuat_pada")
-    .eq("manifest_id", manifestId)
-    .order("dibuat_pada");
-  const riwayat = baris<{ status: string; catatan: string | null; dibuat_pada: string }>(mentahLog);
+  useEffect(() => {
+    if (status !== "siap" || !manifest) return;
+    let aktif = true;
+    setQr("");
+    QRCode.toDataURL(`${window.location.origin}/m/${manifest.kode}`, {
+      width: 256,
+      margin: 2,
+    })
+      .then((u) => {
+        if (aktif) setQr(u);
+      })
+      .catch(() => {
+        if (aktif) setQr("");
+      });
+    return () => {
+      aktif = false;
+    };
+  }, [status, manifest]);
 
-  const { data: mentahBatal } = await admin
-    .from("pembatalan")
-    .select("alasan,dibuat_pada")
-    .eq("manifest_id", manifestId);
-  const batal = baris<{ alasan: string; dibuat_pada: string }>(mentahBatal);
+  async function salinTautan() {
+    const url = window.location.href;
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Tautan disalin");
+    } catch {
+      toast.error("Gagal menyalin tautan");
+    }
+  }
 
-  const { data: mentahLapor } = await admin
-    .from("ketidaksesuaian")
-    .select("jenis,keterangan,dibuat_pada")
-    .eq("manifest_id", manifestId);
-  const lapor = baris<{ jenis: string; keterangan: string; dibuat_pada: string }>(mentahLapor);
-
-  const h = await headers();
-  const host = h.get("x-forwarded-host") ?? h.get("host") ?? "";
-  const proto = h.get("x-forwarded-proto") ?? "https";
-  const url = `${proto}://${host}/m/${manifest.kode}`;
-  const qr = await QRCode.toDataURL(url, { width: 256, margin: 2 });
+  const barang = manifest ? baris<BarangRow>(manifest.items) : [];
+  const riwayat = manifest ? baris<RiwayatRow>(manifest.riwayat) : [];
+  const batal = manifest ? baris<BatalRow>(manifest.pembatalan) : [];
+  const lapor = manifest ? baris<LaporRow>(manifest.ketidaksesuaian) : [];
+  const dibatalkan = manifest?.status === "DIBATALKAN";
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-2xl flex-col gap-6 p-6">
-      <div className="rounded border-2 border-[#0F3B5F] p-4">
-        <p className="font-bold text-[#0F3B5F]">
-          {manifest.status === "TERKUNCI_PUBLIK"
-            ? "TERKUNCI PUBLIK · tidak dapat diubah"
-            : manifest.status === "DIBATALKAN"
-              ? "DIBATALKAN · lihat dokumen pembatalan"
-              : `${manifest.status} · lihat dokumen terkait`}
-        </p>
-        <h1 className="mt-1 text-2xl font-bold">{manifest.kode}</h1>
-        <p className="text-sm text-[#5B6B7F]">
-          {manifest.posko_nama} · {manifest.wilayah}
-        </p>
-        <p className="text-sm text-[#5B6B7F]">
-          Tim {manifest.tim} · {new Date(manifest.dipublikasikan_pada).toLocaleString("id-ID")}
-        </p>
-        <p className="mt-1 font-mono text-xs text-[#5B6B7F]">
-          hash {manifest.hash.slice(0, 16)}…
-        </p>
-      </div>
-      <section>
-        <h2 className="font-bold text-[#0F3B5F]">Isi pengiriman</h2>
-        {items.map((i) => (
-          <p key={i.batch?.kode_sumbangan ?? "?"} className="border-b border-gray-200 py-2 text-sm">
-            {i.jumlah} {i.batch?.item?.satuan} {i.batch?.item?.nama} ({i.batch?.kode_sumbangan})
-          </p>
-        ))}
-      </section>
-      <section>
-        <h2 className="font-bold text-[#0F3B5F]">Riwayat</h2>
-        <ol className="flex flex-col gap-2">
-          {riwayat.map((r, i) => (
-            <li key={i} className="border-l-4 border-[#1B7FBF] pl-3 text-sm">
-              <p className="font-semibold">{r.status}</p>
-              <p className="text-[#5B6B7F]">
-                {r.catatan} · {new Date(r.dibuat_pada).toLocaleString("id-ID")}
-              </p>
-            </li>
-          ))}
-        </ol>
-      </section>
-      {batal.length > 0 && (
-        <section className="flex flex-col gap-2">
-          <h2 className="font-bold text-[#B91C1C]">Dokumen pembatalan</h2>
-          {batal.map((b, i) => (
-            <div key={i} className="rounded bg-[#FEE2E2] p-3 text-sm text-[#B91C1C]">
-              <p>{b.alasan}</p>
-              <p>{new Date(b.dibuat_pada).toLocaleString("id-ID")}</p>
-            </div>
-          ))}
-        </section>
+      <Link
+        href="/transparansi"
+        className="inline-flex min-h-12 items-center gap-2 text-sm text-primary underline"
+      >
+        <ArrowLeftIcon aria-hidden="true" />
+        Kembali ke Transparansi
+      </Link>
+
+      {status === "memuat" && (
+        <div
+          role="status"
+          aria-label="Memuat manifest"
+          className="flex flex-col gap-4"
+        >
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-32 w-full" />
+          <Skeleton className="h-48 w-full" />
+          <Skeleton className="h-64 w-64 self-center" />
+        </div>
       )}
-      {lapor.length > 0 && (
-        <section className="flex flex-col gap-2">
-          <h2 className="font-bold text-[#B45309]">Laporan ketidaksesuaian</h2>
-          {lapor.map((l, i) => (
-            <div key={i} className="rounded bg-[#FEF3C7] p-3 text-sm text-[#B45309]">
-              <p className="font-semibold">{l.jenis}</p>
-              <p>
-                {l.keterangan} · {new Date(l.dibuat_pada).toLocaleString("id-ID")}
-              </p>
-            </div>
-          ))}
-        </section>
+
+      {status === "gagal" && (
+        <Alert variant="destructive">
+          <AlertTitle>Gagal memuat manifest</AlertTitle>
+          <AlertDescription>
+            Periksa koneksi lalu coba lagi.
+          </AlertDescription>
+          <Button onClick={muat} className="mt-3 min-h-12 w-fit">
+            Coba lagi
+          </Button>
+        </Alert>
       )}
-      <section className="flex flex-col items-center gap-2">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={qr} alt={`QR manifest ${manifest.kode}`} width={256} height={256} />
-        <a href={url} className="text-sm text-[#1B7FBF] underline">
-          Salin tautan halaman ini
-        </a>
-      </section>
+
+      {status === "kosong" && (
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <MagnifierIcon aria-hidden="true" />
+            </EmptyMedia>
+            <EmptyTitle>Manifest tidak ditemukan</EmptyTitle>
+            <EmptyDescription>
+              Kode {kode} tidak dikenal. Periksa kembali kode MNF- pada
+              dokumen atau QR.
+            </EmptyDescription>
+          </EmptyHeader>
+          <Button render={<Link href="/transparansi" />} className="mt-4 min-h-12">
+            Kembali ke Transparansi
+          </Button>
+        </Empty>
+      )}
+
+      {status === "siap" && manifest && (
+        <>
+          <Card>
+            <CardHeader>
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge className="border-transparent bg-success-bg text-success">
+                  TERKUNCI
+                </Badge>
+                {dibatalkan && (
+                  <Badge variant="destructive">DIBATALKAN</Badge>
+                )}
+              </div>
+              <CardTitle className="font-mono text-2xl">
+                {manifest.kode}
+              </CardTitle>
+              <CardDescription>
+                {manifest.posko_nama} · {manifest.wilayah}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-2 text-sm">
+              <p className="text-muted-foreground">
+                Tim {manifest.tim} · {tanggal(manifest.dipublikasikan_pada)}
+              </p>
+              <p className="font-mono text-xs text-muted-foreground">
+                hash {manifest.hash.slice(0, 16)}…
+              </p>
+              <div className="flex flex-wrap items-center gap-3">
+                <Button onClick={salinTautan} className="min-h-12">
+                  <CopyIcon aria-hidden="true" />
+                  Salin tautan
+                </Button>
+              </div>
+              <div className="flex flex-col items-center gap-2 pt-2">
+                {qr ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={qr}
+                    alt={`QR manifest ${manifest.kode}`}
+                    width={256}
+                    height={256}
+                  />
+                ) : (
+                  <Skeleton className="size-64" />
+                )}
+                <p className="text-xs text-muted-foreground">
+                  Pindai QR untuk membuka halaman ini
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <section aria-labelledby="isi">
+            <h2 id="isi" className="text-lg font-bold text-primary">
+              Isi pengiriman
+            </h2>
+            {barang.length === 0 ? (
+              <p className="mt-2 text-sm text-muted-foreground">
+                Belum ada barang tercatat.
+              </p>
+            ) : (
+              <Table className="mt-2">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Barang</TableHead>
+                    <TableHead>Jumlah</TableHead>
+                    <TableHead>Batch</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {barang.map((b) => (
+                    <TableRow key={b.kode_sumbangan}>
+                      <TableCell>{b.item_nama}</TableCell>
+                      <TableCell>
+                        {b.jumlah} {b.satuan}
+                      </TableCell>
+                      <TableCell className="font-mono text-xs">
+                        {b.kode_sumbangan}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </section>
+
+          <section aria-labelledby="riwayat">
+            <h2 id="riwayat" className="text-lg font-bold text-primary">
+              Riwayat
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Catatan append-only — tidak dapat diubah.
+            </p>
+            {riwayat.length === 0 ? (
+              <p className="mt-2 text-sm text-muted-foreground">
+                Belum ada riwayat.
+              </p>
+            ) : (
+              <ol className="mt-3 flex flex-col gap-3">
+                {riwayat.map((r, i) => (
+                  <li
+                    key={`${r.dibuat_pada}-${i}`}
+                    className="border-l-4 border-primary pl-3 text-sm"
+                  >
+                    <p className="font-semibold">{r.status}</p>
+                    <p className="text-muted-foreground">
+                      {r.catatan} · {tanggal(r.dibuat_pada)}
+                    </p>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </section>
+
+          {(dibatalkan || batal.length > 0) && (
+            <section
+              aria-labelledby="batal"
+              className="rounded-xl bg-destructive/10 p-4"
+            >
+              <h2 id="batal" className="font-bold text-destructive">
+                Dokumen pembatalan
+              </h2>
+              {batal.length === 0 ? (
+                <p className="mt-1 text-sm text-destructive">
+                  Manifest ini dibatalkan.
+                </p>
+              ) : (
+                <div className="mt-2 flex flex-col gap-2">
+                  {batal.map((b, i) => (
+                    <div key={i} className="text-sm text-destructive">
+                      <p>{b.alasan}</p>
+                      <p>{tanggal(b.dibuat_pada)}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
+
+          {lapor.length > 0 && (
+            <section
+              aria-labelledby="tidak-sesuai"
+              className="rounded-xl bg-warning-bg p-4"
+            >
+              <h2 id="tidak-sesuai" className="font-bold text-warning">
+                Laporan ketidaksesuaian
+              </h2>
+              <div className="mt-2 flex flex-col gap-2">
+                {lapor.map((l, i) => (
+                  <div key={i} className="text-sm text-warning">
+                    <p className="font-semibold">{l.jenis}</p>
+                    <p>
+                      {l.keterangan} · {tanggal(l.dibuat_pada)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+        </>
+      )}
     </main>
   );
 }
