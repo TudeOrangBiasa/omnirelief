@@ -349,7 +349,7 @@ export default function TransparansiPage() {
                     >
                       <div className="flex items-center justify-between gap-2">
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold">{p.posko_nama}</p>
+                          <p className="text-sm font-semibold break-words">{p.posko_nama}</p>
                           <p className="text-xs text-muted-foreground">{p.wilayah}</p>
                         </div>
                         {kurang ? (

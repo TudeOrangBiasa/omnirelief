@@ -229,6 +229,7 @@ export default function BantuanPosko() {
                         onChange={(e) => setKeterangan(e.target.value)}
                         placeholder="Contoh: 10 paket rusak basah"
                         className="min-h-12"
+                        maxLength={500}
                         aria-invalid={galatKeterangan ? true : undefined}
                         aria-describedby={galatKeterangan ? `lapor-keterangan-${b.id}-galat` : undefined}
                       />

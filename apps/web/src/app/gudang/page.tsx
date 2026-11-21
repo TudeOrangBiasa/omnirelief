@@ -391,6 +391,7 @@ export default function GudangPage() {
           </Empty>
         )}
         {statusBatch === "siap" && tampilBatch.length > 0 && (
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -405,7 +406,7 @@ export default function GudangPage() {
                 const hari = b.kedaluwarsa ? sisaHari(b.kedaluwarsa) : null;
                 return (
                   <TableRow key={b.id}>
-                    <TableCell className="font-mono text-xs">{b.kode_sumbangan}</TableCell>
+                    <TableCell className="font-mono text-xs break-all">{b.kode_sumbangan}</TableCell>
                     <TableCell>
                       {b.item_nama}
                       <span className="text-muted-foreground t-angka block text-xs">
@@ -436,6 +437,7 @@ export default function GudangPage() {
               })}
             </TableBody>
           </Table>
+          </div>
         )}
       </section>
 

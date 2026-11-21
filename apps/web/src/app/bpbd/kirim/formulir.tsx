@@ -326,6 +326,7 @@ export default function FormulirKirim() {
                 Tidak ada batch yang cocok dengan pencarian.
               </p>
             ) : (
+              <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -342,7 +343,7 @@ export default function FormulirKirim() {
                     const sudah = barisKirim.some((r) => r.batch_id === b.id);
                     return (
                       <TableRow key={b.id}>
-                        <TableCell className="font-mono text-xs">{b.kode_sumbangan}</TableCell>
+                        <TableCell className="font-mono text-xs break-all">{b.kode_sumbangan}</TableCell>
                         <TableCell>{b.item_nama}</TableCell>
                         <TableCell>
                           {b.sisa} {b.satuan}
@@ -378,6 +379,7 @@ export default function FormulirKirim() {
                   })}
                 </TableBody>
               </Table>
+              </div>
             )}
           </div>
           {terlewat.length > 0 && (

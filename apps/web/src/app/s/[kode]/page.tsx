@@ -197,7 +197,7 @@ export default function SumbanganPage({
       {status === "siap" && sumbangan && (
         <>
           <div>
-            <h1 className="font-mono text-2xl font-bold">
+            <h1 className="font-mono text-2xl font-bold break-all">
               {sumbangan.kode_sumbangan}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -260,7 +260,7 @@ export default function SumbanganPage({
                             href={`/m/${p.kode}`}
                             className="flex min-h-12 items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white p-3 text-sm shadow-xs"
                           >
-                            <span className="font-mono font-semibold text-primary">
+                            <span className="font-mono font-semibold break-all text-primary">
                               {p.kode}
                             </span>
                             <span className="text-right text-muted-foreground tabular-nums">
@@ -301,7 +301,7 @@ export default function SumbanganPage({
                     <Badge className="rounded-full border-transparent bg-success-bg text-success">
                       TERCATAT dan TERLACAK
                     </Badge>
-                    <p className="font-mono text-sm font-semibold">{sumbangan.kode_sumbangan}</p>
+                    <p className="font-mono text-sm font-semibold break-all">{sumbangan.kode_sumbangan}</p>
                     <p className="text-xs text-muted-foreground">
                       Sumber: {sumbangan.sumber}
                     </p>

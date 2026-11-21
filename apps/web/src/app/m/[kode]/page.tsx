@@ -232,7 +232,7 @@ export default function ManifestPage({
                 <Badge variant="destructive" className="rounded-full">DIBATALKAN</Badge>
               )}
             </div>
-            <h1 className="mt-2 font-mono text-2xl font-bold">
+            <h1 className="mt-2 font-mono text-2xl font-bold break-all">
               {manifest.kode}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -255,6 +255,7 @@ export default function ManifestPage({
                       Belum ada barang tercatat.
                     </p>
                   ) : (
+                    <div className="overflow-x-auto">
                     <Table>
                       <TableHeader className="bg-slate-50">
                         <TableRow>
@@ -271,7 +272,7 @@ export default function ManifestPage({
                             <TableCell className="tabular-nums">
                               {b.jumlah} {b.satuan}
                             </TableCell>
-                            <TableCell className="font-mono text-xs">
+                      <TableCell className="font-mono text-xs break-all">
                               {b.kode_sumbangan}
                             </TableCell>
                             <TableCell className="text-xs">
@@ -283,6 +284,7 @@ export default function ManifestPage({
                         ))}
                       </TableBody>
                     </Table>
+                    </div>
                   )}
                 </CardContent>
               </Card>

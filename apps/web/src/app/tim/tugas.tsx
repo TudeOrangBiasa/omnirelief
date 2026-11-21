@@ -363,6 +363,7 @@ export default function TugasTim() {
                   placeholder="Tulis kendala di lapangan"
                   aria-label="Kendala di lapangan"
                   className="min-h-12"
+                  maxLength={500}
                 />
                 <label className="flex min-h-12 items-center gap-2 font-semibold text-destructive">
                   <input

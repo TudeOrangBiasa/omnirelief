@@ -516,6 +516,7 @@ export default function DasborBpbd() {
           </div>
         )}
         {memuatAwal ? (
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -533,6 +534,7 @@ export default function DasborBpbd() {
               <BarisMuatTabel kolom={6} />
             </TableBody>
           </Table>
+          </div>
         ) : antrean.length === 0 ? (
           <Empty>
             <EmptyHeader>
@@ -543,6 +545,7 @@ export default function DasborBpbd() {
             </EmptyHeader>
           </Empty>
         ) : (
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -649,6 +652,7 @@ export default function DasborBpbd() {
               ))}
             </TableBody>
           </Table>
+          </div>
         )}
       </section>
 
@@ -668,6 +672,7 @@ export default function DasborBpbd() {
           )}
         </div>
         {memuatAwal ? (
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -685,6 +690,7 @@ export default function DasborBpbd() {
               <BarisMuatTabel kolom={6} />
             </TableBody>
           </Table>
+          </div>
         ) : prioritas.length === 0 ? (
           <Empty>
             <EmptyHeader>
@@ -693,6 +699,7 @@ export default function DasborBpbd() {
             </EmptyHeader>
           </Empty>
         ) : (
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -739,6 +746,7 @@ export default function DasborBpbd() {
               ))}
             </TableBody>
           </Table>
+          </div>
         )}
       </section>
 
@@ -765,6 +773,7 @@ export default function DasborBpbd() {
               }}
               placeholder="Contoh: jumlah lansia tidak cocok dengan laporan kemarin, mohon cek ulang."
               rows={3}
+              maxLength={500}
             />
             {galatPutusan && (
               <p role="alert" className="flex items-center gap-1 text-sm text-destructive">
@@ -818,6 +827,7 @@ export default function DasborBpbd() {
               }}
               placeholder="Contoh: tim tidak bisa berangkat karena akses putus, diganti manifest baru."
               rows={3}
+              maxLength={500}
             />
             {galatBatal && (
               <p role="alert" className="flex items-center gap-1 text-sm text-destructive">
