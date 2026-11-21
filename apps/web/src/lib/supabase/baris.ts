@@ -41,6 +41,65 @@ export function baris<T>(data: unknown): T[] {
   return Array.isArray(data) ? data.filter((r) => typeof r === "object" && r !== null) as T[] : [];
 }
 
+export type AntreanRow = {
+  id: number;
+  dibuat_pada: string;
+  posko: { nama: string } | null;
+};
+
+export type PantauRow = {
+  id: number;
+  kode: string;
+  posko_nama: string;
+  batas_checkin: string;
+  log_terakhir: string | null;
+  ditandai: boolean;
+};
+
+export type PrioritasRow = {
+  posko_id: number;
+  posko_nama: string;
+  wilayah: string;
+  butuh: number;
+  dikirim: number;
+  diterima: number;
+  selisih: number;
+};
+
+export type BantuanRow = {
+  id: number;
+  kode: string;
+  tim: string;
+  log_terakhir: { status: string; dibuat_pada: string } | null;
+};
+
+export type TugasRow = {
+  id: number;
+  kode: string;
+  tim: string;
+  eta: string | null;
+  batas_checkin: string | null;
+  posko_nama: string;
+  log_terakhir: { status: string; dibuat_pada: string } | null;
+};
+
+export type LaporanRow = {
+  id: number;
+  status: string;
+  dibuat_pada: string;
+};
+
+export type BatchLihatRow = {
+  id: number;
+  kode_sumbangan: string;
+  item_nama: string;
+  satuan: string;
+  jumlah: number;
+  kedaluwarsa: string | null;
+  status: string;
+  sisa: number;
+};
+
 export function tunggal<T>(data: unknown): T | null {
   return typeof data === "object" && data !== null ? (data as T) : null;
 }
