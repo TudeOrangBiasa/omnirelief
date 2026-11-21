@@ -28,6 +28,15 @@ import {
   SelectValue,
 } from "@omnirelief/ui/components/select";
 import { Skeleton } from "@omnirelief/ui/components/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@omnirelief/ui/components/table";
+import { cn } from "@omnirelief/ui/lib/utils";
 import { baris } from "@/lib/supabase/baris";
 
 type Posko = { id: number; nama: string; wilayah: string };
@@ -59,11 +68,23 @@ function labelBatch(b: Batch): string {
   return `${b.kode_sumbangan} · ${b.item_nama} · sisa ${b.sisa} ${b.satuan}${exp}`;
 }
 
+function labelKedaluwarsa(b: Batch): { teks: string; lewat: boolean; dekat: boolean } {
+  if (b.kedaluwarsa === null) {
+    return { teks: "Tanpa tanggal kedaluwarsa", lewat: false, dekat: false };
+  }
+  const tgl = new Date(b.kedaluwarsa).toLocaleDateString("id-ID");
+  const hari = Math.ceil((new Date(b.kedaluwarsa).getTime() - Date.now()) / 86400000);
+  if (hari < 0) return { teks: `Kedaluwarsa ${tgl} — jangan dipakai`, lewat: true, dekat: false };
+  if (hari <= 7) return { teks: `Sisa ${hari} hari (${tgl}) — FEFO`, lewat: false, dekat: true };
+  return { teks: `Sisa ${hari} hari (${tgl})`, lewat: false, dekat: false };
+}
+
 export default function FormulirKirim() {
   const [posko, setPosko] = useState<Posko[]>([]);
   const [batch, setBatch] = useState<Batch[]>([]);
   const [poskoId, setPoskoId] = useState("");
   const [tim, setTim] = useState("");
+  const [cariBatch, setCariBatch] = useState("");
   const [barisKirim, setBarisKirim] = useState<Baris[]>([{ batch_id: 0, jumlah: 0 }]);
   const [draf, setDraf] = useState<{ id: number; kode: string; peringatan: string[] } | null>(null);
   const [hasil, setHasil] = useState<{ kode: string; url_publik: string; qr: string } | null>(null);
@@ -104,6 +125,27 @@ export default function FormulirKirim() {
     const exp: string = b.kedaluwarsa;
     return expDipilih.some((e) => exp < e);
   });
+
+  const kataKunci = cariBatch.trim().toLowerCase();
+  const batchTampil = batch.filter(
+    (b) =>
+      kataKunci === "" ||
+      b.kode_sumbangan.toLowerCase().includes(kataKunci) ||
+      b.item_nama.toLowerCase().includes(kataKunci),
+  );
+
+  function pakaiBatch(id: number) {
+    if (barisKirim.some((r) => r.batch_id === id)) return;
+    const kosong = barisKirim.findIndex((r) => r.batch_id === 0);
+    if (kosong >= 0) {
+      const ganti = [...barisKirim];
+      const lama = ganti[kosong];
+      if (lama) ganti[kosong] = { ...lama, batch_id: id };
+      setBarisKirim(ganti);
+    } else {
+      setBarisKirim([...barisKirim, { batch_id: id, jumlah: 0 }]);
+    }
+  }
 
   async function buatDraf() {
     setSibuk(true);
@@ -262,6 +304,81 @@ export default function FormulirKirim() {
               placeholder="Tim Antar 1"
               className="min-h-12"
             />
+          </div>
+          <div className="flex flex-col gap-2">
+            <h2 className="text-base font-bold text-primary">Stok batch (FEFO)</h2>
+            <p className="text-sm text-muted-foreground">
+              Urut kedaluwarsa terdekat di atas. Pilih dari sini agar batch yang cepat
+              kedaluwarsa keluar duluan.
+            </p>
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="cari-batch">Cari batch</Label>
+              <Input
+                id="cari-batch"
+                value={cariBatch}
+                onChange={(e) => setCariBatch(e.target.value)}
+                placeholder="Cari kode sumbangan atau nama barang…"
+                className="min-h-12"
+              />
+            </div>
+            {batchTampil.length === 0 ? (
+              <p className="text-sm text-muted-foreground" role="status">
+                Tidak ada batch yang cocok dengan pencarian.
+              </p>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Kode</TableHead>
+                    <TableHead>Barang</TableHead>
+                    <TableHead>Sisa</TableHead>
+                    <TableHead>Kedaluwarsa</TableHead>
+                    <TableHead>Aksi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {batchTampil.map((b) => {
+                    const exp = labelKedaluwarsa(b);
+                    const sudah = barisKirim.some((r) => r.batch_id === b.id);
+                    return (
+                      <TableRow key={b.id}>
+                        <TableCell className="font-mono text-xs">{b.kode_sumbangan}</TableCell>
+                        <TableCell>{b.item_nama}</TableCell>
+                        <TableCell>
+                          {b.sisa} {b.satuan}
+                        </TableCell>
+                        <TableCell
+                          className={cn(
+                            exp.lewat
+                              ? "text-destructive"
+                              : exp.dekat
+                                ? "text-warning"
+                                : "text-muted-foreground",
+                          )}
+                        >
+                          {exp.teks}
+                        </TableCell>
+                        <TableCell>
+                          {sudah ? (
+                            <Badge className="border-transparent bg-success-bg text-success">
+                              Dipilih
+                            </Badge>
+                          ) : (
+                            <Button
+                              variant="outline"
+                              onClick={() => pakaiBatch(b.id)}
+                              className="min-h-12"
+                            >
+                              Pakai
+                            </Button>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            )}
           </div>
           {terlewat.length > 0 && (
             <p role="status" className="rounded-xl bg-warning-bg p-3 text-sm text-warning">

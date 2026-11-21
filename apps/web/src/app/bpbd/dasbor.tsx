@@ -3,14 +3,19 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
+  ArrowDownIcon,
+  ArrowUpIcon,
   DangerTriangleIcon,
+  DownloadMinimalisticIcon,
   InfoCircleIcon,
   PhoneCallingRoundedIcon,
+  RefreshIcon,
 } from "@solar-icons/react/linear";
 import { Alert, AlertDescription, AlertTitle } from "@omnirelief/ui/components/alert";
+import { Card, CardContent, CardHeader } from "@omnirelief/ui/components/card";
 import { Badge } from "@omnirelief/ui/components/badge";
 import { Button, buttonVariants } from "@omnirelief/ui/components/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@omnirelief/ui/components/card";
+import { Checkbox } from "@omnirelief/ui/components/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -27,6 +32,14 @@ import {
 } from "@omnirelief/ui/components/empty";
 import { Label } from "@omnirelief/ui/components/label";
 import { Skeleton } from "@omnirelief/ui/components/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@omnirelief/ui/components/table";
 import { Textarea } from "@omnirelief/ui/components/textarea";
 import { cn } from "@omnirelief/ui/lib/utils";
 import { baris } from "@/lib/supabase/baris";
@@ -58,13 +71,11 @@ type Prioritas = {
 type Pantau = {
   id: number;
   kode: string;
-  tim: string;
   posko_nama: string;
   batas_checkin: string;
   log_terakhir: string | null;
   ditandai: boolean;
 };
-
 type PutusanTarget = {
   id: number;
   nama: string;
@@ -73,11 +84,32 @@ type PutusanTarget = {
 
 type BatalTarget = { id: number; kode: string; posko_nama: string };
 
+type KunciSortir = "umur" | "total";
+
 function galatDari(data: unknown, bawaan: string): string {
   if (typeof data === "object" && data !== null && "galat" in data) {
     return String(data.galat);
   }
   return bawaan;
+}
+
+function totalJiwa(a: Antrean): number {
+  return a.bayi + a.balita + a.ibu_hamil + a.lansia + a.disabilitas + a.umum;
+}
+
+function umurDari(iso: string): string {
+  const beda = Date.now() - new Date(iso).getTime();
+  if (Number.isNaN(beda)) return "-";
+  const menit = Math.max(0, Math.floor(beda / 60000));
+  if (menit < 1) return "baru saja";
+  if (menit < 60) return `${menit} mnt lalu`;
+  const jam = Math.floor(menit / 60);
+  if (jam < 24) return `${jam} jam lalu`;
+  return `${Math.floor(jam / 24)} hari lalu`;
+}
+
+function selCsv(nilai: string | number): string {
+  return `"${String(nilai).replace(/"/g, '""')}"`;
 }
 
 function KartuMuat() {
@@ -94,11 +126,28 @@ function KartuMuat() {
   );
 }
 
+function BarisMuatTabel({ kolom }: { kolom: number }) {
+  return (
+    <TableRow aria-hidden="true">
+      {Array.from({ length: kolom }, (_, i) => (
+        <TableCell key={i}>
+          <Skeleton className="h-5 w-full" />
+        </TableCell>
+      ))}
+    </TableRow>
+  );
+}
+
 export default function DasborBpbd() {
   const [status, setStatus] = useState<StatusMuat>("memuat");
   const [antrean, setAntrean] = useState<Antrean[]>([]);
   const [prioritas, setPrioritas] = useState<Prioritas[]>([]);
   const [pantau, setPantau] = useState<Pantau[]>([]);
+  const [diperbarui, setDiperbarui] = useState<string | null>(null);
+  const [kunciSortir, setKunciSortir] = useState<KunciSortir>("umur");
+  const [arahSortir, setArahSortir] = useState<"naik" | "turun">("naik");
+  const [terpilih, setTerpilih] = useState<number[]>([]);
+  const [sibukMassal, setSibukMassal] = useState(false);
   const [putusan, setPutusan] = useState<PutusanTarget | null>(null);
   const [alasanPutusan, setAlasanPutusan] = useState("");
   const [galatPutusan, setGalatPutusan] = useState<string | null>(null);
@@ -125,7 +174,13 @@ export default function DasborBpbd() {
       setAntrean(okA && "antrean" in da ? baris<Antrean>(da.antrean) : []);
       setPrioritas(okP && "prioritas" in dp ? baris<Prioritas>(dp.prioritas) : []);
       setPantau(okW && "perlu_dicek" in dw ? baris<Pantau>(dw.perlu_dicek) : []);
-      setStatus(okA && okP && okW ? "siap" : "gagal");
+      const semuaOk = okA && okP && okW;
+      setStatus(semuaOk ? "siap" : "gagal");
+      if (semuaOk) {
+        setDiperbarui(
+          new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }),
+        );
+      }
     } catch {
       setStatus("gagal");
     }
@@ -154,6 +209,48 @@ export default function DasborBpbd() {
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Keputusan gagal.");
     }
+  }
+
+  async function setujuiTerpilih() {
+    if (terpilih.length === 0 || sibukMassal) return;
+    setSibukMassal(true);
+    let lolos = 0;
+    let gagal = 0;
+    for (const id of terpilih) {
+      try {
+        await kirimPutusan(id, "DISETUJUI");
+        lolos += 1;
+      } catch {
+        gagal += 1;
+      }
+    }
+    setTerpilih([]);
+    setSibukMassal(false);
+    if (gagal === 0) {
+      toast.success(`${lolos} snapshot disetujui.`);
+    } else {
+      toast.error(`${lolos} disetujui, ${gagal} gagal. Ulangi untuk yang gagal.`);
+    }
+    await muat();
+  }
+
+  function alihSortir(kunci: KunciSortir) {
+    if (kunci === kunciSortir) {
+      setArahSortir((arah) => (arah === "naik" ? "turun" : "naik"));
+    } else {
+      setKunciSortir(kunci);
+      setArahSortir(kunci === "umur" ? "naik" : "turun");
+    }
+  }
+
+  function alihPilih(id: number, pilih: boolean) {
+    setTerpilih((sebelum) =>
+      pilih ? (sebelum.includes(id) ? sebelum : [...sebelum, id]) : sebelum.filter((x) => x !== id),
+    );
+  }
+
+  function alihPilihSemua(pilih: boolean) {
+    setTerpilih(pilih ? antreanUrut.map((a) => a.id) : []);
   }
 
   function bukaPutusan(target: PutusanTarget) {
@@ -216,6 +313,53 @@ export default function DasborBpbd() {
     }
   }
 
+  function unduhCsv() {
+    const kepala = ["Posko", "Wilayah", "Butuh", "Dikirim", "Diterima", "Selisih"];
+    const isi = prioritasUrut
+      .map((p) =>
+        [p.posko_nama, p.wilayah, p.butuh, p.dikirim, p.diterima, p.selisih]
+          .map(selCsv)
+          .join(","),
+      )
+      .join("\r\n");
+    const blob = new Blob([[kepala.map(selCsv).join(","), isi].join("\r\n")], {
+      type: "text/csv;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+    const tautan = document.createElement("a");
+    tautan.href = url;
+    tautan.download = "prioritas-selisih.csv";
+    document.body.appendChild(tautan);
+    tautan.click();
+    tautan.remove();
+    URL.revokeObjectURL(url);
+    toast.success("Berkas CSV prioritas diunduh.");
+  }
+
+  const antreanUrut = [...antrean].sort((a, b) => {
+    const beda =
+      kunciSortir === "umur"
+        ? new Date(a.dibuat_pada).getTime() - new Date(b.dibuat_pada).getTime()
+        : totalJiwa(a) - totalJiwa(b);
+    return arahSortir === "naik" ? beda : -beda;
+  });
+
+  const prioritasUrut = [...prioritas].sort((a, b) => b.selisih - a.selisih);
+  const selisihTerbuka = prioritasUrut.reduce((jumlah, p) => jumlah + Math.max(0, p.selisih), 0);
+  const poskoKritis = prioritasUrut.filter((p) => p.selisih > 0).length;
+  const selisihMaks = prioritasUrut.length > 0 ? Math.max(0, ...prioritasUrut.map((p) => p.selisih)) : 0;
+  const semuaTerpilih = antreanUrut.length > 0 && terpilih.length === antreanUrut.length;
+  const memuatAwal = status === "memuat" && antrean.length === 0 && prioritas.length === 0;
+
+  function ikonSortir(kunci: KunciSortir) {
+    if (kunci !== kunciSortir) return null;
+    return arahSortir === "naik" ? (
+      <ArrowUpIcon aria-hidden="true" className="size-4" />
+    ) : (
+      <ArrowDownIcon aria-hidden="true" className="size-4" />
+    );
+  }
+
   return (
     <div className="flex flex-col gap-8">
       {status === "gagal" && (
@@ -231,13 +375,65 @@ export default function DasborBpbd() {
         </Alert>
       )}
 
-      <div className="flex flex-col gap-2 sm:flex-row">
-        <a href="/bpbd/kirim" className={cn(buttonVariants(), "min-h-12 flex-1")}>
-          Buat manifest baru
+      <section aria-label="Ringkasan" className="flex flex-col gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <Card>
+            <CardContent className="flex flex-col gap-1 p-4">
+              <p className="text-3xl font-bold text-primary">{antrean.length}</p>
+              <p className="text-sm text-muted-foreground">snapshot menunggu verifikasi</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="flex flex-col gap-1 p-4">
+              <p
+                className={cn(
+                  "text-3xl font-bold",
+                  selisihTerbuka > 0 ? "text-destructive" : "text-success",
+                )}
+              >
+                {selisihTerbuka}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {selisihTerbuka > 0
+                  ? `jiwa kurang di ${poskoKritis} posko`
+                  : "jiwa kurang — semua posko aman"}
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="flex flex-col gap-1 p-4">
+              <p
+                className={cn(
+                  "text-3xl font-bold",
+                  pantau.length > 0 ? "text-destructive" : "text-success",
+                )}
+              >
+                {pantau.length}
+              </p>
+              <p className="text-sm text-muted-foreground">manifest perlu dicek</p>
+            </CardContent>
+          </Card>
+        </div>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <p className="flex-1 text-sm text-muted-foreground" role="status">
+            {diperbarui ? `Diperbarui ${diperbarui}` : "Belum pernah dimuat"}
+          </p>
+          <Button
+            variant="outline"
+            onClick={() => void muat()}
+            disabled={status === "memuat"}
+            className="min-h-12 sm:w-auto"
+          >
+            <RefreshIcon aria-hidden="true" />
+            {status === "memuat" ? "Memuat..." : "Muat ulang"}
+          </Button>
+        </div>
+      </section>
+
+      <div className="flex flex-col gap-2">
+        <a href="/bpbd/kirim" className={cn(buttonVariants(), "min-h-12 w-full")}>
+          Buat manifest
         </a>
-        <Button variant="outline" onClick={() => void muat()} className="min-h-12 flex-1">
-          Segarkan data
-        </Button>
       </div>
 
       <section aria-label="Perlu Dicek" className="flex flex-col gap-2">
@@ -245,7 +441,7 @@ export default function DasborBpbd() {
           <h2 className="text-lg font-bold text-destructive">Perlu Dicek ({pantau.length})</h2>
           {pantau.length > 0 && <Badge variant="destructive">Perlu Dicek</Badge>}
         </div>
-        {status === "memuat" ? (
+        {status === "memuat" && pantau.length === 0 ? (
           <KartuMuat />
         ) : pantau.length === 0 ? (
           <Empty>
@@ -264,7 +460,8 @@ export default function DasborBpbd() {
                   {w.kode} · {w.posko_nama}
                 </p>
                 <p className="text-muted-foreground">
-                  Tim {w.tim} · batas check-in lewat · kabar terakhir {w.log_terakhir ?? "-"}
+                  Batas check-in {new Date(w.batas_checkin).toLocaleString("id-ID")} · kabar
+                  terakhir {w.log_terakhir ?? "-"}
                   {w.ditandai ? " · sudah ditandai otomatis" : ""}
                 </p>
                 <div className="flex flex-col gap-2 sm:flex-row">
@@ -293,8 +490,49 @@ export default function DasborBpbd() {
 
       <section aria-label="Antrean verifikasi" className="flex flex-col gap-2">
         <h2 className="text-lg font-bold text-primary">Antrean verifikasi ({antrean.length})</h2>
-        {status === "memuat" ? (
-          <KartuMuat />
+        {terpilih.length > 0 && (
+          <div
+            className="flex flex-col gap-2 rounded-xl bg-muted p-3 sm:flex-row sm:items-center"
+            role="status"
+          >
+            <p className="flex-1 text-sm font-semibold">{terpilih.length} snapshot dipilih</p>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Button
+                variant="outline"
+                onClick={() => setTerpilih([])}
+                disabled={sibukMassal}
+                className="min-h-12"
+              >
+                Batalkan pilihan
+              </Button>
+              <Button
+                onClick={() => void setujuiTerpilih()}
+                disabled={sibukMassal}
+                className="min-h-12 bg-success text-white hover:bg-success/80"
+              >
+                {sibukMassal ? "Menyetujui..." : `Setujui terpilih (${terpilih.length})`}
+              </Button>
+            </div>
+          </div>
+        )}
+        {memuatAwal ? (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead aria-label="Pilih">Pilih</TableHead>
+                <TableHead>Posko</TableHead>
+                <TableHead>Kategori rentan</TableHead>
+                <TableHead>Total</TableHead>
+                <TableHead>Umur antrean</TableHead>
+                <TableHead>Putusan</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <BarisMuatTabel kolom={6} />
+              <BarisMuatTabel kolom={6} />
+              <BarisMuatTabel kolom={6} />
+            </TableBody>
+          </Table>
         ) : antrean.length === 0 ? (
           <Empty>
             <EmptyHeader>
@@ -305,70 +543,148 @@ export default function DasborBpbd() {
             </EmptyHeader>
           </Empty>
         ) : (
-          antrean.map((a) => {
-            const total = a.bayi + a.balita + a.ibu_hamil + a.lansia + a.disabilitas + a.umum;
-            return (
-              <Card key={a.id}>
-                <CardHeader>
-                  <CardTitle className="text-base">{a.posko?.nama ?? "Posko?"}</CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-2 text-sm">
-                  <p className="text-muted-foreground">
-                    Total {total} jiwa ·{" "}
-                    {new Date(a.dibuat_pada).toLocaleString("id-ID")}
-                  </p>
-                  <dl className="grid grid-cols-2 gap-1 text-sm sm:grid-cols-3">
-                    <div>Bayi: <strong>{a.bayi}</strong></div>
-                    <div>Balita: <strong>{a.balita}</strong></div>
-                    <div>Ibu hamil: <strong>{a.ibu_hamil}</strong></div>
-                    <div>Lansia: <strong>{a.lansia}</strong></div>
-                    <div>Disabilitas: <strong>{a.disabilitas}</strong></div>
-                    <div>Umum: <strong>{a.umum}</strong></div>
-                  </dl>
-                  <div className="flex flex-col gap-2 sm:flex-row">
-                    <Button
-                      onClick={() => void setujui(a.id)}
-                      className="min-h-12 flex-1 bg-success text-white hover:bg-success/80"
-                    >
-                      Setujui
-                    </Button>
-                    <Button
-                      onClick={() =>
-                        bukaPutusan({
-                          id: a.id,
-                          nama: a.posko?.nama ?? "Posko?",
-                          keputusan: "MINTA_REVISI",
-                        })
-                      }
-                      className="min-h-12 flex-1 bg-warning-bg text-warning hover:bg-warning-bg"
-                    >
-                      Minta revisi
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={() =>
-                        bukaPutusan({
-                          id: a.id,
-                          nama: a.posko?.nama ?? "Posko?",
-                          keputusan: "DITOLAK",
-                        })
-                      }
-                      className="min-h-12 flex-1"
-                    >
-                      Tolak
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>
+                  <Checkbox
+                    checked={semuaTerpilih}
+                    onCheckedChange={(nilai) => alihPilihSemua(nilai === true)}
+                    aria-label="Pilih semua antrean"
+                    disabled={sibukMassal}
+                  />
+                </TableHead>
+                <TableHead>Posko</TableHead>
+                <TableHead>Kategori rentan</TableHead>
+                <TableHead aria-sort={kunciSortir === "total" ? (arahSortir === "naik" ? "ascending" : "descending") : "none"}>
+                  <button
+                    type="button"
+                    onClick={() => alihSortir("total")}
+                    className="inline-flex min-h-12 items-center gap-1 font-semibold"
+                    aria-label={`Urutkan total jiwa, saat ini ${kunciSortir === "total" ? arahSortir : "tidak diurutkan"}`}
+                  >
+                    Total {ikonSortir("total")}
+                  </button>
+                </TableHead>
+                <TableHead aria-sort={kunciSortir === "umur" ? (arahSortir === "naik" ? "ascending" : "descending") : "none"}>
+                  <button
+                    type="button"
+                    onClick={() => alihSortir("umur")}
+                    className="inline-flex min-h-12 items-center gap-1 font-semibold"
+                    aria-label={`Urutkan umur antrean, saat ini ${kunciSortir === "umur" ? arahSortir : "tidak diurutkan"}`}
+                  >
+                    Umur antrean {ikonSortir("umur")}
+                  </button>
+                </TableHead>
+                <TableHead>Putusan</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {antreanUrut.map((a) => (
+                <TableRow key={a.id} data-state={terpilih.includes(a.id) ? "selected" : undefined}>
+                  <TableCell>
+                    <Checkbox
+                      checked={terpilih.includes(a.id)}
+                      onCheckedChange={(nilai) => alihPilih(a.id, nilai === true)}
+                      aria-label={`Pilih snapshot ${a.posko?.nama ?? "posko?"}`}
+                      disabled={sibukMassal}
+                    />
+                  </TableCell>
+                  <TableCell className="font-semibold">{a.posko?.nama ?? "Posko?"}</TableCell>
+                  <TableCell>
+                    <dl className="grid grid-cols-2 gap-x-3 text-xs">
+                      <div>Bayi: <strong>{a.bayi}</strong></div>
+                      <div>Balita: <strong>{a.balita}</strong></div>
+                      <div>Ibu hamil: <strong>{a.ibu_hamil}</strong></div>
+                      <div>Lansia: <strong>{a.lansia}</strong></div>
+                      <div>Disabilitas: <strong>{a.disabilitas}</strong></div>
+                      <div>Umum: <strong>{a.umum}</strong></div>
+                    </dl>
+                  </TableCell>
+                  <TableCell>
+                    <strong>{totalJiwa(a)}</strong> jiwa
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap text-muted-foreground">
+                    {umurDari(a.dibuat_pada)}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex min-w-32 flex-col gap-1">
+                      <Button
+                        onClick={() => void setujui(a.id)}
+                        disabled={sibukMassal}
+                        className="min-h-12 w-full bg-success text-white hover:bg-success/80"
+                      >
+                        Setujui
+                      </Button>
+                      <Button
+                        onClick={() =>
+                          bukaPutusan({
+                            id: a.id,
+                            nama: a.posko?.nama ?? "Posko?",
+                            keputusan: "MINTA_REVISI",
+                          })
+                        }
+                        disabled={sibukMassal}
+                        className="min-h-12 w-full bg-warning-bg text-warning hover:bg-warning-bg"
+                      >
+                        Minta revisi
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        onClick={() =>
+                          bukaPutusan({
+                            id: a.id,
+                            nama: a.posko?.nama ?? "Posko?",
+                            keputusan: "DITOLAK",
+                          })
+                        }
+                        disabled={sibukMassal}
+                        className="min-h-12 w-full"
+                      >
+                        Tolak
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         )}
       </section>
 
       <section aria-label="Prioritas kebutuhan" className="flex flex-col gap-2">
-        <h2 className="text-lg font-bold text-primary">Prioritas kebutuhan</h2>
-        {status === "memuat" ? (
-          <KartuMuat />
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <h2 className="flex-1 text-lg font-bold text-primary">Prioritas kebutuhan</h2>
+          {prioritas.length > 0 && (
+            <Button
+              variant="outline"
+              onClick={unduhCsv}
+              className="min-h-12 sm:w-auto"
+              aria-label="Unduh prioritas sebagai CSV"
+            >
+              <DownloadMinimalisticIcon aria-hidden="true" />
+              Unduh CSV
+            </Button>
+          )}
+        </div>
+        {memuatAwal ? (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Posko</TableHead>
+                <TableHead>Wilayah</TableHead>
+                <TableHead>Butuh</TableHead>
+                <TableHead>Dikirim</TableHead>
+                <TableHead>Diterima</TableHead>
+                <TableHead>Selisih</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <BarisMuatTabel kolom={6} />
+              <BarisMuatTabel kolom={6} />
+              <BarisMuatTabel kolom={6} />
+            </TableBody>
+          </Table>
         ) : prioritas.length === 0 ? (
           <Empty>
             <EmptyHeader>
@@ -377,23 +693,52 @@ export default function DasborBpbd() {
             </EmptyHeader>
           </Empty>
         ) : (
-          prioritas.map((p) => (
-            <Card key={p.posko_id}>
-              <CardContent className="flex flex-col gap-2 p-4 text-sm">
-                <p className="font-semibold">
-                  {p.posko_nama} · {p.wilayah}
-                </p>
-                <p className="text-muted-foreground">
-                  Butuh {p.butuh} · Dikirim {p.dikirim} · Diterima {p.diterima}
-                </p>
-                {p.selisih > 0 ? (
-                  <Badge variant="destructive">Kurang {p.selisih}</Badge>
-                ) : (
-                  <Badge className="border-transparent bg-success-bg text-success">Aman</Badge>
-                )}
-              </CardContent>
-            </Card>
-          ))
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Posko</TableHead>
+                <TableHead>Wilayah</TableHead>
+                <TableHead>Butuh</TableHead>
+                <TableHead>Dikirim</TableHead>
+                <TableHead>Diterima</TableHead>
+                <TableHead>Selisih terbesar dulu</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {prioritasUrut.map((p) => (
+                <TableRow key={p.posko_id}>
+                  <TableCell className="font-semibold">{p.posko_nama}</TableCell>
+                  <TableCell className="text-muted-foreground">{p.wilayah}</TableCell>
+                  <TableCell>{p.butuh}</TableCell>
+                  <TableCell>{p.dikirim}</TableCell>
+                  <TableCell>{p.diterima}</TableCell>
+                  <TableCell>
+                    {p.selisih > 0 ? (
+                      <div className="flex min-w-40 flex-col gap-1">
+                        <div
+                          className="h-2 w-full rounded-full bg-muted"
+                          role="img"
+                          aria-label={`Kurang ${p.selisih} dari ${selisihMaks} tertinggi`}
+                        >
+                          <div
+                            className="h-2 rounded-full bg-destructive"
+                            style={{
+                              width: `${selisihMaks > 0 ? Math.round((p.selisih / selisihMaks) * 100) : 0}%`,
+                            }}
+                          />
+                        </div>
+                        <Badge variant="destructive" className="w-fit">
+                          Kurang {p.selisih}
+                        </Badge>
+                      </div>
+                    ) : (
+                      <Badge className="border-transparent bg-success-bg text-success">Aman</Badge>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         )}
       </section>
 
@@ -414,7 +759,10 @@ export default function DasborBpbd() {
             <Textarea
               id="alasan-putusan"
               value={alasanPutusan}
-              onChange={(e) => setAlasanPutusan(e.target.value)}
+              onChange={(e) => {
+                setAlasanPutusan(e.target.value);
+                if (galatPutusan) setGalatPutusan(null);
+              }}
               placeholder="Contoh: jumlah lansia tidak cocok dengan laporan kemarin, mohon cek ulang."
               rows={3}
             />
@@ -464,7 +812,10 @@ export default function DasborBpbd() {
             <Textarea
               id="alasan-batal"
               value={alasanBatal}
-              onChange={(e) => setAlasanBatal(e.target.value)}
+              onChange={(e) => {
+                setAlasanBatal(e.target.value);
+                if (galatBatal) setGalatBatal(null);
+              }}
               placeholder="Contoh: tim tidak bisa berangkat karena akses putus, diganti manifest baru."
               rows={3}
             />
