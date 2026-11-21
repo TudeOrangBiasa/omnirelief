@@ -81,7 +81,7 @@ export default function Header({
   const macet = !daring || antre > 0;
 
   return (
-    <header className="sticky top-0 z-40 min-h-14 border-b border-border bg-background">
+    <header className="sticky top-0 z-40 min-h-14 border-b border-slate-300/60 bg-white/70 backdrop-blur-md">
       <div className="mx-auto flex min-h-14 w-full max-w-5xl items-center gap-2 px-4">
         <SidebarTrigger className="hidden min-h-12 min-w-12 md:flex" />
         <Separator orientation="vertical" className="hidden h-4 md:block" />

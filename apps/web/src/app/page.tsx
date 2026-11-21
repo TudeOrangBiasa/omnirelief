@@ -18,7 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@omnirelief/ui/components/card";
-import { AuroraBackground } from "@omnirelief/ui/components/velora/aurora-background";
+import { ShaderBackground } from "@/components/motion/shader-background";
 import { Input } from "@omnirelief/ui/components/input";
 import { cn } from "@omnirelief/ui/lib/utils";
 
@@ -94,7 +94,12 @@ export default function Home() {
         aria-label="Cek kode kiriman"
         className="relative grid scroll-mt-20 gap-10 section-napas lg:grid-cols-12 lg:gap-12"
       >
-        <AuroraBackground intensity="subtle" className="fixed inset-0" />
+        <ShaderBackground
+          variant="mesh-gradient"
+          colors={["#F5F7FA", "#F5F7FA", "#F5F7FA", "#1B7FBFCC", "#0F3B5F80"]}
+          aria-hidden
+          className="pointer-events-none fixed inset-0"
+        />
         <div className="relative flex flex-col gap-5 lg:col-span-7">
           <p className="t-micro text-primary">
             Sistem supply chain pangan darurat
@@ -189,7 +194,7 @@ export default function Home() {
 
       <section
         aria-label="Angka pantauan"
-        className="grid grid-cols-3 divide-x divide-border border-y border-border py-8"
+        className="relative grid grid-cols-3 divide-x divide-border border-y border-border py-8"
       >
         <div className="flex flex-col gap-1 px-4 first:pl-0 md:px-8">
           <span className="t-h2 t-angka text-primary">
@@ -217,7 +222,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section aria-label="Empat janji anti-korupsi" className="section-napas">
+      <section aria-label="Empat janji anti-korupsi" className="relative section-napas">
         <p className="t-micro text-primary">Empat janji anti-korupsi</p>
         <h2 className="t-h2 t-balance mt-2 max-w-2xl text-primary">
           Uang dan barang publik harus bisa diikuti siapa saja
@@ -227,7 +232,7 @@ export default function Home() {
             <a
               key={j.judul}
               href={j.href}
-              className="flex flex-col gap-3 bg-card p-6 transition-colors hover:bg-muted md:p-8"
+              className="relative flex flex-col gap-3 border border-slate-300/70 bg-white/65 p-6 backdrop-blur-sm md:p-8"
             >
               <div className="flex items-center justify-between">
                 <span className="t-micro text-muted-foreground">
@@ -249,7 +254,7 @@ export default function Home() {
 
       <section
         aria-label="Cara cek dalam 3 langkah"
-        className="-mx-5 bg-primary text-primary-foreground md:-mx-10"
+        className="relative -mx-5 bg-[#0F3B5F] text-primary-foreground md:-mx-10"
       >
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-5 py-16 md:px-10 md:py-24">
           <div>
@@ -282,7 +287,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section aria-label="Mulai cek sekarang" className="section-napas">
+      <section aria-label="Mulai cek sekarang" className="relative section-napas">
         <Card>
           <CardContent className="flex flex-col items-start gap-4 p-6 md:flex-row md:items-center md:justify-between md:p-8">
             <div>
@@ -303,7 +308,7 @@ export default function Home() {
         </Card>
       </section>
 
-      <footer className="flex flex-col gap-3 border-t border-border py-6 pb-8 text-sm">
+      <footer className="relative flex flex-col gap-3 border-t border-border bg-white py-6 pb-8 text-sm">
         <nav className="flex gap-4">
           <a href="/" className="font-semibold">Beranda</a>
           <a href="/transparansi" className="font-semibold">Transparansi</a>
