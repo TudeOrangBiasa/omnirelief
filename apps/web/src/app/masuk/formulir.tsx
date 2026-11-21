@@ -45,9 +45,9 @@ export default function FormulirMasuk({
         </p>
       </div>
       {galat && (
-        <Alert variant="destructive">
+        <Alert variant="destructive" role="alert">
           <AlertTitle>Gagal masuk</AlertTitle>
-          <AlertDescription>{galat}</AlertDescription>
+          <AlertDescription id="masuk-galat">{galat}</AlertDescription>
         </Alert>
       )}
       <form action={aksi} className="flex flex-col gap-4">
@@ -59,7 +59,10 @@ export default function FormulirMasuk({
             type="email"
             required
             autoComplete="username"
+            autoFocus={galat ? true : undefined}
             placeholder="nama@contoh.id"
+            aria-invalid={galat ? true : undefined}
+            aria-describedby={galat ? "masuk-galat" : undefined}
             className="min-h-12"
           />
         </div>
@@ -72,6 +75,8 @@ export default function FormulirMasuk({
               type={tampil ? "text" : "password"}
               required
               autoComplete="current-password"
+              aria-invalid={galat ? true : undefined}
+              aria-describedby={galat ? "masuk-galat" : undefined}
               className="min-h-12 pr-14"
             />
             <Button

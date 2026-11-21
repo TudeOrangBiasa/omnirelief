@@ -3,11 +3,9 @@ import type { Route } from "next";
 import { getProfil } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { Alert, AlertDescription, AlertTitle } from "@omnirelief/ui/components/alert";
-import { Button } from "@omnirelief/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@omnirelief/ui/components/card";
-import { Input } from "@omnirelief/ui/components/input";
-import { Label } from "@omnirelief/ui/components/label";
 import { InfoCircleIcon, LockIcon } from "@solar-icons/react/linear";
+import FormulirPassword from "./formulir-password";
 
 export const dynamic = "force-dynamic";
 
@@ -53,25 +51,6 @@ export default async function ProfilPage({
           Data diri kamu. Tanpa hapus akun mandiri — minta admin bila akun harus dinonaktifkan.
         </p>
       </div>
-
-      {params.ok && (
-        <p role="status" className="rounded-xl bg-success-bg p-3 text-sm text-success-badge-fg">
-          Password berhasil diubah.
-        </p>
-      )}
-      {params.gagal && (
-        <Alert variant="destructive">
-          <AlertTitle>Gagal mengubah password</AlertTitle>
-          <AlertDescription>
-            {params.gagal === "salah"
-              ? "Password lama salah. Coba lagi."
-              : params.gagal === "pendek"
-                ? "Password baru minimal 8 karakter."
-                : "Terjadi galat. Coba lagi."}
-          </AlertDescription>
-        </Alert>
-      )}
-
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Data diri</CardTitle>
@@ -108,37 +87,15 @@ export default async function ProfilPage({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form action={ubahPassword} className="flex flex-col gap-4 text-sm">
-            <p className="text-muted-foreground">
-              Demi keamanan, masukkan password lama dulu (autentikasi ulang).
-            </p>
-            <div className="flex flex-col gap-1">
-              <Label htmlFor="password_lama">Password lama</Label>
-              <Input
-                id="password_lama"
-                name="password_lama"
-                type="password"
-                required
-                autoComplete="current-password"
-                className="min-h-12"
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <Label htmlFor="password_baru">Password baru (min. 8 karakter)</Label>
-              <Input
-                id="password_baru"
-                name="password_baru"
-                type="password"
-                required
-                minLength={8}
-                autoComplete="new-password"
-                className="min-h-12"
-              />
-            </div>
-            <Button type="submit" className="min-h-12 w-full">
-              Simpan password baru
-            </Button>
-          </form>
+          <FormulirPassword
+            aksi={ubahPassword}
+            ok={params.ok === "1"}
+            gagal={
+              params.gagal === "salah" || params.gagal === "pendek" || params.gagal === "gagal"
+                ? params.gagal
+                : null
+            }
+          />
         </CardContent>
       </Card>
 

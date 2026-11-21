@@ -14,6 +14,14 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@omnirelief/ui/components/empty";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@omnirelief/ui/components/dialog";
 import { Skeleton } from "@omnirelief/ui/components/skeleton";
 import { BoxIcon, WiFiOffIcon } from "@solar-icons/react/linear";
 import { Textarea } from "@omnirelief/ui/components/textarea";
@@ -60,6 +68,7 @@ export default function TugasTim() {
   const [pilih, setPilih] = useState<number | null>(null);
   const [kendala, setKendala] = useState("");
   const [darurat, setDarurat] = useState(false);
+  const [tanyaDarurat, setTanyaDarurat] = useState(false);
   const [antre, setAntre] = useState(0);
 
   const muat = useCallback(async () => {
@@ -129,6 +138,22 @@ export default function TugasTim() {
     }
   }
 
+  async function kirimSekarang(): Promise<void> {
+    const sisa = await kirimAntrean(window.localStorage, kirimNyata);
+    setAntre(sisa.length);
+    if (sisa.length === 0) {
+      toast.success("Antrean terkirim.");
+      await muat();
+    } else {
+      toast.error(`${sisa.length} data masih menunggu. Periksa koneksi lalu coba lagi.`);
+    }
+  }
+
+  function menitMenujuBatas(t: Tugas): number | null {
+    if (t.batas_checkin === null) return null;
+    return Math.round((new Date(t.batas_checkin).getTime() - Date.now()) / 60000);
+  }
+
   const aktif = tugas.find((t) => t.id === pilih) ?? null;
   const perluDicek = tugas.filter(lewatBatas).length;
 
@@ -136,13 +161,30 @@ export default function TugasTim() {
     <div className="flex flex-col gap-4">
       <BannerOffline />
       {antre > 0 && (
-        <p
+        <div
           role="status"
-          className="flex min-h-12 items-center gap-2 rounded-xl bg-warning-bg p-3 text-sm font-semibold text-warning-badge-fg"
+          className="flex flex-col gap-2 rounded-xl bg-warning-bg p-3 text-sm font-semibold text-warning-badge-fg"
         >
-          <WiFiOffIcon aria-hidden="true" className="size-5" />
-          {antre} Menunggu Sinkronisasi — terkirim otomatis saat daring.
-        </p>
+          <p className="flex min-h-12 items-center gap-2">
+            <WiFiOffIcon aria-hidden="true" className="size-5" />
+            {antre} Menunggu Sinkronisasi — terkirim otomatis saat daring.
+          </p>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => void kirimSekarang()}
+              variant="outline"
+              className="min-h-12 flex-1"
+            >
+              Kirim sekarang
+            </Button>
+            <a
+              href="/pengaturan#notifikasi"
+              className="flex min-h-12 flex-1 items-center justify-center rounded-xl border border-border px-4 font-semibold"
+            >
+              Atur notifikasi
+            </a>
+          </div>
+        </div>
       )}
 
       {status === "memuat" && (
@@ -185,87 +227,156 @@ export default function TugasTim() {
             {tugas.length} tugas hari ini
             {perluDicek > 0 ? ` · ${perluDicek} Perlu Dicek (lewat batas check-in)` : ""}
           </p>
-          {tugas.map((t) => (
-            <Card
-              key={t.id}
-              onClick={() => setPilih(t.id)}
-              className={`cursor-pointer text-left ${pilih === t.id ? "border-2 border-primary" : ""}`}
-            >
-              <CardContent className="flex flex-col gap-2 p-4 text-sm">
-                <p className="flex flex-wrap items-center gap-2 font-bold">
-                  {t.kode} · {t.posko_nama}
-                  {lewatBatas(t) && <Badge variant="destructive">Perlu Dicek</Badge>}
-                </p>
-                <p className="text-muted-foreground">
-                  Terakhir: {t.log_terakhir?.status ?? "-"}
-                  {t.eta ? ` · tiba ${new Date(t.eta).toLocaleString("id-ID")}` : ""}
-                  {t.batas_checkin
-                    ? ` · batas check-in ${new Date(t.batas_checkin).toLocaleString("id-ID")}`
-                    : ""}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
+          {tugas.map((t) => {
+            const sisa = menitMenujuBatas(t);
+            const mepet = !lewatBatas(t) && sisa !== null && sisa < 60 && sisa >= 0;
+            return (
+              <Card
+                key={t.id}
+                onClick={() => setPilih(t.id)}
+                className={`cursor-pointer text-left ${pilih === t.id ? "border-2 border-primary" : ""}`}
+              >
+                <CardContent className="flex flex-col gap-1 p-4 text-sm">
+                  <p className="flex flex-wrap items-center gap-2 font-bold">
+                    {t.kode} · {t.posko_nama}
+                    {lewatBatas(t) && <Badge variant="destructive">Perlu Dicek</Badge>}
+                    {mepet && (
+                      <Badge className="border-transparent bg-warning-bg text-warning-badge-fg">
+                        Check-in {sisa} mnt lagi
+                      </Badge>
+                    )}
+                  </p>
+                  <p className="text-muted-foreground">
+                    Terakhir: {t.log_terakhir?.status ?? "-"}
+                    {t.eta ? ` · tiba ${new Date(t.eta).toLocaleString("id-ID")}` : ""}
+                  </p>
+                  <p className="text-muted-foreground">
+                    {t.batas_checkin
+                      ? `Batas check-in: ${new Date(t.batas_checkin).toLocaleString("id-ID")}`
+                      : "Tanpa batas check-in"}
+                  </p>
+                </CardContent>
+              </Card>
+            );
+          })}
         </>
       )}
 
-      {aktif && (
-        <Card id="check-in" className="scroll-mt-20">
-          <CardHeader>
-            <CardTitle className="flex flex-wrap items-center gap-2 text-base">
-              Update {aktif.kode}
-              {lewatBatas(aktif) && <Badge variant="destructive">Perlu Dicek</Badge>}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-3 text-sm">
-            <div className="grid grid-cols-2 gap-2">
-              {AKSI.map((a) => (
-                <Button
-                  key={a.status}
-                  onClick={() =>
-                    void kirim(a.label, "/api/tim/status", {
-                      manifest_id: aktif.id,
-                      status: a.status,
-                    })
-                  }
+      {aktif &&
+        (() => {
+          const sisaAktif = menitMenujuBatas(aktif);
+          const mepetAktif =
+            !lewatBatas(aktif) && sisaAktif !== null && sisaAktif < 60 && sisaAktif >= 0;
+          return (
+            <Card id="check-in" className="scroll-mt-20">
+              <CardHeader>
+                <CardTitle className="flex flex-wrap items-center gap-2 text-base">
+                  Update {aktif.kode}
+                  {lewatBatas(aktif) && <Badge variant="destructive">Perlu Dicek</Badge>}
+                  {mepetAktif && (
+                    <Badge className="border-transparent bg-warning-bg text-warning-badge-fg">
+                      Check-in {sisaAktif} mnt lagi
+                    </Badge>
+                  )}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-3 text-sm">
+                <p className="text-muted-foreground">
+                  {aktif.batas_checkin
+                    ? `Batas check-in: ${new Date(aktif.batas_checkin).toLocaleString("id-ID")}`
+                    : "Tanpa batas check-in"}
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  {AKSI.map((a) => (
+                    <Button
+                      key={a.status}
+                      onClick={() =>
+                        void kirim(a.label, "/api/tim/status", {
+                          manifest_id: aktif.id,
+                          status: a.status,
+                        })
+                      }
+                      className="min-h-12"
+                    >
+                      {a.label}
+                    </Button>
+                  ))}
+                </div>
+                <Textarea
+                  value={kendala}
+                  onChange={(e) => setKendala(e.target.value)}
+                  placeholder="Tulis kendala di lapangan"
+                  aria-label="Kendala di lapangan"
                   className="min-h-12"
+                />
+                <label className="flex min-h-12 items-center gap-2 font-semibold text-destructive">
+                  <input
+                    type="checkbox"
+                    checked={darurat}
+                    onChange={(e) => setDarurat(e.target.checked)}
+                    className="h-5 w-5 accent-destructive"
+                  />
+                  Darurat (butuh SOP darurat BPBD)
+                </label>
+                <Button
+                  onClick={() => {
+                    if (darurat) {
+                      setTanyaDarurat(true);
+                      return;
+                    }
+                    void kirim("Kendala", "/api/tim/kendala", {
+                      manifest_id: aktif.id,
+                      kendala,
+                      darurat,
+                    });
+                  }}
+                  disabled={kendala.trim() === ""}
+                  variant={darurat ? "destructive" : "outline"}
+                  className="min-h-12 w-full"
                 >
-                  {a.label}
+                  {darurat ? "Kirim tanda darurat" : "Lapor kendala"}
                 </Button>
-              ))}
-            </div>
-            <Textarea
-              value={kendala}
-              onChange={(e) => setKendala(e.target.value)}
-              placeholder="Tulis kendala di lapangan"
-              aria-label="Kendala di lapangan"
-              className="min-h-12"
-            />
-            <label className="flex min-h-12 items-center gap-2">
-              <input
-                type="checkbox"
-                checked={darurat}
-                onChange={(e) => setDarurat(e.target.checked)}
-                className="h-5 w-5 accent-destructive"
-              />
-              Darurat (butuh SOP darurat BPBD)
-            </label>
+              </CardContent>
+            </Card>
+          );
+        })()}
+      <Dialog open={tanyaDarurat} onOpenChange={(buka) => !buka && setTanyaDarurat(false)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-destructive">Kirim tanda darurat?</DialogTitle>
+            <DialogDescription>
+              Tanda darurat memakai SOP darurat BPBD dan command center segera dihubungi. Pastikan
+              situasi benar-benar darurat sebelum mengirim.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
             <Button
-              onClick={() =>
-                void kirim("Kendala", "/api/tim/kendala", {
-                  manifest_id: aktif.id,
-                  kendala,
-                  darurat,
-                })
-              }
-              disabled={kendala.trim() === ""}
-              className="min-h-12 w-full bg-warning-bg text-warning-badge-fg hover:bg-warning-bg"
+              variant="outline"
+              onClick={() => setTanyaDarurat(false)}
+              className="min-h-12"
             >
-              Lapor kendala
+              Batal
             </Button>
-          </CardContent>
-        </Card>
-      )}
+            <Button
+              variant="destructive"
+              onClick={() => {
+                setTanyaDarurat(false);
+                if (aktif) {
+                  void kirim("Darurat", "/api/tim/kendala", {
+                    manifest_id: aktif.id,
+                    kendala,
+                    darurat: true,
+                  });
+                }
+              }}
+              disabled={kendala.trim() === ""}
+              className="min-h-12"
+            >
+              Ya, kirim darurat
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

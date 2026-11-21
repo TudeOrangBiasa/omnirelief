@@ -1,0 +1,114 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { Label } from "@omnirelief/ui/components/label";
+import { Switch } from "@omnirelief/ui/components/switch";
+
+const KUNCI = "omnirelief-aksesibilitas";
+
+type Ukuran = "biasa" | "besar" | "sangat";
+type Pilihan = { teks: Ukuran; kontras: boolean; gerak: boolean };
+
+const UKURAN: { nilai: Ukuran; label: string }[] = [
+  { nilai: "biasa", label: "Biasa" },
+  { nilai: "besar", label: "Besar" },
+  { nilai: "sangat", label: "Sangat besar" },
+];
+
+function baca(): Pilihan {
+  const baku: Pilihan = { teks: "biasa", kontras: false, gerak: false };
+  try {
+    const mentah = window.localStorage.getItem(KUNCI);
+    if (!mentah) return baku;
+    const p = JSON.parse(mentah) as Partial<Pilihan>;
+    const teks: Ukuran =
+      p.teks === "besar" || p.teks === "sangat" ? p.teks : "biasa";
+    return { teks, kontras: p.kontras === true, gerak: p.gerak === true };
+  } catch {
+    return { teks: "biasa", kontras: false, gerak: false };
+  }
+}
+
+function terapkan(p: Pilihan): void {
+  const akar = document.documentElement;
+  akar.style.fontSize = p.teks === "besar" ? "112.5%" : p.teks === "sangat" ? "125%" : "";
+  akar.classList.toggle("a11y-kontras", p.kontras);
+  akar.classList.toggle("a11y-gerak", p.gerak);
+}
+
+export default function AksesibilitasForm() {
+  const [pilihan, setPilihan] = useState<Pilihan>({ teks: "biasa", kontras: false, gerak: false });
+  const [siap, setSiap] = useState(false);
+
+  useEffect(() => {
+    const awal = baca();
+    setPilihan(awal);
+    terapkan(awal);
+    setSiap(true);
+  }, []);
+
+  function simpan(baru: Pilihan): void {
+    setPilihan(baru);
+    terapkan(baru);
+    try {
+      window.localStorage.setItem(KUNCI, JSON.stringify(baru));
+    } catch {
+      /* abaikan */
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-3 text-sm">
+      <fieldset className="flex flex-col gap-2">
+        <legend className="font-semibold">Ukuran teks</legend>
+        <div className="flex gap-2" role="group" aria-label="Ukuran teks">
+          {UKURAN.map((u) => (
+            <button
+              key={u.nilai}
+              type="button"
+              aria-pressed={siap && pilihan.teks === u.nilai}
+              onClick={() => simpan({ ...pilihan, teks: u.nilai })}
+              className={`min-h-12 flex-1 rounded-xl border px-3 font-semibold ${
+                pilihan.teks === u.nilai
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border"
+              }`}
+            >
+              {u.label}
+            </button>
+          ))}
+        </div>
+        <p aria-live="polite" className="text-muted-foreground text-xs">
+          Pratinjau: Posko A melayani 120 penyintas hari ini.
+        </p>
+      </fieldset>
+      <div className="flex min-h-12 items-center justify-between gap-3">
+        <div className="flex flex-col">
+          <Label htmlFor="a11y-kontras">Kontras tinggi</Label>
+          <span className="text-muted-foreground text-xs">Teks lebih tegas, tetap terang.</span>
+        </div>
+        <Switch
+          id="a11y-kontras"
+          checked={siap && pilihan.kontras}
+          onCheckedChange={(nilai) => simpan({ ...pilihan, kontras: nilai })}
+          aria-label={`Kontras tinggi, ${pilihan.kontras ? "aktif" : "nonaktif"}`}
+        />
+      </div>
+      <div className="flex min-h-12 items-center justify-between gap-3">
+        <div className="flex flex-col">
+          <Label htmlFor="a11y-gerak">Kurangi gerak dan animasi</Label>
+          <span className="text-muted-foreground text-xs">Menghormati preferensi perangkat.</span>
+        </div>
+        <Switch
+          id="a11y-gerak"
+          checked={siap && pilihan.gerak}
+          onCheckedChange={(nilai) => simpan({ ...pilihan, gerak: nilai })}
+          aria-label={`Kurangi gerak dan animasi, ${pilihan.gerak ? "aktif" : "nonaktif"}`}
+        />
+      </div>
+      <p role="status" id="a11y-info" className="text-muted-foreground">
+        {siap ? "Pilihan aksesibilitas tersimpan di perangkat ini." : "Memuat pilihan…"}
+      </p>
+    </div>
+  );
+}
