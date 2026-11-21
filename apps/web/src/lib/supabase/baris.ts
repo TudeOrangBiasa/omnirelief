@@ -99,6 +99,19 @@ export type BatchLihatRow = {
   status: string;
   sisa: number;
 };
+export type GudangBatchRow = {
+  id: number;
+  kode_sumbangan: string;
+  item_nama: string;
+  satuan: string;
+  jumlah: number;
+  kedaluwarsa: string | null;
+  sumber: string;
+  tampilkan_nama: boolean;
+  status: string;
+  terpakai: number;
+  sisa: number;
+};
 
 export function tunggal<T>(data: unknown): T | null {
   return typeof data === "object" && data !== null ? (data as T) : null;
