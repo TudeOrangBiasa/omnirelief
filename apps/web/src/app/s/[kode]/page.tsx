@@ -8,6 +8,7 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@omnirelief/ui/components/alert";
+import { Badge } from "@omnirelief/ui/components/badge";
 import { Button } from "@omnirelief/ui/components/button";
 import {
   Card,
@@ -103,6 +104,7 @@ export default function SumbanganPage({
     sumbangan && sumbangan.jumlah > 0
       ? Math.round((sumbangan.dialokasikan / sumbangan.jumlah) * 100)
       : 0;
+  const penuh = !!sumbangan && sumbangan.jumlah > 0 && sumbangan.tersisa <= 0;
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-2xl flex-col gap-6 p-6">
@@ -182,6 +184,15 @@ export default function SumbanganPage({
             <h2 id="alokasi" className="text-lg font-bold text-primary">
               Alokasi
             </h2>
+            {penuh ? (
+              <Badge className="mt-2 border-transparent bg-success-bg text-success-badge-fg">
+                Penuh · 100%
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="mt-2">
+                Terpakai {persen}%
+              </Badge>
+            )}
             <Progress value={persen} className="mt-2">
               <ProgressLabel>Terpakai</ProgressLabel>
               <span className="ml-auto text-xs text-muted-foreground tabular-nums">{persen}%</span>
@@ -195,7 +206,7 @@ export default function SumbanganPage({
 
           <section aria-labelledby="pemakai">
             <h2 id="pemakai" className="text-lg font-bold text-primary">
-              Dipakai di manifest
+              Dipakai di manifest ({dipakai.length})
             </h2>
             {dipakai.length === 0 ? (
               <p className="mt-2 text-sm text-muted-foreground">

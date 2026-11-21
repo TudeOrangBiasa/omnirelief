@@ -1,18 +1,33 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { toast } from "sonner";
+import { MagnifierIcon } from "@solar-icons/react/linear";
 import { Alert, AlertDescription, AlertTitle } from "@omnirelief/ui/components/alert";
+import { Badge } from "@omnirelief/ui/components/badge";
 import { Button } from "@omnirelief/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@omnirelief/ui/components/card";
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
+  EmptyMedia,
   EmptyTitle,
 } from "@omnirelief/ui/components/empty";
 import { Input } from "@omnirelief/ui/components/input";
 import { Label } from "@omnirelief/ui/components/label";
+import { Skeleton } from "@omnirelief/ui/components/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@omnirelief/ui/components/table";
+import { urutFEFO } from "@/lib/fefo";
+import { baris, type GudangBatchRow } from "@/lib/supabase/baris";
 
 type GalatField = {
   item_id?: string;
@@ -27,6 +42,8 @@ type IntakeHariIni = {
   sumber: string;
   waktu: string;
 };
+
+type StatusBatch = "memuat" | "siap" | "gagal" | "tanpa-akses";
 
 function validasiClient(formData: FormData): { nilai: { item_id: number; jumlah: number; kedaluwarsa: string; sumber: string; tampilkan_nama: boolean }; galat: GalatField } {
   const galat: GalatField = {};
@@ -49,12 +66,18 @@ function validasiClient(formData: FormData): { nilai: { item_id: number; jumlah:
     nilai: {
       item_id,
       jumlah,
-      kedaluwarsa: kedaluwarsa === "" ? "" : kedaluwarsa,
+      kedaluwarsa,
       sumber,
       tampilkan_nama: formData.get("tampilkan_nama") === "on",
     },
     galat,
   };
+}
+
+function sisaHari(t: string) {
+  const kini = new Date();
+  kini.setHours(0, 0, 0, 0);
+  return Math.ceil((new Date(t).getTime() - kini.getTime()) / 86400000);
 }
 
 export default function GudangPage() {
@@ -63,7 +86,64 @@ export default function GudangPage() {
   const [galatField, setGalatField] = useState<GalatField>({});
   const [riwayat, setRiwayat] = useState<IntakeHariIni[]>([]);
   const [sibuk, setSibuk] = useState(false);
+  const [batch, setBatch] = useState<GudangBatchRow[]>([]);
+  const [statusBatch, setStatusBatch] = useState<StatusBatch>("memuat");
+  const [cariBatch, setCariBatch] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
+
+  const muatBatch = useCallback(() => {
+    setStatusBatch("memuat");
+    fetch("/api/gudang/batch")
+      .then((r) => {
+        if (r.status === 401 || r.status === 403) {
+          setStatusBatch("tanpa-akses");
+          return null;
+        }
+        if (!r.ok) {
+          setStatusBatch("gagal");
+          return null;
+        }
+        return r.json();
+      })
+      .then((d: { ok: boolean; batch?: unknown } | null) => {
+        if (d === null) return;
+        if (d.ok) {
+          setBatch(baris<GudangBatchRow>(d.batch));
+          setStatusBatch("siap");
+        } else {
+          setStatusBatch("gagal");
+        }
+      })
+      .catch(() => setStatusBatch("gagal"));
+  }, []);
+
+  useEffect(() => {
+    muatBatch();
+  }, [muatBatch]);
+
+  const tampilBatch = useMemo(() => {
+    const kata = cariBatch.trim().toLowerCase();
+    const saring = batch.filter(
+      (b) =>
+        kata === "" ||
+        b.kode_sumbangan.toLowerCase().includes(kata) ||
+        b.item_nama.toLowerCase().includes(kata) ||
+        b.sumber.toLowerCase().includes(kata)
+    );
+    return urutFEFO(
+      saring.map((b) => ({ ...b, kode: b.kode_sumbangan, tersedia: b.sisa }))
+    );
+  }, [batch, cariBatch]);
+
+  const sisaTampil = useMemo(
+    () => tampilBatch.reduce((s, b) => s + b.sisa, 0),
+    [tampilBatch]
+  );
+
+  function fokusForm() {
+    formRef.current?.scrollIntoView({ block: "start" });
+    document.getElementById("gudang-item")?.focus({ preventScroll: true });
+  }
 
   async function simpan(formData: FormData) {
     setHasil(null);
@@ -98,6 +178,7 @@ export default function GudangPage() {
         ]);
         toast.success(`Intake tersimpan. Kode ${data.kode_sumbangan}.`);
         formRef.current?.reset();
+        muatBatch();
       } else {
         setGalat(data.galat ?? "Gagal menyimpan.");
       }
@@ -225,6 +306,138 @@ export default function GudangPage() {
           {sibuk ? "Menyimpan..." : "Simpan batch"}
         </Button>
       </form>
+
+      <section aria-label="Stok batch" className="flex flex-col gap-3">
+        <h2 className="text-lg font-bold text-primary">Stok batch</h2>
+        <p className="text-muted-foreground text-sm">
+          Urutan FEFO: kedaluwarsa paling dekat keluar duluan.
+        </p>
+        <Input
+          value={cariBatch}
+          onChange={(e) => setCariBatch(e.target.value)}
+          placeholder="Cari kode, barang, atau sumber..."
+          aria-label="Cari batch"
+          className="min-h-12"
+        />
+        {statusBatch === "siap" && (
+          <p role="status" className="text-muted-foreground t-angka text-sm">
+            {tampilBatch.length} batch · sisa {sisaTampil}
+          </p>
+        )}
+        {statusBatch === "memuat" && (
+          <div role="status" aria-label="Memuat stok batch" className="flex flex-col gap-2">
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+          </div>
+        )}
+        {statusBatch === "tanpa-akses" && (
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <MagnifierIcon aria-hidden="true" />
+              </EmptyMedia>
+              <EmptyTitle>Stok batch butuh akses gudang</EmptyTitle>
+              <EmptyDescription>
+                Masuk sebagai petugas gudang atau BPBD untuk melihat tabel batch.
+              </EmptyDescription>
+            </EmptyHeader>
+            <Button render={<Link href="/masuk" />} className="mt-4 min-h-12">
+              Masuk
+            </Button>
+          </Empty>
+        )}
+        {statusBatch === "gagal" && (
+          <Alert variant="destructive">
+            <AlertTitle>Gagal memuat batch</AlertTitle>
+            <AlertDescription>
+              Periksa koneksi lalu coba lagi.
+            </AlertDescription>
+            <Button onClick={muatBatch} className="mt-3 min-h-12">
+              Coba lagi
+            </Button>
+          </Alert>
+        )}
+        {statusBatch === "siap" && batch.length === 0 && (
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <MagnifierIcon aria-hidden="true" />
+              </EmptyMedia>
+              <EmptyTitle>Belum ada batch</EmptyTitle>
+              <EmptyDescription>
+                Batch muncul di sini setiap ada intake tersimpan, siap disalurkan FEFO.
+              </EmptyDescription>
+            </EmptyHeader>
+            <Button onClick={fokusForm} className="mt-4 min-h-12">
+              Catat sumbangan
+            </Button>
+          </Empty>
+        )}
+        {statusBatch === "siap" && batch.length > 0 && tampilBatch.length === 0 && (
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <MagnifierIcon aria-hidden="true" />
+              </EmptyMedia>
+              <EmptyTitle>Tidak ada hasil</EmptyTitle>
+              <EmptyDescription>
+                Tidak ada batch yang cocok dengan pencarian. Coba kata lain atau atur ulang.
+              </EmptyDescription>
+            </EmptyHeader>
+            <Button onClick={() => setCariBatch("")} variant="outline" className="mt-4 min-h-12">
+              Atur ulang pencarian
+            </Button>
+          </Empty>
+        )}
+        {statusBatch === "siap" && tampilBatch.length > 0 && (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Kode</TableHead>
+                <TableHead>Barang</TableHead>
+                <TableHead>Sisa</TableHead>
+                <TableHead>Kedaluwarsa</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {tampilBatch.map((b) => {
+                const hari = b.kedaluwarsa ? sisaHari(b.kedaluwarsa) : null;
+                return (
+                  <TableRow key={b.id}>
+                    <TableCell className="font-mono text-xs">{b.kode_sumbangan}</TableCell>
+                    <TableCell>
+                      {b.item_nama}
+                      <span className="text-muted-foreground t-angka block text-xs">
+                        {b.jumlah} {b.satuan}
+                      </span>
+                    </TableCell>
+                    <TableCell className="t-angka">
+                      {b.sisa} {b.satuan}
+                    </TableCell>
+                    <TableCell className="text-xs">
+                      {b.kedaluwarsa ? new Date(b.kedaluwarsa).toLocaleDateString("id-ID") : "Tanpa tanggal"}
+                      {hari !== null && hari < 0 && (
+                        <Badge variant="destructive" className="mt-1">
+                          Kedaluwarsa
+                        </Badge>
+                      )}
+                      {hari !== null && hari >= 0 && hari <= 7 && (
+                        <Badge
+                          variant="outline"
+                          className="mt-1 border-transparent bg-warning-bg text-warning"
+                        >
+                          FEFO: kedaluwarsa {hari} hari
+                        </Badge>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        )}
+      </section>
 
       <section aria-label="Riwayat intake hari ini" className="flex flex-col gap-2">
         <h2 className="text-lg font-bold text-primary">Riwayat intake hari ini</h2>
