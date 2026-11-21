@@ -65,11 +65,11 @@ const CONTOH_KODE = "MNF-2026-0001";
 
 // Rel kiri transparan (viewport): konten menempel kanan.
 // BAND = pita selebar viewport yang keluar dari kolom layout (ml 50%-50vw).
-// SOLID = pita solid yang mulai dari batas rel (8vw, 14vw di sm+) sampai tepi kanan.
+// SOLID = pita solid yang mulai dari batas rel (8vw, 14vw di md+) sampai tepi kanan.
 const BAND = "relative ml-[calc(50%-50vw)] w-screen";
-const REL = "ml-[8vw] w-[92vw] sm:ml-[14vw] sm:w-[86vw]";
+const REL = "ml-[8vw] w-[92vw] md:ml-[14vw] md:w-[86vw]";
 const SOLID =
-  "relative ml-[calc(50%-50vw+8vw)] w-[92vw] sm:ml-[calc(50%-50vw+14vw)] sm:w-[86vw]";
+  "relative ml-[calc(50%-50vw+8vw)] w-[92vw] md:ml-[calc(50%-50vw+14vw)] md:w-[86vw]";
 
 export default function Home() {
   const [kode, setKode] = useState("");
@@ -99,7 +99,7 @@ export default function Home() {
         variant="mesh-gradient"
         colors={["#030D14", "#082032", "#0F3B5F", "#1B7FBF"]}
         aria-hidden
-        className="pointer-events-none fixed inset-0"
+        className="pointer-events-none fixed inset-0 bg-[#030D14]"
       />
 
       {/* Band 1 — Hero transparan di atas tinta */}
@@ -108,7 +108,7 @@ export default function Home() {
         aria-label="Cek kode kiriman"
         className={cn(BAND, "scroll-mt-20")}
       >
-        <div className={cn(REL, "grid gap-10 py-16 pr-5 md:pr-10 md:py-24 lg:grid-cols-12 lg:gap-12")}>
+        <div className={cn(REL, "grid gap-10 pb-16 pr-5 pt-24 sm:pt-28 md:pb-24 md:pr-10 lg:grid-cols-12 lg:gap-12")}>
           <div className="relative flex flex-col justify-center gap-5 lg:col-span-6">
             <p className="t-micro text-white/70">
               Sistem supply chain pangan darurat
@@ -198,7 +198,7 @@ export default function Home() {
         aria-label="Ringkasan angka"
         className={cn(SOLID, "rounded-none bg-[#DCE8EE] text-[#0B1F2E]")}
       >
-        <div className="relative grid gap-10 py-12 pr-5 md:pr-10 md:py-16 lg:grid-cols-12 lg:gap-12">
+        <div className="relative grid gap-10 px-6 py-12 sm:px-10 lg:grid-cols-12 lg:gap-12 lg:px-14 lg:py-16">
           <div className="flex flex-col justify-center gap-2 lg:col-span-5">
             <p className="t-micro opacity-70">Tanpa login</p>
             <h2 className="t-h2 t-balance">
@@ -269,7 +269,7 @@ export default function Home() {
         aria-label="Cara cek dalam 3 langkah"
         className={cn(SOLID, "rounded-none bg-[#DCE8EE] text-[#0B1F2E]")}
       >
-        <div className="relative grid gap-10 py-12 pr-5 md:pr-10 md:py-16 lg:grid-cols-12 lg:gap-12">
+        <div className="relative grid gap-10 px-6 py-12 sm:px-10 lg:grid-cols-12 lg:gap-12 lg:px-14 lg:py-16">
           <div className="flex flex-col justify-center gap-2 lg:col-span-5">
             <p className="t-micro opacity-70">Verifikasi publik</p>
             <h2 className="t-h2 t-balance">
