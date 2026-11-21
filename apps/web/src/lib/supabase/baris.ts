@@ -1,3 +1,9 @@
+export type ItemKatalogRow = {
+  id: number;
+  nama: string;
+  satuan: string;
+};
+
 export type BatchRow = {
   id: number;
   kode_sumbangan: string;

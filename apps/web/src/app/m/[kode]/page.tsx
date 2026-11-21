@@ -40,6 +40,7 @@ import {
   TableRow,
 } from "@omnirelief/ui/components/table";
 import { baris, tunggal } from "@/lib/supabase/baris";
+import { formatHariLokal, formatTanggalLokal } from "@/lib/tanggal";
 
 type StatusMuat = "memuat" | "siap" | "kosong" | "gagal";
 
@@ -84,7 +85,7 @@ type ManifestApi = {
 };
 
 function tanggal(t: string) {
-  return new Date(t).toLocaleString("id-ID");
+  return formatTanggalLokal(t);
 }
 
 export default function ManifestPage({
@@ -277,7 +278,7 @@ export default function ManifestPage({
                             </TableCell>
                             <TableCell className="text-xs">
                               {b.kedaluwarsa
-                                ? new Date(b.kedaluwarsa).toLocaleDateString("id-ID")
+                                ? formatHariLokal(b.kedaluwarsa)
                                 : "Tidak ada tanggal"}
                             </TableCell>
                           </TableRow>

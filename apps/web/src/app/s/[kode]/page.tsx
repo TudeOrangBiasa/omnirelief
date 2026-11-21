@@ -36,6 +36,7 @@ import {
 } from "@omnirelief/ui/components/progress";
 import { Skeleton } from "@omnirelief/ui/components/skeleton";
 import { baris, tunggal } from "@/lib/supabase/baris";
+import { formatHariLokal, formatTanggalLokal } from "@/lib/tanggal";
 
 type StatusMuat = "memuat" | "siap" | "kosong" | "gagal";
 type PakaiRow = {
@@ -59,7 +60,7 @@ type SumbanganApi = {
 };
 
 function tanggal(t: string) {
-  return new Date(t).toLocaleDateString("id-ID");
+  return formatTanggalLokal(t);
 }
 
 export default function SumbanganPage({
@@ -204,7 +205,7 @@ export default function SumbanganPage({
               {sumbangan.jumlah} {sumbangan.satuan} {sumbangan.item_nama} ·
               masuk {tanggal(sumbangan.tgl_masuk)}
               {sumbangan.kedaluwarsa
-                ? ` · kedaluwarsa ${tanggal(sumbangan.kedaluwarsa)}`
+                ? ` · kedaluwarsa ${formatHariLokal(sumbangan.kedaluwarsa)}`
                 : ""}
             </p>
           </div>

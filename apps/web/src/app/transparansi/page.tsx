@@ -130,8 +130,8 @@ export default function TransparansiPage() {
             required
             className="min-h-12 flex-1"
           />
-          <Button type="submit" className="min-h-12">
-            Cek
+          <Button type="submit" className="min-h-12" aria-label="Cek kode manifest">
+            <MagnifierIcon aria-hidden="true" /> Cek
           </Button>
         </form>
         <form action={`/s/${kodeSumbangan.trim()}`} className="flex gap-2">
@@ -143,8 +143,8 @@ export default function TransparansiPage() {
             required
             className="min-h-12 flex-1"
           />
-          <Button type="submit" className="min-h-12">
-            Cek
+          <Button type="submit" className="min-h-12" aria-label="Cek kode sumbangan">
+            <MagnifierIcon aria-hidden="true" /> Cek
           </Button>
         </form>
       </div>

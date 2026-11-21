@@ -27,7 +27,7 @@ import {
   TableRow,
 } from "@omnirelief/ui/components/table";
 import { urutFEFO } from "@/lib/fefo";
-import { baris, type GudangBatchRow } from "@/lib/supabase/baris";
+import { baris, type GudangBatchRow, type ItemKatalogRow } from "@/lib/supabase/baris";
 
 type GalatField = {
   item_id?: string;
@@ -53,7 +53,7 @@ function validasiClient(formData: FormData): { nilai: { item_id: number; jumlah:
   const sumber = String(formData.get("sumber") ?? "").trim();
 
   if (!Number.isInteger(item_id) || item_id <= 0)
-    galat.item_id = "Isi ID item dengan angka lebih dari 0.";
+    galat.item_id = "Pilih nama barang dari daftar.";
   if (!Number.isInteger(jumlah) || jumlah <= 0)
     galat.jumlah = "Jumlah harus lebih dari 0.";
   if (sumber === "") galat.sumber = "Sumber wajib diisi.";
@@ -88,6 +88,8 @@ export default function GudangPage() {
   const [sibuk, setSibuk] = useState(false);
   const [batch, setBatch] = useState<GudangBatchRow[]>([]);
   const [statusBatch, setStatusBatch] = useState<StatusBatch>("memuat");
+  const [katalog, setKatalog] = useState<ItemKatalogRow[]>([]);
+  const [statusKatalog, setStatusKatalog] = useState<StatusBatch>("memuat");
   const [cariBatch, setCariBatch] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -117,9 +119,36 @@ export default function GudangPage() {
       .catch(() => setStatusBatch("gagal"));
   }, []);
 
+  const muatKatalog = useCallback(() => {
+    setStatusKatalog("memuat");
+    fetch("/api/gudang/items")
+      .then((r) => {
+        if (r.status === 401 || r.status === 403) {
+          setStatusKatalog("tanpa-akses");
+          return null;
+        }
+        if (!r.ok) {
+          setStatusKatalog("gagal");
+          return null;
+        }
+        return r.json();
+      })
+      .then((d: { ok: boolean; items?: unknown } | null) => {
+        if (d === null) return;
+        if (d.ok) {
+          setKatalog(baris<ItemKatalogRow>(d.items));
+          setStatusKatalog("siap");
+        } else {
+          setStatusKatalog("gagal");
+        }
+      })
+      .catch(() => setStatusKatalog("gagal"));
+  }, []);
+
   useEffect(() => {
     muatBatch();
-  }, [muatBatch]);
+    muatKatalog();
+  }, [muatBatch, muatKatalog]);
 
   const tampilBatch = useMemo(() => {
     const kata = cariBatch.trim().toLowerCase();
@@ -233,19 +262,41 @@ export default function GudangPage() {
 
       <form ref={formRef} action={simpan} className="flex flex-col gap-4" noValidate>
         <div className="flex flex-col gap-1">
-          <Label htmlFor="gudang-item">ID item (lihat katalog, contoh 6 untuk Paket Sembako)</Label>
-          <Input
+          <Label htmlFor="gudang-item">Nama barang</Label>
+          <select
             id="gudang-item"
             name="item_id"
-            type="number"
-            min={1}
-            className="min-h-12"
+            defaultValue=""
+            required
+            disabled={statusKatalog !== "siap"}
+            className="min-h-12 w-full rounded-xl border border-input bg-card px-3 text-sm disabled:opacity-50"
             aria-invalid={galatField.item_id ? true : undefined}
             aria-describedby={galatField.item_id ? "gudang-item-galat" : undefined}
-          />
+          >
+            <option value="">
+              {statusKatalog === "memuat"
+                ? "Memuat daftar barang..."
+                : statusKatalog === "siap"
+                  ? `Pilih barang (${katalog.length} jenis)`
+                  : "Daftar barang butuh akses gudang"}
+            </option>
+            {katalog.map((k) => (
+              <option key={k.id} value={k.id}>
+                {k.nama} · {k.satuan}
+              </option>
+            ))}
+          </select>
           {galatField.item_id && (
             <p id="gudang-item-galat" role="alert" className="text-sm text-destructive">
               {galatField.item_id}
+            </p>
+          )}
+          {statusKatalog === "gagal" && (
+            <p className="text-sm text-muted-foreground">
+              Gagal memuat daftar.{" "}
+              <button type="button" onClick={muatKatalog} className="min-h-12 underline">
+                Muat ulang
+              </button>
             </p>
           )}
         </div>
