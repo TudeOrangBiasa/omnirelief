@@ -114,3 +114,21 @@ Menambah kolom tanpa data = akal-akalan; dicatat di sini sesuai instruksi.
    client-side perlu paginasi/`load more` (List View baris 6 jadi 🔴 saat itu).
 3. Warna batang progress `/s` tidak berubah hijau saat penuh (batas primitif UI);
    status hijau dibawa badge — setara makna, beda piksel.
+
+## Tindak lanjut — 4 gap ditutup (`6d0582c`, terverifikasi browser 21 Nov 2026)
+
+1. **Aktor timeline**: `manifest_log.dibuat_oleh` ternyata sudah ada di skema
+   (diisi semua penulis kecuali penanda sistem pantauan) — gap hanya di baca:
+   `api/publik/manifest` kini join `profil(nama)`; timeline tampilkan
+   `oleh {nama}` / `oleh sistem`.
+2. **Kedaluwarsa item**: `manifest_item → stok_batch.kedaluwarsa` tersedia tanpa
+   migrasi — rute kini memilihnya; tabel `/m` tambah kolom Kedaluwarsa
+   (`id-ID`, `—` bila tanpa tanggal).
+3. **Alasan revisi**: migrasi `0002_alasan_snapshot.sql` (`penyintas_snapshot.alasan`,
+   teraplikasi live); `validasiVerifikasi` wajibkan alasan ≥5 huruf untuk
+   MINTA_REVISI/DITOLAK (+2 uji); rute verifikasi simpan; GET laporan kembalikan;
+   banner posko tampilkan `Alasan BPBD:` (revisi + tolak). Data sementara saat
+   verifikasi dikembalikan (snapshot id=1).
+4. **Progress penuh hijau**: primitif `Progress` tambah `indicatorClassName`
+   (aditif); `/s` oper `bg-success` saat 100%. Kasus penuh belum ada di seed —
+   cabang hijau terverifikasi kode + gerbang, belum tangkapan layar.
