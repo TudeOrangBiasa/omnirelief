@@ -28,6 +28,15 @@ export type ManifestItemRow = {
   jumlah: number;
 };
 
+export type DashboardRow = {
+  posko_id: number;
+  posko_nama: string;
+  wilayah: string;
+  butuh: number;
+  dikirim: number;
+  diterima: number;
+  selisih: number;
+};
 export function baris<T>(data: unknown): T[] {
   return Array.isArray(data) ? data.filter((r) => typeof r === "object" && r !== null) as T[] : [];
 }
