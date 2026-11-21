@@ -18,6 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@omnirelief/ui/components/card";
+import { AuroraBackground } from "@omnirelief/ui/components/velora/aurora-background";
 import { Input } from "@omnirelief/ui/components/input";
 import { cn } from "@omnirelief/ui/lib/utils";
 
@@ -91,9 +92,10 @@ export default function Home() {
       <section
         id="cek-kode"
         aria-label="Cek kode kiriman"
-        className="grid scroll-mt-20 gap-10 pb-16 pt-12 md:pt-20 lg:grid-cols-12 lg:gap-12"
+        className="relative grid scroll-mt-20 gap-10 pb-16 pt-12 md:pt-20 lg:grid-cols-12 lg:gap-12"
       >
-        <div className="flex flex-col gap-5 lg:col-span-7">
+        <AuroraBackground intensity="subtle" />
+        <div className="relative flex flex-col gap-5 lg:col-span-7">
           <p className="t-micro text-primary">
             Sistem supply chain pangan darurat
           </p>
@@ -144,7 +146,7 @@ export default function Home() {
 
         <aside
           aria-label="Pratinjau kartu manifest terkunci"
-          className="lg:col-span-5"
+          className="relative lg:col-span-5"
         >
           <Card className="lg:sticky lg:top-24">
             <CardHeader>
