@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
   BoxMinimalisticIcon,
@@ -18,8 +18,6 @@ import {
   SendSquareIcon,
   SettingsIcon,
   ShieldCheckIcon,
-  SidebarCloseIcon,
-  SidebarOpenIcon,
   TruckIcon,
   UserIcon,
 } from "@solar-icons/react/linear";
@@ -40,6 +38,19 @@ import {
   TruckIcon as TruckDuoIcon,
   UserIcon as UserDuoIcon,
 } from "@solar-icons/react/bold-duotone";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+} from "@omnirelief/ui/components/sidebar";
 import {
   grupSidebar,
   LABEL_SINGKAT,
@@ -143,47 +154,44 @@ function ItemTab({
   );
 }
 
-function ItemSidebar({
+function ItemMenu({
   item,
   aktif,
   menunggu,
   pantau,
-  ciut,
 }: {
   item: NavItem;
   aktif: boolean;
   menunggu: number;
   pantau: number;
-  ciut: boolean;
 }) {
   const Ikon = aktif ? IKON_DUO[item.ikon] : IKON_LIN[item.ikon];
   return (
-    <a
-      href={item.href}
-      aria-current={aktif ? "page" : undefined}
-      title={ciut ? item.label : undefined}
-      aria-label={
-        item.lencana === "antrean" && menunggu > 0
-          ? `${item.label}, ${menunggu} menunggu${pantau > 0 ? `, ${pantau} perlu dicek` : ""}`
-          : item.label
-      }
-      className={cn(
-        "flex min-h-12 items-center gap-3 rounded-xl text-sm",
-        ciut ? "w-12 justify-center" : "px-3",
-        aktif ? "bg-primary-bg font-bold text-primary" : "font-medium text-muted-foreground"
-      )}
-    >
-      <span className="relative shrink-0">
-        <Ikon aria-hidden="true" className="size-5" />
-      {ciut && item.lencana === "antrean" && (
-        <span className="absolute -top-2 -end-2">
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        isActive={aktif}
+        tooltip={item.label}
+        render={
+          <a
+            href={item.href}
+            aria-current={aktif ? "page" : undefined}
+            aria-label={
+              item.lencana === "antrean" && menunggu > 0
+                ? `${item.label}, ${menunggu} menunggu${pantau > 0 ? `, ${pantau} perlu dicek` : ""}`
+                : item.label
+            }
+          />
+        }
+      >
+        <Ikon aria-hidden="true" />
+        <span>{item.label}</span>
+      </SidebarMenuButton>
+      {item.lencana === "antrean" && menunggu > 0 && (
+        <span className="absolute top-1 end-1">
           <Lencana jumlah={menunggu} />
         </span>
       )}
-      </span>
-      {!ciut && <span className="flex-1">{item.label}</span>}
-      {!ciut && item.lencana === "antrean" && <Lencana jumlah={menunggu} />}
-    </a>
+    </SidebarMenuItem>
   );
 }
 
@@ -193,8 +201,6 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
   const [lainnyaBuka, setLainnyaBuka] = useState(false);
   const [antrean, setAntrean] = useState(0);
   const [pantau, setPantau] = useState(0);
-  const [menuBuka, setMenuBuka] = useState(false);
-  const [ciut, setCiut] = useState(false);
 
   useEffect(() => {
     function segarkanHash() {
@@ -240,48 +246,12 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
     return () => window.removeEventListener("keydown", saatTombol);
   }, [lainnyaBuka]);
 
-  useEffect(() => {
-    if (!menuBuka) return;
-    function tutupLuar(e: MouseEvent) {
-      if (!(e.target as HTMLElement).closest("[data-menu-akun]")) setMenuBuka(false);
-    }
-    function tutupLepas(e: KeyboardEvent) {
-      if (e.key === "Escape") setMenuBuka(false);
-    }
-    document.addEventListener("mousedown", tutupLuar);
-    window.addEventListener("keydown", tutupLepas);
-    return () => {
-      document.removeEventListener("mousedown", tutupLuar);
-      window.removeEventListener("keydown", tutupLepas);
-    };
-  }, [menuBuka]);
-
-
-  useEffect(() => {
-    try {
-      setCiut(window.localStorage.getItem("omnirelief-bilah") === "ciut");
-    } catch {
-      /* abaikan: privat mode */
-    }
-  }, []);
-
-  function alihLebar() {
-    setCiut((v) => {
-      try {
-        window.localStorage.setItem("omnirelief-bilah", v ? "lebar" : "ciut");
-      } catch {
-        /* abaikan */
-      }
-      return !v;
-    });
-  }
   const path = pathname ?? "/";
   const sembunyi = sembunyikanTabBar(path);
   const diDasbor = zonaDasbor(path);
   const tab = NAVIGASI_TAB[peran];
   const lainnya = NAVIGASI_LAINNYA[peran];
   const grup = grupSidebar(peran);
-  const IkonCiut = ciut ? SidebarOpenIcon : SidebarCloseIcon;
   const cocokAda = grup.some((g) => g.item.some((i) => tabAktif(path, hash, i.href)));
   const cocokTabAda = tab.some((i) => tabAktif(path, hash, i.href));
   const aktifItem = (href: string) =>
@@ -294,125 +264,81 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
   return (
     <>
       {diDasbor && (
-        <aside
-          aria-label="Navigasi utama"
-          className={cn(
-            "sticky top-16 hidden shrink-0 flex-col self-start overflow-y-auto border-e border-border py-6 md:flex",
-            ciut ? "w-20 items-center gap-3 px-2" : "w-64 gap-3 px-6"
-          )}
-        >
-          <div className={cn("flex min-h-12 items-center gap-3", ciut && "flex-col")}>
-            <a
-              href="/beranda"
-              aria-label="OmniRelief work zone"
-              className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-base font-bold text-primary-foreground"
-            >
-              O
-            </a>
-            {!ciut && (
-              <p className="min-w-0 flex-1 truncate text-sm font-bold">OmniRelief</p>
-            )}
-            <button
-              type="button"
-              onClick={alihLebar}
-              aria-expanded={!ciut}
-              aria-label={ciut ? "Bentangkan navigasi" : "Ciutkan navigasi"}
-              title={ciut ? "Bentangkan" : "Ciutkan"}
-              className="flex min-h-12 min-w-12 items-center justify-center rounded-xl text-muted-foreground"
-            >
-              <IkonCiut aria-hidden="true" className="size-5" />
-            </button>
-          </div>
-          <span aria-hidden="true" className="mx-auto w-36 border-t border-border" />
-          {grup.map((g, i) => (
-            <Fragment key={g.judul}>
-              {i > 0 && (
-                <span aria-hidden="true" className="mx-auto w-36 border-t border-border" />
-              )}
-              <section
-                aria-label={g.judul}
-                className={cn("flex w-full flex-col gap-1", ciut && "items-center")}
-              >
-                {!ciut && <p className="t-micro px-3 text-muted-foreground">{g.judul}</p>}
-                {g.item.map((item) => (
-                  <ItemSidebar
-                    key={item.href}
-                    item={item}
-                    ciut={ciut}
-                    menunggu={antrean + pantau}
-                    pantau={pantau}
-                    aktif={aktifItem(item.href)}
-                  />
-                ))}
-              </section>
-            </Fragment>
-          ))}
-          {nama && (
-            <>
-              <span aria-hidden="true" className="mx-auto w-36 border-t border-border" />
-              <div data-menu-akun className={cn("relative", ciut ? "flex flex-col items-center" : "flex min-h-12 items-center gap-3")}>
-                <a
-                  href="/profil"
-                  aria-label={`Profil ${nama}`}
-                  title={ciut ? nama : undefined}
-                  className={cn(
-                    "flex min-h-12 items-center gap-3 rounded-xl text-sm",
-                    ciut ? "w-12 justify-center" : "min-w-0 flex-1"
-                  )}
+        <Sidebar variant="inset" collapsible="icon" aria-label="Navigasi utama">
+          <SidebarHeader>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  size="lg"
+                  tooltip="Beranda"
+                  render={
+                    <a href="/beranda" aria-label="OmniRelief work zone" />
+                  }
                 >
                   <span
                     aria-hidden="true"
-                    className="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-bold text-secondary-foreground"
+                    className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-bold text-primary-foreground"
                   >
-                    {inisial}
+                    O
                   </span>
-                  {!ciut && (
+                  <span className="truncate text-sm font-bold">OmniRelief</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarHeader>
+          <SidebarContent>
+            {grup.map((g) => (
+              <SidebarGroup key={g.judul}>
+                <SidebarGroupLabel>{g.judul}</SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {g.item.map((item) => (
+                      <ItemMenu
+                        key={item.href}
+                        item={item}
+                        menunggu={antrean + pantau}
+                        pantau={pantau}
+                        aktif={aktifItem(item.href)}
+                      />
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            ))}
+          </SidebarContent>
+          {nama && (
+            <SidebarFooter>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    size="lg"
+                    tooltip={`Profil ${nama}`}
+                    render={
+                      <a
+                        href="/profil"
+                        aria-label={`Profil ${nama}, ${LABEL_SINGKAT[peran]}`}
+                      />
+                    }
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="flex size-8 shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-bold text-secondary-foreground"
+                    >
+                      {inisial}
+                    </span>
                     <span className="min-w-0 flex-1 leading-tight">
                       <span className="block truncate font-semibold">{nama}</span>
                       <span className="block truncate text-xs font-normal text-muted-foreground">
                         {LABEL_SINGKAT[peran]}
                       </span>
                     </span>
-                  )}
-                </a>
-                <button
-                  type="button"
-                  onClick={() => setMenuBuka((v) => !v)}
-                  aria-expanded={menuBuka}
-                  aria-label="Menu akun"
-                  title="Menu akun"
-                  className="flex min-h-12 min-w-12 items-center justify-center rounded-xl text-muted-foreground"
-                >
-                  <MenuDotsVerticalIcon aria-hidden="true" className="size-5" />
-                </button>
-                {menuBuka && (
-                  <div
-                    role="menu"
-                    aria-label="Menu akun"
-                    className="absolute right-0 bottom-full z-10 mb-2 w-48 rounded-xl border border-border bg-background p-1"
-                  >
-                    <a
-                      role="menuitem"
-                      href="/profil"
-                      onClick={() => setMenuBuka(false)}
-                      className="flex min-h-12 items-center rounded-lg px-3 text-sm font-medium"
-                    >
-                      Profil
-                    </a>
-                    <a
-                      role="menuitem"
-                      href="/pengaturan"
-                      onClick={() => setMenuBuka(false)}
-                      className="flex min-h-12 items-center rounded-lg px-3 text-sm font-medium"
-                    >
-                      Pengaturan
-                    </a>
-                  </div>
-                )}
-              </div>
-            </>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarFooter>
           )}
-        </aside>
+          <SidebarRail />
+        </Sidebar>
       )}
 
 

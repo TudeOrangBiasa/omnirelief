@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import "../index.css";
+import { SidebarInset, SidebarProvider } from "@omnirelief/ui/components/sidebar";
 import Header from "@/components/header";
 import BilahNav from "@/components/bilah-nav";
 import PendaftaranSw from "@/components/pendaftaran-sw";
@@ -52,11 +53,15 @@ export default async function RootLayout({
           }}
         />
         <Providers>
-          <Header nama={profil?.nama ?? null} peranLabel={LABEL_PERAN[peran]} />
-          <div className="mx-auto flex w-full max-w-5xl items-start">
+          <SidebarProvider>
             <BilahNav peran={peran} nama={profil?.nama ?? null} />
-            <div className="min-w-0 flex-1 pb-28 md:pb-0">{children}</div>
-          </div>
+            <SidebarInset className="bg-slate-50">
+              <Header nama={profil?.nama ?? null} peranLabel={LABEL_PERAN[peran]} />
+              <div className="mx-auto w-full max-w-5xl min-w-0 flex-1 pb-28 md:pb-0">
+                {children}
+              </div>
+            </SidebarInset>
+          </SidebarProvider>
         </Providers>
         <PendaftaranSw />
       </body>
