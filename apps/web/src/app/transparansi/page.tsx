@@ -2,23 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import {
-  ChartIcon,
-  ClipboardListIcon,
-  DeliveryIcon,
-  HospitalIcon,
-  MagnifierIcon,
-} from "@solar-icons/react/linear";
+import { MagnifierIcon } from "@solar-icons/react/linear";
 import { Alert, AlertDescription, AlertTitle } from "@omnirelief/ui/components/alert";
 import { Badge } from "@omnirelief/ui/components/badge";
 import { Button } from "@omnirelief/ui/components/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@omnirelief/ui/components/card";
+import { Card, CardContent, CardHeader } from "@omnirelief/ui/components/card";
 import {
   Empty,
   EmptyDescription,
@@ -113,11 +101,12 @@ export default function TransparansiPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 p-6">
+    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-8 px-5 py-12 md:px-10 md:py-20">
       <div>
-        <h1 className="text-2xl font-bold text-primary">Transparansi per posko</h1>
-        <p className="text-muted-foreground mt-1 text-sm">
-          Jatah, pengiriman, penerimaan, dan selisih tiap daerah. Tanpa login.
+        <p className="t-micro text-primary">Tanpa login</p>
+        <h1 className="t-h1 t-balance mt-2 font-bold text-primary">Transparansi per posko</h1>
+        <p className="t-pretty mt-2 max-w-xl text-muted-foreground">
+          Jatah, pengiriman, penerimaan, dan selisih tiap daerah. Angka tidak digabung antar posko.
         </p>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
@@ -149,75 +138,44 @@ export default function TransparansiPage() {
         </form>
       </div>
 
-      <section aria-label="Ringkasan angka">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="bg-white rounded-xl border border-slate-200 shadow-xs">
-            <CardContent className="flex flex-col gap-2 p-4">
-              <div className="flex items-start justify-between gap-2">
-                <p className="text-xs text-muted-foreground">Posko terpantau</p>
-                <HospitalIcon aria-hidden="true" className="size-5 text-muted-foreground" />
-              </div>
-              <p className="text-3xl font-bold tracking-tight tabular-nums">{data.length}</p>
-              {ringkas.kurang > 0 ? (
-                <Badge variant="destructive" className="rounded-full">{ringkas.kurang} kurang</Badge>
-              ) : (
-                <Badge
-                  variant="outline"
-                  className="rounded-full border-transparent bg-success-bg text-success-badge-fg"
-                >
-                  Semua aman
-                </Badge>
-              )}
-            </CardContent>
-          </Card>
-          <Card className="bg-white rounded-xl border border-slate-200 shadow-xs">
-            <CardContent className="flex flex-col gap-2 p-4">
-              <div className="flex items-start justify-between gap-2">
-                <p className="text-xs text-muted-foreground">Total butuh</p>
-                <ClipboardListIcon aria-hidden="true" className="size-5 text-muted-foreground" />
-              </div>
-              <p className="text-3xl font-bold tracking-tight tabular-nums">{ringkas.totalButuh}</p>
-              <Badge variant="outline" className="rounded-full">Jatah disetujui</Badge>
-            </CardContent>
-          </Card>
-          <Card className="bg-white rounded-xl border border-slate-200 shadow-xs">
-            <CardContent className="flex flex-col gap-2 p-4">
-              <div className="flex items-start justify-between gap-2">
-                <p className="text-xs text-muted-foreground">Total diterima</p>
-                <DeliveryIcon aria-hidden="true" className="size-5 text-muted-foreground" />
-              </div>
-              <p className="text-3xl font-bold tracking-tight tabular-nums">{ringkas.totalDiterima}</p>
-              {ringkas.totalDiterima > 0 ? (
-                <Badge
-                  variant="outline"
-                  className="rounded-full border-transparent bg-success-bg text-success-badge-fg"
-                >
-                  Konfirmasi terima
-                </Badge>
-              ) : (
-                <Badge variant="outline" className="rounded-full">Belum ada terima</Badge>
-              )}
-            </CardContent>
-          </Card>
-          <Card className="bg-white rounded-xl border border-slate-200 shadow-xs">
-            <CardContent className="flex flex-col gap-2 p-4">
-              <div className="flex items-start justify-between gap-2">
-                <p className="text-xs text-muted-foreground">Selisih terbuka</p>
-                <ChartIcon aria-hidden="true" className="size-5 text-muted-foreground" />
-              </div>
-              <p className="text-3xl font-bold tracking-tight tabular-nums">{ringkas.selisihTerbuka}</p>
-              {ringkas.selisihTerbuka > 0 ? (
-                <Badge variant="destructive" className="rounded-full">Perlu kirim</Badge>
-              ) : (
-                <Badge
-                  variant="outline"
-                  className="rounded-full border-transparent bg-success-bg text-success-badge-fg"
-                >
-                  Nol, semua cukup
-                </Badge>
-              )}
-            </CardContent>
-          </Card>
+      <section aria-label="Ringkasan angka" className="grid grid-cols-2 gap-y-8 border-y border-border py-8 lg:grid-cols-4">
+        <div className="flex flex-col gap-1 pr-4 md:pr-8">
+          <span className="t-h2 t-angka font-bold text-primary tabular-nums">{data.length}</span>
+          <span className="text-xs text-muted-foreground md:text-sm">Posko terpantau</span>
+          {ringkas.kurang > 0 ? (
+            <Badge variant="destructive" className="mt-1 w-fit rounded-full">{ringkas.kurang} kurang</Badge>
+          ) : (
+            <Badge variant="outline" className="mt-1 w-fit rounded-full border-transparent bg-success-bg text-success-badge-fg">
+              Semua aman
+            </Badge>
+          )}
+        </div>
+        <div className="flex flex-col gap-1 pr-4 md:pr-8 lg:border-l lg:border-border lg:pl-8">
+          <span className="t-h2 t-angka font-bold text-primary tabular-nums">{ringkas.totalButuh}</span>
+          <span className="text-xs text-muted-foreground md:text-sm">Total butuh</span>
+          <Badge variant="outline" className="mt-1 w-fit rounded-full">Jatah disetujui</Badge>
+        </div>
+        <div className="flex flex-col gap-1 pr-4 md:pr-8 lg:border-l lg:border-border lg:pl-8">
+          <span className="t-h2 t-angka font-bold text-primary tabular-nums">{ringkas.totalDiterima}</span>
+          <span className="text-xs text-muted-foreground md:text-sm">Total diterima</span>
+          {ringkas.totalDiterima > 0 ? (
+            <Badge variant="outline" className="mt-1 w-fit rounded-full border-transparent bg-success-bg text-success-badge-fg">
+              Konfirmasi terima
+            </Badge>
+          ) : (
+            <Badge variant="outline" className="mt-1 w-fit rounded-full">Belum ada terima</Badge>
+          )}
+        </div>
+        <div className="flex flex-col gap-1 lg:border-l lg:border-border lg:pl-8">
+          <span className="t-h2 t-angka font-bold text-destructive tabular-nums">{ringkas.selisihTerbuka}</span>
+          <span className="text-xs text-muted-foreground md:text-sm">Selisih terbuka</span>
+          {ringkas.selisihTerbuka > 0 ? (
+            <Badge variant="destructive" className="mt-1 w-fit rounded-full">Perlu kirim</Badge>
+          ) : (
+            <Badge variant="outline" className="mt-1 w-fit rounded-full border-transparent bg-success-bg text-success-badge-fg">
+              Nol, semua cukup
+            </Badge>
+          )}
         </div>
       </section>
 
@@ -232,43 +190,34 @@ export default function TransparansiPage() {
             className="min-h-12 flex-1"
           />
         </div>
-        <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Saring status selisih">
-          <Button
-            type="button"
-            variant={filterStatus === "semua" ? "default" : "outline"}
-            onClick={() => setFilterStatus("semua")}
-            aria-pressed={filterStatus === "semua"}
-            className="min-h-12"
-          >
-            Semua
-          </Button>
-          <Button
-            type="button"
-            variant={filterStatus === "kurang" ? "default" : "outline"}
-            onClick={() => setFilterStatus("kurang")}
-            aria-pressed={filterStatus === "kurang"}
-            className="min-h-12"
-          >
-            Kurang
-          </Button>
-          <Button
-            type="button"
-            variant={filterStatus === "aman" ? "default" : "outline"}
-            onClick={() => setFilterStatus("aman")}
-            aria-pressed={filterStatus === "aman"}
-            className="min-h-12"
-          >
-            Aman
-          </Button>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-1 rounded-full border border-border p-1" role="group" aria-label="Saring status selisih">
+            {(
+              [
+                { nilai: "semua", label: "Semua" },
+                { nilai: "kurang", label: "Kurang" },
+                { nilai: "aman", label: "Aman" },
+              ] as const
+            ).map((o) => (
+              <button
+                key={o.nilai}
+                type="button"
+                onClick={() => setFilterStatus(o.nilai)}
+                aria-pressed={filterStatus === o.nilai}
+                className={
+                  filterStatus === o.nilai
+                    ? "min-h-10 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground"
+                    : "min-h-10 rounded-full px-4 text-sm text-muted-foreground hover:text-foreground"
+                }
+              >
+                {o.label}
+              </button>
+            ))}
+          </div>
           {adaFilter && (
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={aturUlang}
-              className="min-h-12"
-            >
+            <button type="button" onClick={aturUlang} className="min-h-12 text-sm underline">
               Atur ulang
-            </Button>
+            </button>
           )}
         </div>
         {status === "siap" && (
@@ -330,61 +279,53 @@ export default function TransparansiPage() {
       )}
       {status === "siap" && tampil.length > 0 && (
         <section aria-label="Stok per posko">
-          <Card className="bg-white rounded-xl border border-slate-200 shadow-xs">
-            <CardHeader>
-              <CardTitle>Stok per posko</CardTitle>
-              <CardDescription>
-                Diterima dibanding butuh, per posko. Angka tidak digabung antar posko.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="flex flex-col">
-                {tampil.map((p) => {
-                  const persen = persenTerima(p.butuh, p.diterima);
-                  const kurang = p.selisih > 0;
-                  return (
-                    <li
-                      key={p.posko_id}
-                      className="flex flex-col gap-2 border-t border-slate-200 py-4 first:border-t-0 first:pt-0 last:pb-0"
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="min-w-0">
-                          <p className="text-sm font-semibold break-words">{p.posko_nama}</p>
-                          <p className="text-xs text-muted-foreground">{p.wilayah}</p>
-                        </div>
-                        {kurang ? (
-                          <Badge variant="destructive" className="rounded-full">Kurang {p.selisih}</Badge>
-                        ) : (
-                          <Badge
-                            variant="outline"
-                            className="rounded-full border-transparent bg-success-bg text-success-badge-fg"
-                          >
-                            Aman
-                          </Badge>
-                        )}
-                      </div>
-                      <div
-                        role="progressbar"
-                        aria-valuenow={persen}
-                        aria-valuemin={0}
-                        aria-valuemax={100}
-                        aria-label={`Penerimaan ${p.posko_nama}`}
-                        className="h-2 w-full overflow-hidden rounded-full bg-slate-100"
+          <p className="t-micro text-primary">Stok per posko</p>
+          <h2 className="t-h2 t-balance mt-2 font-bold text-primary">Diterima dibanding butuh</h2>
+          <ul className="mt-6 flex flex-col border-t border-border">
+            {tampil.map((p) => {
+              const persen = persenTerima(p.butuh, p.diterima);
+              const kurang = p.selisih > 0;
+              return (
+                <li
+                  key={p.posko_id}
+                  className="flex flex-col gap-3 border-b border-border py-6"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="t-micro text-muted-foreground">{p.wilayah}</p>
+                      <p className="mt-1 text-lg font-semibold break-words">{p.posko_nama}</p>
+                    </div>
+                    {kurang ? (
+                      <Badge variant="destructive" className="shrink-0 rounded-full">Kurang {p.selisih}</Badge>
+                    ) : (
+                      <Badge
+                        variant="outline"
+                        className="shrink-0 rounded-full border-transparent bg-success-bg text-success-badge-fg"
                       >
-                        <div
-                          className={kurang ? "h-full rounded-full bg-destructive" : "h-full rounded-full bg-success"}
-                          style={{ width: `${persen}%` }}
-                        />
-                      </div>
-                      <p className="text-xs text-muted-foreground tabular-nums">
-                        Diterima {p.diterima} dari butuh {p.butuh} ({persen}%) · Dikirim {p.dikirim}
-                      </p>
-                    </li>
-                  );
-                })}
-              </ul>
-            </CardContent>
-          </Card>
+                        Aman
+                      </Badge>
+                    )}
+                  </div>
+                  <div
+                    role="progressbar"
+                    aria-valuenow={persen}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-label={`Penerimaan ${p.posko_nama}`}
+                    className="h-2 w-full overflow-hidden rounded-full bg-muted"
+                  >
+                    <div
+                      className={kurang ? "h-full rounded-full bg-destructive" : "h-full rounded-full bg-success"}
+                      style={{ width: `${persen}%` }}
+                    />
+                  </div>
+                  <p className="t-angka text-sm text-muted-foreground tabular-nums">
+                    Diterima {p.diterima} dari butuh {p.butuh} ({persen}%) · Dikirim {p.dikirim}
+                  </p>
+                </li>
+              );
+            })}
+          </ul>
         </section>
       )}
     </main>

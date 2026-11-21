@@ -75,6 +75,7 @@ export default function Home() {
       .then((r) => r.json())
       .then((d: { ok: boolean; dashboard?: Baris[] }) => {
         if (d.ok && d.dashboard) {
+          setTotalPosko(d.dashboard.length);
           setTotalDiterima(d.dashboard.reduce((s, p) => s + p.diterima, 0));
           setTotalSelisih(d.dashboard.reduce((s, p) => s + p.selisih, 0));
         }
