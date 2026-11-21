@@ -23,7 +23,7 @@ import {
   DialogTitle,
 } from "@omnirelief/ui/components/dialog";
 import { Skeleton } from "@omnirelief/ui/components/skeleton";
-import { BoxIcon, WiFiOffIcon } from "@solar-icons/react/linear";
+import { BoxIcon, CheckIcon, WiFiOffIcon } from "@solar-icons/react/linear";
 import { Textarea } from "@omnirelief/ui/components/textarea";
 import { kirimAntrean, tambahAntrean } from "@/lib/offline";
 
@@ -275,6 +275,8 @@ export default function TugasTim() {
           const sisaAktif = menitMenujuBatas(aktif);
           const mepetAktif =
             !lewatBatas(aktif) && sisaAktif !== null && sisaAktif < 60 && sisaAktif >= 0;
+          const temu = AKSI.findIndex((a) => a.status === aktif.log_terakhir?.status);
+          const kini = temu < 0 ? 0 : temu;
           return (
             <Card id="check-in" className="scroll-mt-20">
               <CardHeader>
@@ -294,21 +296,66 @@ export default function TugasTim() {
                     ? `Batas check-in: ${new Date(aktif.batas_checkin).toLocaleString("id-ID")}`
                     : "Tanpa batas check-in"}
                 </p>
-                <div className="grid grid-cols-2 gap-2">
-                  {AKSI.map((a) => (
-                    <Button
-                      key={a.status}
-                      onClick={() =>
-                        void kirim(a.label, "/api/tim/status", {
-                          manifest_id: aktif.id,
-                          status: a.status,
-                        })
-                      }
-                      className="min-h-12"
-                    >
-                      {a.label}
-                    </Button>
-                  ))}
+                <div className="flex flex-col gap-2">
+                  <p role="status" className="font-semibold">
+                    Tahap {kini + 1} dari {AKSI.length}: {AKSI[kini].label}
+                  </p>
+                  <ol aria-label="Progres pengiriman" className="flex gap-1 overflow-x-auto pb-1">
+                    {AKSI.map((a, i) => {
+                      const selesai = i < kini;
+                      const tahapKini = i === kini;
+                      return (
+                        <li key={a.status} className="flex min-w-28 flex-1">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              void kirim(a.label, "/api/tim/status", {
+                                manifest_id: aktif.id,
+                                status: a.status,
+                              })
+                            }
+                            aria-current={tahapKini ? "step" : undefined}
+                            aria-label={`Kirim status ${a.label}`}
+                            className="flex min-h-12 w-full flex-col items-center gap-1 rounded-xl px-1 py-2 focus-visible:ring-2 focus-visible:ring-primary"
+                          >
+                            <span aria-hidden="true" className="flex w-full items-center">
+                              <span
+                                className={`h-0.5 flex-1 ${i === 0 ? "bg-transparent" : i <= kini ? "bg-primary" : "bg-slate-200"}`}
+                              />
+                              <span
+                                className={`flex size-8 items-center justify-center rounded-full ${
+                                  selesai
+                                    ? "bg-success text-white"
+                                    : tahapKini
+                                      ? "border-2 border-primary bg-white font-bold text-primary"
+                                      : "border border-slate-200 bg-slate-50 text-muted-foreground"
+                                }`}
+                              >
+                                {selesai ? (
+                                  <CheckIcon aria-hidden="true" className="size-5" />
+                                ) : (
+                                  i + 1
+                                )}
+                              </span>
+                              <span
+                                className={`h-0.5 flex-1 ${i === AKSI.length - 1 ? "bg-transparent" : i < kini ? "bg-primary" : "bg-slate-200"}`}
+                              />
+                            </span>
+                            <span
+                              className={`text-center text-sm leading-tight ${tahapKini ? "font-bold text-primary" : selesai ? "font-semibold" : "text-muted-foreground"}`}
+                            >
+                              {a.label}
+                            </span>
+                            <span
+                              className={`text-center text-xs ${selesai ? "font-semibold text-success" : tahapKini ? "font-semibold text-primary" : "text-muted-foreground"}`}
+                            >
+                              {selesai ? "Selesai" : tahapKini ? "Tahap kini" : "Belum"}
+                            </span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ol>
                 </div>
                 <Textarea
                   value={kendala}
