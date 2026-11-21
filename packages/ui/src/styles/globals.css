@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+
 @source "../../../apps/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
 
@@ -64,9 +65,11 @@
   --sidebar-accent-foreground: #232e40;
   --sidebar-border: #d7dde7;
   --sidebar-ring: #3a538d;
+  --brand: oklch(0.546 0.245 263);
+  --brand-from: oklch(0.546 0.245 263);
+  --brand-via: oklch(0.623 0.214 260);
+  --brand-to: oklch(0.685 0.169 237);
 }
-
-
 
 @theme inline {
   --font-sans: "Inter Variable", sans-serif;
@@ -128,6 +131,46 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+  --color-brand: var(--brand);
+  --color-brand-from: var(--brand-from);
+  --color-brand-via: var(--brand-via);
+  --color-brand-to: var(--brand-to);
+  --animate-aurora-1: aurora-1 14s ease-in-out infinite alternate;
+  --animate-aurora-2: aurora-2 18s ease-in-out infinite alternate;
+  --animate-aurora-3: aurora-3 22s ease-in-out infinite alternate;
+  @keyframes aurora-1 {
+  0% {
+    transform: translate(-10%, -12%) scale(1);
+    }
+  50% {
+    transform: translate(12%, 8%) scale(1.25);
+    }
+  100% {
+    transform: translate(-6%, 14%) scale(0.95);
+    }
+  }
+  @keyframes aurora-2 {
+  0% {
+    transform: translate(12%, 10%) scale(1.1);
+    }
+  50% {
+    transform: translate(-14%, -6%) scale(0.9);
+    }
+  100% {
+    transform: translate(8%, -12%) scale(1.2);
+    }
+  }
+  @keyframes aurora-3 {
+  0% {
+    transform: translate(0%, 16%) scale(0.95);
+    }
+  50% {
+    transform: translate(10%, -10%) scale(1.15);
+    }
+  100% {
+    transform: translate(-12%, 4%) scale(1);
+    }
+  }
 }
 
 @layer base {
@@ -237,4 +280,11 @@
   .animate-enter {
     animation: none;
   }
+}
+
+.dark {
+  --brand: oklch(0.623 0.214 260);
+  --brand-from: oklch(0.623 0.214 260);
+  --brand-via: oklch(0.707 0.165 255);
+  --brand-to: oklch(0.746 0.16 233);
 }
