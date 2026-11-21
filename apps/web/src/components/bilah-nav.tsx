@@ -118,11 +118,13 @@ function ItemTab({
   aktif,
   menunggu,
   pantau,
+  gelap,
 }: {
   item: NavItem;
   aktif: boolean;
   menunggu: number;
   pantau: number;
+  gelap?: boolean;
 }) {
   const Ikon = aktif ? IKON_DUO[item.ikon] : IKON_LIN[item.ikon];
   return (
@@ -137,8 +139,12 @@ function ItemTab({
       className={cn(
         "flex min-h-16 flex-col items-center justify-center gap-0.5 px-1 text-xs",
         aktif
-          ? "font-bold text-primary"
-          : "font-medium text-muted-foreground"
+          ? gelap
+            ? "font-bold text-white"
+            : "font-bold text-primary"
+          : gelap
+            ? "font-medium text-white/70"
+            : "font-medium text-muted-foreground"
       )}
     >
       <span className="relative">
@@ -247,6 +253,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
   }, [lainnyaBuka]);
 
   const path = pathname ?? "/";
+  const gelap = path === "/";
   const sembunyi = sembunyikanTabBar(path);
   const diDasbor = zonaDasbor(path);
   const tab = NAVIGASI_TAB[peran];
@@ -345,7 +352,10 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
       {!sembunyi && (
         <nav
           aria-label="Navigasi utama seluler"
-          className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background md:hidden"
+          className={cn(
+            "fixed inset-x-0 bottom-0 z-40 border-t backdrop-blur-md md:hidden",
+            gelap ? "border-white/15 bg-[#030D14]/60" : "border-border bg-background"
+          )}
         >
           <div className="grid grid-cols-4 pb-2">
             {tab.map((item) => (
@@ -355,6 +365,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
                 menunggu={antrean + pantau}
                 pantau={pantau}
                 aktif={aktifTab(item.href)}
+                gelap={gelap}
               />
             ))}
             <button
@@ -362,7 +373,10 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
               onClick={() => setLainnyaBuka(true)}
               aria-expanded={lainnyaBuka}
               aria-label="Menu lainnya"
-              className="flex min-h-16 flex-col items-center justify-center gap-0.5 px-1 text-xs font-medium text-muted-foreground"
+              className={cn(
+                "flex min-h-16 flex-col items-center justify-center gap-0.5 px-1 text-xs font-medium",
+                gelap ? "text-white/70" : "text-muted-foreground"
+              )}
             >
               <MenuDotsVerticalIcon aria-hidden="true" className="size-6" />
               Lainnya
@@ -384,7 +398,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
             onClick={() => setLainnyaBuka(false)}
             className="absolute inset-0 cursor-default bg-foreground/40"
           />
-          <div className="absolute inset-x-0 bottom-0 flex flex-col gap-1 rounded-t-2xl border-t border-border bg-background p-4 pb-6">
+          <div className={cn("absolute inset-x-0 bottom-0 flex flex-col gap-1 rounded-t-2xl border-t p-4 pb-6", gelap ? "border-white/15 bg-[#030D14]/80 text-white backdrop-blur-md" : "border-border bg-background")}>
             {lainnya.map((item) => {
               const Ikon = IKON_LIN[item.ikon];
               return (
@@ -394,7 +408,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
                   onClick={() => setLainnyaBuka(false)}
                   className="flex min-h-12 items-center gap-3 rounded-xl px-4 text-sm font-medium"
                 >
-                  <Ikon aria-hidden="true" className="size-5 text-muted-foreground" />
+                  <Ikon aria-hidden="true" className={cn("size-5", gelap ? "text-white/70" : "text-muted-foreground")} />
                   {item.label}
                 </a>
               );

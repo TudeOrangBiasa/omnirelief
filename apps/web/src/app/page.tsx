@@ -65,8 +65,11 @@ const CONTOH_KODE = "MNF-2026-0001";
 
 // Rel kiri transparan (viewport): konten menempel kanan.
 // BAND = pita selebar viewport yang keluar dari kolom layout (ml 50%-50vw).
+// SOLID = pita solid yang mulai dari batas rel (8vw, 14vw di sm+) sampai tepi kanan.
 const BAND = "relative ml-[calc(50%-50vw)] w-screen";
-const REL = "ml-[6vw] w-[94vw] lg:ml-[14vw] lg:w-[86vw]";
+const REL = "ml-[8vw] w-[92vw] sm:ml-[14vw] sm:w-[86vw]";
+const SOLID =
+  "relative ml-[calc(50%-50vw+8vw)] w-[92vw] sm:ml-[calc(50%-50vw+14vw)] sm:w-[86vw]";
 
 export default function Home() {
   const [kode, setKode] = useState("");
@@ -106,7 +109,7 @@ export default function Home() {
         className={cn(BAND, "scroll-mt-20")}
       >
         <div className={cn(REL, "grid gap-10 py-16 pr-5 md:pr-10 md:py-24 lg:grid-cols-12 lg:gap-12")}>
-          <div className="relative flex flex-col justify-center gap-5 lg:col-span-7">
+          <div className="relative flex flex-col justify-center gap-5 lg:col-span-6">
             <p className="t-micro text-white/70">
               Sistem supply chain pangan darurat
             </p>
@@ -114,7 +117,7 @@ export default function Home() {
               Tiap paket tercatat, tiap posko terlihat
             </h1>
           </div>
-          <div className="relative flex flex-col gap-5 lg:col-span-5">
+          <div className="relative flex flex-col gap-5 lg:col-span-6">
             <p className="t-body t-pretty max-w-xl text-white/80">
               OmniRelief mencatat bantuan pangan dari gudang sampai posko.
               Publik bisa cek tanpa login, data terkunci tidak bisa diubah
@@ -193,9 +196,9 @@ export default function Home() {
       {/* Band 2 — KPI solid biru-es menempel kanan */}
       <section
         aria-label="Ringkasan angka"
-        className={cn(BAND, "rounded-none bg-[#DCE8EE] text-[#0B1F2E]")}
+        className={cn(SOLID, "rounded-none bg-[#DCE8EE] text-[#0B1F2E]")}
       >
-        <div className={cn(REL, "relative grid gap-10 py-12 pr-5 md:pr-10 md:py-16 lg:grid-cols-12 lg:gap-12")}>
+        <div className="relative grid gap-10 py-12 pr-5 md:pr-10 md:py-16 lg:grid-cols-12 lg:gap-12">
           <div className="flex flex-col justify-center gap-2 lg:col-span-5">
             <p className="t-micro opacity-70">Tanpa login</p>
             <h2 className="t-h2 t-balance">
@@ -264,9 +267,9 @@ export default function Home() {
       {/* Band 4 — Alur 3 langkah solid biru-es menempel kanan */}
       <section
         aria-label="Cara cek dalam 3 langkah"
-        className={cn(BAND, "rounded-none bg-[#DCE8EE] text-[#0B1F2E]")}
+        className={cn(SOLID, "rounded-none bg-[#DCE8EE] text-[#0B1F2E]")}
       >
-        <div className={cn(REL, "relative grid gap-10 py-12 pr-5 md:pr-10 md:py-16 lg:grid-cols-12 lg:gap-12")}>
+        <div className="relative grid gap-10 py-12 pr-5 md:pr-10 md:py-16 lg:grid-cols-12 lg:gap-12">
           <div className="flex flex-col justify-center gap-2 lg:col-span-5">
             <p className="t-micro opacity-70">Verifikasi publik</p>
             <h2 className="t-h2 t-balance">
