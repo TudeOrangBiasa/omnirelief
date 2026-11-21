@@ -178,6 +178,10 @@
   html {
     -webkit-font-smoothing: antialiased;
   }
+  html,
+  body {
+    overflow-x: clip;
+  }
 }
 
 @layer components {
