@@ -97,14 +97,14 @@ export default function Home() {
       />
 
       <div className="relative ml-[calc(50%-50vw)] w-screen">
-        <div className="ml-[6vw] w-[94vw] border-l border-white/25 md:ml-[14vw] md:w-[86vw]">
+        <div className="ml-[6vw] w-[94vw] border-l border-white/20 md:ml-[14vw] md:w-[86vw]">
       {/* Band 1 — Hero transparan di atas tinta */}
       <section
         id="cek-kode"
         aria-label="Cek kode kiriman"
         className="relative scroll-mt-20"
       >
-        <div className="grid gap-10 pb-16 pr-5 pt-24 sm:pt-28 md:pb-24 md:pr-10 lg:grid-cols-12 lg:gap-12">
+        <div className="grid gap-10 pb-16 pl-6 pr-5 pt-24 sm:pt-28 md:pb-24 md:pl-12 md:pr-10 lg:grid-cols-12 lg:gap-12 lg:pl-16 lg:pr-14">
           <div className="relative flex flex-col justify-center gap-5 lg:col-span-6">
             <p className="t-micro text-white/70">
               Sistem supply chain pangan darurat
@@ -194,7 +194,7 @@ export default function Home() {
         aria-label="Ringkasan angka"
         className="relative rounded-none bg-[#DCE8EE] text-[#0B1F2E]"
       >
-        <div className="relative grid gap-10 px-6 py-12 sm:px-10 lg:grid-cols-12 lg:gap-12 lg:px-14 lg:py-16">
+        <div className="relative grid gap-10 py-12 pl-6 pr-5 md:pl-12 md:pr-10 lg:grid-cols-12 lg:gap-12 lg:py-16 lg:pl-16 lg:pr-14">
           <div className="flex flex-col justify-center gap-2 lg:col-span-5">
             <p className="t-micro opacity-70">Tanpa login</p>
             <h2 className="t-h2 t-balance">
@@ -229,7 +229,7 @@ export default function Home() {
         aria-label="Empat janji anti-korupsi"
         className="relative"
       >
-        <div className="relative grid gap-10 py-16 pr-5 md:pr-10 md:py-24 lg:grid-cols-12 lg:gap-12">
+        <div className="relative grid gap-10 py-16 pl-6 pr-5 md:py-24 md:pl-12 md:pr-10 lg:grid-cols-12 lg:gap-12 lg:pl-16 lg:pr-14">
           <div className="flex flex-col justify-center gap-2 lg:col-span-5">
             <p className="t-micro text-white/70">Empat janji anti-korupsi</p>
             <h2 className="t-h2 t-balance text-white">
@@ -265,7 +265,7 @@ export default function Home() {
         aria-label="Cara cek dalam 3 langkah"
         className="relative rounded-none bg-[#DCE8EE] text-[#0B1F2E]"
       >
-        <div className="relative grid gap-10 px-6 py-12 sm:px-10 lg:grid-cols-12 lg:gap-12 lg:px-14 lg:py-16">
+        <div className="relative grid gap-10 py-12 pl-6 pr-5 md:pl-12 md:pr-10 lg:grid-cols-12 lg:gap-12 lg:py-16 lg:pl-16 lg:pr-14">
           <div className="flex flex-col justify-center gap-2 lg:col-span-5">
             <p className="t-micro opacity-70">Verifikasi publik</p>
             <h2 className="t-h2 t-balance">
@@ -292,7 +292,7 @@ export default function Home() {
 
       {/* Band 5 — Penutup transparan + CTA */}
       <section aria-label="Mulai cek sekarang" className="relative">
-        <div className="relative flex flex-col items-start gap-4 py-16 pr-5 md:pr-10 md:py-24">
+        <div className="relative flex flex-col items-start gap-4 py-16 pl-6 pr-5 md:py-24 md:pl-12 md:pr-10 lg:pl-16 lg:pr-14">
           <h2 className="t-h2 t-balance text-white">
             Pegang kode? Langsung cek.
           </h2>
@@ -302,13 +302,13 @@ export default function Home() {
           <div className="flex flex-wrap gap-2">
             <a
               href="/transparansi"
-              className={cn(buttonVariants(), "min-h-12 rounded-xl bg-white px-6 text-[#0B1F2E] hover:bg-white/90")}
+              className={cn(buttonVariants(), "min-h-12 rounded-xl bg-white px-6 text-sm font-semibold text-[#0B1F2E] hover:bg-white/90")}
             >
               Dashboard transparansi
             </a>
             <a
               href="/masuk"
-              className={cn(buttonVariants({ variant: "outline" }), "min-h-12 rounded-xl border-white/40 px-6 text-white hover:bg-white/10 hover:text-white")}
+              className={cn(buttonVariants({ variant: "outline" }), "min-h-12 rounded-xl border border-white/40 bg-white/10 px-6 text-white backdrop-blur-sm hover:bg-white/20 hover:text-white")}
             >
               Masuk relawan
             </a>
@@ -317,7 +317,7 @@ export default function Home() {
       </section>
 
       <footer className="relative border-t border-white/20 py-6 pb-8 text-sm text-white/70">
-        <div className="relative flex flex-col gap-3 pr-5 md:pr-10">
+        <div className="relative flex flex-col gap-3 pl-6 pr-5 md:pl-12 md:pr-10 lg:pl-16 lg:pr-14">
           <nav className="flex gap-4">
             <a href="/" className="font-semibold text-white">Beranda</a>
             <a href="/transparansi" className="font-semibold text-white">Transparansi</a>
