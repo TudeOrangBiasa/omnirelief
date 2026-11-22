@@ -103,7 +103,7 @@ export default function Home() {
         aria-label="Cek kode kiriman"
         className="relative ml-[6vw] w-[94vw] scroll-mt-20 md:ml-[14vw] md:w-[86vw]"
       >
-        <div className="grid gap-10 pb-16 pl-6 pr-5 pt-24 sm:pt-28 md:pb-24 md:pl-12 md:pr-10 lg:grid-cols-12 lg:gap-12 lg:pl-16 lg:pr-14">
+        <div className="grid grid-cols-1 gap-8 pb-16 pr-5 pt-24 sm:pt-28 md:pb-24 md:pr-10 lg:grid-cols-12 lg:pr-14">
           <div className="relative flex flex-col justify-center gap-5 lg:col-span-6">
             <p className="t-micro text-white/70">
               Sistem supply chain pangan darurat
@@ -194,7 +194,7 @@ export default function Home() {
         aria-label="Ringkasan angka"
         className="relative rounded-none bg-[#DCE8EE] text-[#0B1F2E]"
       >
-        <div className="relative grid gap-10 py-12 pl-6 pr-5 md:pl-12 md:pr-10 lg:grid-cols-12 lg:gap-12 lg:py-16 lg:pl-16 lg:pr-14">
+        <div className="relative grid grid-cols-1 gap-8 px-8 py-14 md:px-12 md:py-16 lg:grid-cols-12">
           <div className="flex flex-col justify-center gap-2 lg:col-span-5">
             <p className="t-micro opacity-70">Tanpa login</p>
             <h2 className="t-h2 t-balance">
@@ -230,7 +230,7 @@ export default function Home() {
         aria-label="Empat janji anti-korupsi"
         className="relative scroll-mt-20"
       >
-        <div className="relative grid gap-10 py-16 pl-6 pr-5 md:py-24 md:pl-12 md:pr-10 lg:grid-cols-12 lg:gap-12 lg:pl-16 lg:pr-14">
+        <div className="relative grid gap-10 py-16 pr-5 md:py-24 md:pr-10 lg:grid-cols-12 lg:gap-12 lg:pr-14">
           <div className="flex flex-col justify-center gap-2 lg:col-span-5">
             <p className="t-micro text-white/70">Empat janji anti-korupsi</p>
             <h2 className="t-h2 t-balance text-white">
@@ -267,7 +267,7 @@ export default function Home() {
         aria-label="Cara cek dalam 3 langkah"
         className="relative scroll-mt-20 rounded-none bg-[#DCE8EE] text-[#0B1F2E]"
       >
-        <div className="relative grid gap-10 py-12 pl-6 pr-5 md:pl-12 md:pr-10 lg:grid-cols-12 lg:gap-12 lg:py-16 lg:pl-16 lg:pr-14">
+        <div className="relative grid grid-cols-1 gap-8 px-8 py-14 md:px-12 md:py-16 lg:grid-cols-12">
           <div className="flex flex-col justify-center gap-2 lg:col-span-5">
             <p className="t-micro opacity-70">Verifikasi publik</p>
             <h2 className="t-h2 t-balance">
@@ -294,7 +294,7 @@ export default function Home() {
 
       {/* Band 5 — Penutup transparan + CTA */}
       <section aria-label="Mulai cek sekarang" className="relative">
-        <div className="relative flex flex-col items-start gap-4 py-16 pl-6 pr-5 md:py-24 md:pl-12 md:pr-10 lg:pl-16 lg:pr-14">
+        <div className="relative flex flex-col items-start gap-4 py-16 pr-5 md:py-24 md:pr-10 lg:pr-14">
           <h2 className="t-h2 t-balance text-white">
             Pegang kode? Langsung cek.
           </h2>
@@ -319,7 +319,7 @@ export default function Home() {
       </section>
 
       <footer className="relative border-t border-white/20 py-6 pb-8 text-sm text-white/70">
-        <div className="relative flex flex-col gap-3 pl-6 pr-5 md:pl-12 md:pr-10 lg:pl-16 lg:pr-14">
+        <div className="relative flex flex-col gap-3 pr-5 md:pr-10 lg:pr-14">
           <nav className="flex gap-4">
             <a href="/" className="font-semibold text-white">Beranda</a>
             <a href="/transparansi" className="font-semibold text-white">Transparansi</a>
