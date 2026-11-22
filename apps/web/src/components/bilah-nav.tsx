@@ -137,10 +137,12 @@ function ItemTab({
           : item.label
       }
       className={cn(
-        "flex min-h-16 flex-col items-center justify-center gap-0.5 px-1 text-xs",
+        gelap
+          ? "flex min-h-12 w-full flex-col items-center justify-center gap-0.5 rounded-full px-1 text-center text-xs"
+          : "flex min-h-16 flex-col items-center justify-center gap-0.5 px-1 text-xs",
         aktif
           ? gelap
-            ? "rounded-full border border-white/25 bg-white/15 font-bold text-white"
+            ? "border border-white/25 bg-white/15 font-bold text-white"
             : "font-bold text-primary"
           : gelap
             ? "font-medium text-white/70"
@@ -270,6 +272,24 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
 
   return (
     <>
+      {gelap && (
+        <header className="fixed inset-x-0 top-0 z-40 w-full border-b border-white/15 bg-[#030D14]/45 backdrop-blur-md md:hidden">
+          <div className="flex items-center justify-between py-3.5 pr-4 pl-[6vw]">
+            <a href="/" className="flex items-center gap-2" aria-label="OmniRelief beranda">
+              <span aria-hidden="true" className="flex size-8 items-center justify-center rounded-lg bg-white text-sm font-bold text-[#0B1F2E]">
+                O
+              </span>
+              <span className="font-semibold tracking-tight text-white">OmniRelief</span>
+            </a>
+            <a
+              href="/masuk"
+              className="inline-flex min-h-10 items-center justify-center border border-white/30 bg-white/10 px-3.5 font-mono text-xs tracking-wider text-white uppercase"
+            >
+              Masuk
+            </a>
+          </div>
+        </header>
+      )}
       {diDasbor && (
         <Sidebar variant="inset" collapsible="icon" aria-label="Navigasi utama">
           <SidebarHeader>
@@ -359,7 +379,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
               : "fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background backdrop-blur-md"
           )}
         >
-          <div className={gelap ? "grid grid-cols-5" : "grid grid-cols-4 pb-2"}>
+          <div className={gelap ? "grid w-full grid-cols-4 items-center gap-1" : "grid grid-cols-4 pb-2"}>
             {tab.map((item) => (
               <ItemTab
                 key={item.href}
