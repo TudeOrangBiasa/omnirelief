@@ -82,4 +82,11 @@ Observasi sendiri (di luar checklist): header global (`header.tsx:8-10`) hanya b
 | Footer | Tanpa legal, kontak, dan merek tegas; hanya 3 link | Kepercayaan (privasi, lapor selisih, siapa pengelola) tidak terjawab di halaman paling publik |
 | Header | Navigasi global minimal ("Home" saja) | Inkonsisten dengan nav landing; revamp landing harus bareng navigasi global |
 
+## 6. Revamp Nov 2026 (10 band, rre right-dock)
+
+- File: `apps/web/src/app/page.tsx` ditulis ulang; `bilah-nav.tsx` header landing diselaraskan (Transparansi, Cara Kerja, Keamanan, FAQ, Masuk Portal corner-bracket). Dock mobile tetap kapsul kaca 4 sel.
+- Menutup temuan: ada FAQ keberatan (5), CTA bawah ganda (publik + petugas), legal tanpa dead-link (3 dialog), merek + status di footer, padding seragam + border-l sumbu di tiap section, shader fixed full-viewport.
+- Verifikasi: `bun --filter web check-types` hijau, `lint` exit 0, screenshot desktop 1440 + mobile 390 + dialog legal + PDF cetak di `docs/bukti-ui/landing-*.png`, `landing-report.pdf`. Akordeon cara kerja + FAQ diuji klik (satu terbuka per grup). KPI hidup 2/0/320 dari `/api/publik/dashboard`.
+- Catatan: `bun run check:ui` merah 4 baris di `bilah-nav.tsx` + `sidebar.tsx` yang sudah ada sebelum perubahan ini (hex/shadow pola lama); tidak ditambah pelanggaran baru.
+
 Worksheet check-types: n/a (file murni markdown, tidak menyentuh token/kode).

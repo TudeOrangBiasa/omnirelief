@@ -4,7 +4,7 @@ Sumber: Bab 10 dan U4 dokumen tim. Status UI dicatat agar migrasi shadcn konsist
 
 ## Publik tanpa login
 
-1. `/` landing. File `apps/web/src/app/page.tsx`. UI shadcn penuh. Hero 2 baris, kolom kode auto-deteksi MNF atau DNT, 3 statistik hidup, 4 janji, 3 langkah, footer resmi.
+1. `/` landing. File `apps/web/src/app/page.tsx`. Rel kanan 6vw/14vw di atas shader fixed, padding seragam tiap section. 10 band selang-seling: hero + form cek MNF/DNT, KPI hidup, masalah, 4 janji, cara kerja akordeon 4 garda, verifikasi 3 langkah, arsitektur 3 blok, FAQ akordeon 5, CTA ganda, footer 4 kolom + dialog legal.
 2. `/transparansi` dashboard per posko. File `apps/web/src/app/transparansi/page.tsx`. UI shadcn penuh. Kartu per posko butuh, dikirim, diterima, badge Kurang merah atau Aman hijau, 2 kolom cari.
 3. `/m/[kode]` detail manifest. File `apps/web/src/app/m/[kode]/page.tsx`. UI tangan. Badge terkunci plus hash pendek, tabel item plus batch, timeline append-only, kartu pembatalan dan ketidaksesuaian, QR plus salin tautan. Tanpa tombol edit atau hapus dalam kondisi apa pun.
 4. `/s/[kode]` detail sumbangan. File `apps/web/src/app/s/[kode]/page.tsx`. UI tangan. Kode, item, sumber hanya tampil bila izin, progress alokasi, daftar manifest pemakai.

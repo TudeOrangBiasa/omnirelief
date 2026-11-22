@@ -280,30 +280,37 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
     <>
       {gelap && (
         <header className="fixed inset-x-0 top-0 z-40 w-full bg-transparent print:hidden">
-          <div className="ml-[6vw] grid w-[94vw] grid-cols-1 items-center gap-8 py-6 pr-5 md:ml-[14vw] md:w-[86vw] md:pr-10 lg:grid-cols-12 lg:pr-14">
-            <a href="/" className="flex items-center gap-2 lg:col-span-6" aria-label="OmniRelief beranda">
+          <div className="ml-[6vw] grid w-[94vw] grid-cols-12 items-center py-6 pr-5 md:ml-[14vw] md:w-[86vw] md:pr-10 lg:pr-14">
+            <a href="/" className="col-span-6 flex items-center gap-2" aria-label="OmniRelief beranda">
               <span aria-hidden="true" className="flex size-8 items-center justify-center rounded-lg bg-white text-sm font-bold text-[#0B1F2E]">
                 O
               </span>
               <span className="font-semibold tracking-tight text-white">OmniRelief</span>
             </a>
-            <nav aria-label="Navigasi utama" className="hidden items-center justify-between gap-8 md:flex lg:col-span-6">
+            <nav aria-label="Navigasi utama" className="col-span-6 hidden items-center justify-between gap-8 md:flex">
               <span className="flex items-center gap-8">
                 <a href="/transparansi" className="font-mono text-[11px] tracking-[0.15em] text-white/80 uppercase hover:text-white">
                   Transparansi
                 </a>
-                <a href="/#janji" className="font-mono text-[11px] tracking-[0.15em] text-white/80 uppercase hover:text-white">
-                  Empat Janji
+                <a href="/#cara-kerja" className="font-mono text-[11px] tracking-[0.15em] text-white/80 uppercase hover:text-white">
+                  Cara Kerja
                 </a>
-                <a href="/#cara-cek" className="font-mono text-[11px] tracking-[0.15em] text-white/80 uppercase hover:text-white">
-                  Cara Cek
+                <a href="/#arsitektur" className="font-mono text-[11px] tracking-[0.15em] text-white/80 uppercase hover:text-white">
+                  Keamanan
+                </a>
+                <a href="/#faq" className="font-mono text-[11px] tracking-[0.15em] text-white/80 uppercase hover:text-white">
+                  FAQ
                 </a>
               </span>
               <a
                 href="/masuk"
-                className="inline-flex min-h-10 items-center justify-center border border-white/40 bg-white/10 px-3.5 font-mono text-xs tracking-wider text-white uppercase backdrop-blur-sm hover:bg-white/20"
+                className="relative inline-flex min-h-10 items-center justify-center border border-white/40 bg-white/10 px-3.5 font-mono text-[11px] tracking-[0.15em] text-white uppercase backdrop-blur-sm hover:bg-white/20"
               >
-                Masuk
+                <span aria-hidden="true" className="absolute top-0 left-0 h-1.5 w-1.5 border-t border-l border-white" />
+                <span aria-hidden="true" className="absolute top-0 right-0 h-1.5 w-1.5 border-t border-r border-white" />
+                <span aria-hidden="true" className="absolute bottom-0 left-0 h-1.5 w-1.5 border-b border-l border-white" />
+                <span aria-hidden="true" className="absolute right-0 bottom-0 h-1.5 w-1.5 border-r border-b border-white" />
+                Masuk Portal
               </a>
             </nav>
           </div>
