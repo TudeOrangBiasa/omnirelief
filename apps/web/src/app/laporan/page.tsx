@@ -1,7 +1,6 @@
 "use client";
 
 import { Badge } from "@omnirelief/ui/components/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@omnirelief/ui/components/card";
 import { ShaderBackground } from "@/components/motion/shader-background";
 
 const REL = "ml-[6vw] w-[94vw] md:ml-[14vw] md:w-[86vw]";
@@ -25,42 +24,19 @@ const UKUR = [
 ];
 
 const HALAMAN: { judul: string; berkas: string; alt: string; catatan: string }[] = [
-  {
-    judul: "/ — Landing desktop",
-    berkas: "/laporan/rail6-hero.png",
-    alt: "Landing desktop: hero 6/6, KPI menempel kanan, rel tinta kiri",
-    catatan: "Hero 6/6, band #DCE8EE dock kanan, rel 14vw transparan.",
-  },
-  {
-    judul: "/ — Landing mobile 390",
-    berkas: "/laporan/rail7-mob.png",
-    alt: "Landing mobile: nav kaca, hero menumpuk, dock pil",
-    catatan: "Top bar kaca, pill dock 4 sel, rel 6vw.",
-  },
-  {
-    judul: "/transparansi",
-    berkas: "/laporan/rpt-trans.png",
-    alt: "Transparansi: pita statistik, filter segmented, daftar posko",
-    catatan: "Wash terang, teks navy. Statistik + filter + baris editorial.",
-  },
-  {
-    judul: "/m/MNF-2026-0001",
-    berkas: "/laporan/rpt-m.png",
-    alt: "Detail manifest: badge terkunci, tabel isi, timeline hash, QR",
-    catatan: "Tanggal lokal rapi, hash terpotong 16 aksara.",
-  },
-  {
-    judul: "/s/DNT-2026-001",
-    berkas: "/laporan/rpt-s.png",
-    alt: "Detail sumbangan: progress alokasi, daftar pemakai",
-    catatan: "Progress X dari Y, daftar manifest pemakai.",
-  },
-  {
-    judul: "/masuk",
-    berkas: "/laporan/pub-masuk2.png",
-    alt: "Masuk relawan: kartu form + akun demo",
-    catatan: "Form server action, akun demo untuk juri.",
-  },
+  { judul: "01 / — Landing", berkas: "/laporan/full/full-01-landing.png", alt: "Halaman penuh landing desktop", catatan: "Hero 6/6, KPI dock kanan, rel 14vw, shader fixed." },
+  { judul: "02 /transparansi", berkas: "/laporan/full/full-02-transparansi.png", alt: "Halaman penuh transparansi", catatan: "Pita statistik, filter segmented, baris editorial." },
+  { judul: "03 /m/MNF-2026-0001", berkas: "/laporan/full/full-03-manifest.png", alt: "Halaman penuh detail manifest", catatan: "Badge terkunci, tabel isi, timeline hash, QR." },
+  { judul: "04 /s/DNT-2026-001", berkas: "/laporan/full/full-04-sumbangan.png", alt: "Halaman penuh detail sumbangan", catatan: "Progress alokasi, daftar manifest pemakai." },
+  { judul: "05 /masuk", berkas: "/laporan/full/full-05-masuk.png", alt: "Halaman penuh masuk", catatan: "Form server action + akun demo." },
+  { judul: "06 /beranda (BPBD)", berkas: "/laporan/full/full-06-beranda.png", alt: "Halaman penuh beranda relawan", catatan: "Sapaan, angka hero, aktivitas 5 baris." },
+  { judul: "07 /bpbd (BPBD)", berkas: "/laporan/full/full-07-bpbd.png", alt: "Halaman penuh command center", catatan: "Metrik, Perlu Dicek, antrean massal." },
+  { judul: "08 /bpbd/kirim (BPBD)", berkas: "/laporan/full/full-08-kirim.png", alt: "Halaman penuh buat manifest", catatan: "Tabel batch FEFO + kunci MNF+QR." },
+  { judul: "09 /gudang (Gudang)", berkas: "/laporan/full/full-09-gudang.png", alt: "Halaman penuh gudang", catatan: "Dropdown nama barang, tabel batch, intake hari ini." },
+  { judul: "10 /posko (Posko)", berkas: "/laporan/full/full-10-posko.png", alt: "Halaman penuh posko", catatan: "Snapshot 6 angka, terima, lapor." },
+  { judul: "11 /tim (Tim)", berkas: "/laporan/full/full-11-tim.png", alt: "Halaman penuh tim", catatan: "Tugas, check-in, kendala, kirim-sekarang." },
+  { judul: "12 /pengaturan (BPBD)", berkas: "/laporan/full/full-12-pengaturan.png", alt: "Halaman penuh pengaturan", catatan: "Akun, notifikasi, aksesibilitas, zona keluar." },
+  { judul: "13 /profil (BPBD)", berkas: "/laporan/full/full-13-profil.png", alt: "Halaman penuh profil", catatan: "Identitas + ganti password." },
 ];
 
 const CEK = [
@@ -175,32 +151,33 @@ export default function LaporanPage() {
             aria-label="Galeri halaman"
             className="relative rounded-none bg-[#DCE8EE] text-[#0B1F2E]"
           >
-            <div className="relative grid gap-10 px-8 py-14 md:px-12 md:py-16 lg:grid-cols-12 lg:gap-12">
-              <div className="flex flex-col justify-center gap-2 lg:col-span-5">
+            <div className="relative flex flex-col gap-8 px-8 py-14 md:px-12 md:py-16">
+              <div className="flex max-w-2xl flex-col gap-2">
                 <p className="t-micro opacity-70">Bukti visual</p>
-                <h2 className="t-h2 t-balance">Galeri halaman publik</h2>
+                <h2 className="t-h2 t-balance">Galeri halaman penuh</h2>
                 <p className="text-sm opacity-80">
-                  Tangkapan desktop 1440 + mobile 390 dari sesi
-                  agent-browser yang sama dengan angka di atas.
+                  Tangkapan full-page desktop 1440 tiap rute — 5 publik tanpa
+                  login, 8 dasbor dengan login demo. Klik gambar untuk
+                  melihat skala penuh di tab baru.
                 </p>
               </div>
-              <div className="grid gap-6 sm:grid-cols-2 lg:col-span-7">
+              <div className="flex flex-col gap-10">
                 {HALAMAN.map((h) => (
-                  <Card key={h.judul} className="overflow-hidden">
-                    <CardHeader>
-                      <CardTitle className="text-base">{h.judul}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex flex-col gap-2">
+                  <figure key={h.judul}>
+                    <figcaption className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
+                      <span className="font-semibold">{h.judul}</span>
+                      <span className="text-xs opacity-70">{h.catatan}</span>
+                    </figcaption>
+                    <a href={h.berkas} target="_blank" rel="noreferrer">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={h.berkas}
                         alt={h.alt}
                         loading="lazy"
-                        className="w-full rounded-xl border border-border"
+                        className="w-full rounded-xl border border-[#0B1F2E]/15 bg-white"
                       />
-                      <p className="text-xs text-muted-foreground">{h.catatan}</p>
-                    </CardContent>
-                  </Card>
+                    </a>
+                  </figure>
                 ))}
               </div>
             </div>

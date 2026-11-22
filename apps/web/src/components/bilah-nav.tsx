@@ -273,7 +273,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
   return (
     <>
       {gelap && (
-        <header className="fixed inset-x-0 top-0 z-40 w-full bg-transparent">
+        <header className="fixed inset-x-0 top-0 z-40 w-full bg-transparent print:hidden">
           <div className="ml-[6vw] grid w-[94vw] grid-cols-1 items-center gap-8 py-6 pr-5 md:ml-[14vw] md:w-[86vw] md:pr-10 lg:grid-cols-12 lg:pr-14">
             <a href="/" className="flex items-center gap-2 lg:col-span-6" aria-label="OmniRelief beranda">
               <span aria-hidden="true" className="flex size-8 items-center justify-center rounded-lg bg-white text-sm font-bold text-[#0B1F2E]">
@@ -386,7 +386,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
         <nav
           aria-label="Navigasi utama seluler"
           className={cn(
-            "md:hidden",
+            "md:hidden print:hidden",
             gelap
               ? "fixed bottom-4 left-1/2 z-50 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 rounded-full border border-white/15 bg-[#04131E]/75 p-1.5 shadow-2xl backdrop-blur-xl"
               : "fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background backdrop-blur-md"
