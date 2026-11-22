@@ -274,15 +274,15 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
     <>
       {gelap && (
         <header className="fixed inset-x-0 top-0 z-40 w-full bg-transparent">
-          <div className="ml-[6vw] flex w-[94vw] items-center justify-between py-6 pr-5 pl-6 md:ml-[14vw] md:w-[86vw] md:pl-12 md:pr-10 lg:pl-16 lg:pr-14">
-            <a href="/" className="flex items-center gap-2" aria-label="OmniRelief beranda">
+          <div className="ml-[6vw] grid w-[94vw] grid-cols-12 items-center gap-8 py-6 pr-5 pl-6 md:ml-[14vw] md:w-[86vw] md:pl-12 md:pr-10 lg:pl-16 lg:pr-14">
+            <a href="/" className="col-span-6 flex items-center gap-2" aria-label="OmniRelief beranda">
               <span aria-hidden="true" className="flex size-8 items-center justify-center rounded-lg bg-white text-sm font-bold text-[#0B1F2E]">
                 O
               </span>
               <span className="font-semibold tracking-tight text-white">OmniRelief</span>
             </a>
-            <nav aria-label="Navigasi utama" className="flex items-center gap-8">
-              <span className="hidden items-center gap-8 md:flex">
+            <nav aria-label="Navigasi utama" className="col-span-6 hidden items-center justify-between gap-8 md:flex">
+              <span className="flex items-center gap-8">
                 <a href="/transparansi" className="font-mono text-[11px] tracking-[0.15em] text-white/80 uppercase hover:text-white">
                   Transparansi
                 </a>
