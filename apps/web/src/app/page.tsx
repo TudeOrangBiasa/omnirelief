@@ -63,13 +63,7 @@ const LANGKAH = [
 
 const CONTOH_KODE = "MNF-2026-0001";
 
-// Rel kiri transparan (viewport): konten menempel kanan.
-// BAND = pita selebar viewport yang keluar dari kolom layout (ml 50%-50vw).
-// SOLID = pita solid yang mulai dari batas rel (8vw, 14vw di md+) sampai tepi kanan.
-const BAND = "relative ml-[calc(50%-50vw)] w-screen";
-const REL = "ml-[8vw] w-[92vw] md:ml-[14vw] md:w-[86vw]";
-const SOLID =
-  "relative ml-[calc(50%-50vw+8vw)] w-[92vw] md:ml-[calc(50%-50vw+14vw)] md:w-[86vw]";
+// Rel kiri: satu container viewport di bawah navbar; semua band duduk di dalamnya.
 
 export default function Home() {
   const [kode, setKode] = useState("");
@@ -102,13 +96,15 @@ export default function Home() {
         className="pointer-events-none fixed inset-0 bg-[#030D14]"
       />
 
+      <div className="relative ml-[calc(50%-50vw)] w-screen">
+        <div className="ml-[6vw] w-[94vw] border-l border-white/25 md:ml-[14vw] md:w-[86vw]">
       {/* Band 1 — Hero transparan di atas tinta */}
       <section
         id="cek-kode"
         aria-label="Cek kode kiriman"
-        className={cn(BAND, "scroll-mt-20")}
+        className="relative scroll-mt-20"
       >
-        <div className={cn(REL, "grid gap-10 pb-16 pr-5 pt-24 sm:pt-28 md:pb-24 md:pr-10 lg:grid-cols-12 lg:gap-12")}>
+        <div className="grid gap-10 pb-16 pr-5 pt-24 sm:pt-28 md:pb-24 md:pr-10 lg:grid-cols-12 lg:gap-12">
           <div className="relative flex flex-col justify-center gap-5 lg:col-span-6">
             <p className="t-micro text-white/70">
               Sistem supply chain pangan darurat
@@ -196,7 +192,7 @@ export default function Home() {
       {/* Band 2 — KPI solid biru-es menempel kanan */}
       <section
         aria-label="Ringkasan angka"
-        className={cn(SOLID, "rounded-none bg-[#DCE8EE] text-[#0B1F2E]")}
+        className="relative rounded-none bg-[#DCE8EE] text-[#0B1F2E]"
       >
         <div className="relative grid gap-10 px-6 py-12 sm:px-10 lg:grid-cols-12 lg:gap-12 lg:px-14 lg:py-16">
           <div className="flex flex-col justify-center gap-2 lg:col-span-5">
@@ -231,9 +227,9 @@ export default function Home() {
       {/* Band 3 — Empat janji transparan di atas tinta */}
       <section
         aria-label="Empat janji anti-korupsi"
-        className={cn(BAND, "relative")}
+        className="relative"
       >
-        <div className={cn(REL, "relative grid gap-10 py-16 pr-5 md:pr-10 md:py-24 lg:grid-cols-12 lg:gap-12")}>
+        <div className="relative grid gap-10 py-16 pr-5 md:pr-10 md:py-24 lg:grid-cols-12 lg:gap-12">
           <div className="flex flex-col justify-center gap-2 lg:col-span-5">
             <p className="t-micro text-white/70">Empat janji anti-korupsi</p>
             <h2 className="t-h2 t-balance text-white">
@@ -267,7 +263,7 @@ export default function Home() {
       {/* Band 4 — Alur 3 langkah solid biru-es menempel kanan */}
       <section
         aria-label="Cara cek dalam 3 langkah"
-        className={cn(SOLID, "rounded-none bg-[#DCE8EE] text-[#0B1F2E]")}
+        className="relative rounded-none bg-[#DCE8EE] text-[#0B1F2E]"
       >
         <div className="relative grid gap-10 px-6 py-12 sm:px-10 lg:grid-cols-12 lg:gap-12 lg:px-14 lg:py-16">
           <div className="flex flex-col justify-center gap-2 lg:col-span-5">
@@ -295,8 +291,8 @@ export default function Home() {
       </section>
 
       {/* Band 5 — Penutup transparan + CTA */}
-      <section aria-label="Mulai cek sekarang" className={cn(BAND, "relative")}>
-        <div className={cn(REL, "relative flex flex-col items-start gap-4 py-16 pr-5 md:pr-10 md:py-24")}>
+      <section aria-label="Mulai cek sekarang" className="relative">
+        <div className="relative flex flex-col items-start gap-4 py-16 pr-5 md:pr-10 md:py-24">
           <h2 className="t-h2 t-balance text-white">
             Pegang kode? Langsung cek.
           </h2>
@@ -320,8 +316,8 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className={cn(BAND, "relative border-t border-white/20 py-6 pb-8 text-sm text-white/70")}>
-        <div className={cn(REL, "relative flex flex-col gap-3 pr-5 md:pr-10")}>
+      <footer className="relative border-t border-white/20 py-6 pb-8 text-sm text-white/70">
+        <div className="relative flex flex-col gap-3 pr-5 md:pr-10">
           <nav className="flex gap-4">
             <a href="/" className="font-semibold text-white">Beranda</a>
             <a href="/transparansi" className="font-semibold text-white">Transparansi</a>
@@ -332,6 +328,8 @@ export default function Home() {
           </p>
         </div>
       </footer>
+      </div>
+      </div>
     </main>
   );
 }

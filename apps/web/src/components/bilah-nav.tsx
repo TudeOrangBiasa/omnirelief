@@ -140,7 +140,7 @@ function ItemTab({
         "flex min-h-16 flex-col items-center justify-center gap-0.5 px-1 text-xs",
         aktif
           ? gelap
-            ? "font-bold text-white"
+            ? "rounded-full border border-white/25 bg-white/15 font-bold text-white"
             : "font-bold text-primary"
           : gelap
             ? "font-medium text-white/70"
@@ -353,11 +353,13 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
         <nav
           aria-label="Navigasi utama seluler"
           className={cn(
-            "fixed inset-x-0 bottom-0 z-40 border-t backdrop-blur-md md:hidden",
-            gelap ? "border-white/15 bg-[#030D14]/60" : "border-border bg-background"
+            "md:hidden",
+            gelap
+              ? "fixed bottom-4 left-1/2 z-50 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 rounded-full border border-white/15 bg-[#04131E]/75 p-1.5 shadow-2xl backdrop-blur-xl"
+              : "fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background backdrop-blur-md"
           )}
         >
-          <div className="grid grid-cols-4 pb-2">
+          <div className={gelap ? "grid grid-cols-5" : "grid grid-cols-4 pb-2"}>
             {tab.map((item) => (
               <ItemTab
                 key={item.href}
@@ -368,6 +370,19 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
                 gelap={gelap}
               />
             ))}
+            {gelap && (
+              <button
+                type="button"
+                onClick={() => setLainnyaBuka(true)}
+                aria-expanded={lainnyaBuka}
+                aria-label="Menu lainnya"
+                className="flex min-h-16 flex-col items-center justify-center gap-0.5 px-1 text-xs font-medium text-white/70"
+              >
+                <MenuDotsVerticalIcon aria-hidden="true" className="size-6" />
+                Lainnya
+              </button>
+            )}
+            {!gelap && (
             <button
               type="button"
               onClick={() => setLainnyaBuka(true)}
@@ -381,6 +396,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
               <MenuDotsVerticalIcon aria-hidden="true" className="size-6" />
               Lainnya
             </button>
+            )}
           </div>
         </nav>
       )}
