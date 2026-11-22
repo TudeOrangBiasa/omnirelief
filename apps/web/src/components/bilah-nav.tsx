@@ -273,20 +273,33 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
   return (
     <>
       {gelap && (
-        <header className="fixed inset-x-0 top-0 z-40 w-full border-b border-white/15 bg-[#030D14]/45 backdrop-blur-md">
-          <div className="flex items-center justify-between py-3.5 pr-4 pl-[6vw] md:pr-10 md:pl-[14vw]">
+        <header className="fixed inset-x-0 top-0 z-40 w-full bg-transparent">
+          <div className="ml-[6vw] flex w-[94vw] items-center justify-between py-6 pr-5 pl-6 md:ml-[14vw] md:w-[86vw] md:pl-12 md:pr-10 lg:pl-16 lg:pr-14">
             <a href="/" className="flex items-center gap-2" aria-label="OmniRelief beranda">
               <span aria-hidden="true" className="flex size-8 items-center justify-center rounded-lg bg-white text-sm font-bold text-[#0B1F2E]">
                 O
               </span>
               <span className="font-semibold tracking-tight text-white">OmniRelief</span>
             </a>
-            <a
-              href="/masuk"
-              className="inline-flex min-h-10 items-center justify-center border border-white/30 bg-white/10 px-3.5 font-mono text-xs tracking-wider text-white uppercase"
-            >
-              Masuk
-            </a>
+            <nav aria-label="Navigasi utama" className="flex items-center gap-8">
+              <span className="hidden items-center gap-8 md:flex">
+                <a href="/transparansi" className="font-mono text-[11px] tracking-[0.15em] text-white/80 uppercase hover:text-white">
+                  Transparansi
+                </a>
+                <a href="/#janji" className="font-mono text-[11px] tracking-[0.15em] text-white/80 uppercase hover:text-white">
+                  Empat Janji
+                </a>
+                <a href="/#cara-cek" className="font-mono text-[11px] tracking-[0.15em] text-white/80 uppercase hover:text-white">
+                  Cara Cek
+                </a>
+              </span>
+              <a
+                href="/masuk"
+                className="inline-flex min-h-10 items-center justify-center border border-white/40 bg-white/10 px-3.5 font-mono text-xs tracking-wider text-white uppercase backdrop-blur-sm hover:bg-white/20"
+              >
+                Masuk
+              </a>
+            </nav>
           </div>
         </header>
       )}

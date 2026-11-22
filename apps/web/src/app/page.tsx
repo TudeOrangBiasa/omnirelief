@@ -97,12 +97,11 @@ export default function Home() {
       />
 
       <div className="relative ml-[calc(50%-50vw)] w-screen">
-        <div className="ml-[6vw] w-[94vw] border-l border-white/20 md:ml-[14vw] md:w-[86vw]">
       {/* Band 1 — Hero transparan di atas tinta */}
       <section
         id="cek-kode"
         aria-label="Cek kode kiriman"
-        className="relative scroll-mt-20"
+        className="relative ml-[6vw] w-[94vw] scroll-mt-20 md:ml-[14vw] md:w-[86vw]"
       >
         <div className="grid gap-10 pb-16 pl-6 pr-5 pt-24 sm:pt-28 md:pb-24 md:pl-12 md:pr-10 lg:grid-cols-12 lg:gap-12 lg:pl-16 lg:pr-14">
           <div className="relative flex flex-col justify-center gap-5 lg:col-span-6">
@@ -188,6 +187,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <div className="ml-[6vw] w-[94vw] border-l border-white/20 md:ml-[14vw] md:w-[86vw]">
 
       {/* Band 2 — KPI solid biru-es menempel kanan */}
       <section
@@ -226,8 +226,9 @@ export default function Home() {
 
       {/* Band 3 — Empat janji transparan di atas tinta */}
       <section
+        id="janji"
         aria-label="Empat janji anti-korupsi"
-        className="relative"
+        className="relative scroll-mt-20"
       >
         <div className="relative grid gap-10 py-16 pl-6 pr-5 md:py-24 md:pl-12 md:pr-10 lg:grid-cols-12 lg:gap-12 lg:pl-16 lg:pr-14">
           <div className="flex flex-col justify-center gap-2 lg:col-span-5">
@@ -262,8 +263,9 @@ export default function Home() {
 
       {/* Band 4 — Alur 3 langkah solid biru-es menempel kanan */}
       <section
+        id="cara-cek"
         aria-label="Cara cek dalam 3 langkah"
-        className="relative rounded-none bg-[#DCE8EE] text-[#0B1F2E]"
+        className="relative scroll-mt-20 rounded-none bg-[#DCE8EE] text-[#0B1F2E]"
       >
         <div className="relative grid gap-10 py-12 pl-6 pr-5 md:pl-12 md:pr-10 lg:grid-cols-12 lg:gap-12 lg:py-16 lg:pl-16 lg:pr-14">
           <div className="flex flex-col justify-center gap-2 lg:col-span-5">
