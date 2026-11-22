@@ -89,4 +89,11 @@ Observasi sendiri (di luar checklist): header global (`header.tsx:8-10`) hanya b
 - Verifikasi: `bun --filter web check-types` hijau, `lint` exit 0, screenshot desktop 1440 + mobile 390 + dialog legal + PDF cetak di `docs/bukti-ui/landing-*.png`, `landing-report.pdf`. Akordeon cara kerja + FAQ diuji klik (satu terbuka per grup). KPI hidup 2/0/320 dari `/api/publik/dashboard`.
 - Catatan: `bun run check:ui` merah 4 baris di `bilah-nav.tsx` + `sidebar.tsx` yang sudah ada sebelum perubahan ini (hex/shadow pola lama); tidak ditambah pelanggaran baru.
 
+
+## 7. Bukti video 13 rute (22 Nov 2026, pengganti PDF stale)
+
+- `OmniRelief-UI-Design-Report.pdf` dihapus dari worktree: stale dan screenshot beku menghilangkan shader. Bukti baru: rekaman layar per rute (shader live terkomposit di frame video).
+- `docs/bukti-video/`: 26 webm (`d-*` desktop 1440x900, `m-*` mobile 390x844, 4 fps), 26 contact sheet `sheets/` (6 frame merata per rute via `scripts/potong-bukti.py`), `laporan-bukti.pdf` 41 halaman (cetak galeri sheet), `galeri.html` sumber cetak.
+- Akun audit temporer (`audit-*@demo`) dibuat via service key, dipakai login form asli per peran, lalu dihapus total (verifikasi: 0 sisa). Screenshot beku `landing-*.png` + `landing-report.pdf` ikut dihapus agar tidak dipakai lagi.
+- Batasan: load mesin 25+ saat rekam membuat encoder 30/8 fps rontok; 4 fps stabil. Satu take `d-04-sumbangan` sempat gagal 2x di 6 fps, lolos di 4 fps.
 Worksheet check-types: n/a (file murni markdown, tidak menyentuh token/kode).
