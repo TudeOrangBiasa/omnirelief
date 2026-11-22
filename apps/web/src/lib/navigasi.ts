@@ -171,15 +171,12 @@ export const NAVIGASI_LAINNYA: Record<NavPeran, NavItem[]> = {
 };
 
 /**
- * Tab bar disembunyikan di halaman detail (/m/*, /s/*) dan alur formulir
- * dalam (/bpbd/kirim) agar tombol primer tidak tertutup.
+ * Tab bar disembunyikan di alur formulir dalam (/bpbd/kirim) agar tombol
+ * primer tidak tertutup. Halaman detail publik (/m/*, /s/*) memakai glass
+ * dock yang melayang sehingga konten tetap terlihat.
  */
 export function sembunyikanTabBar(pathname: string): boolean {
   return (
-    pathname === "/m" ||
-    pathname.startsWith("/m/") ||
-    pathname === "/s" ||
-    pathname.startsWith("/s/") ||
     pathname === "/bpbd/kirim" ||
     pathname.startsWith("/bpbd/kirim/")
   );

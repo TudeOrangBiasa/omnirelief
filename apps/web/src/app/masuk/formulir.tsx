@@ -39,8 +39,8 @@ export default function FormulirMasuk({
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-bold text-primary">Masuk OmniRelief</h1>
-        <p className="text-muted-foreground mt-1 text-sm">
+        <h1 className="text-2xl font-bold text-white">Masuk OmniRelief</h1>
+        <p className="mt-1 text-sm text-white/70">
           Masuk dengan akun peran yang dibagikan command center.
         </p>
       </div>
@@ -52,7 +52,7 @@ export default function FormulirMasuk({
       )}
       <form action={aksi} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
-          <Label htmlFor="masuk-email">Email</Label>
+          <Label htmlFor="masuk-email" className="text-white">Email</Label>
           <Input
             id="masuk-email"
             name="email"
@@ -63,11 +63,11 @@ export default function FormulirMasuk({
             placeholder="nama@contoh.id"
             aria-invalid={galat ? true : undefined}
             aria-describedby={galat ? "masuk-galat" : undefined}
-            className="min-h-12"
+            className="min-h-12 border-white/30 bg-white/10 text-white placeholder:text-white/50"
           />
         </div>
         <div className="flex flex-col gap-1">
-          <Label htmlFor="masuk-password">Password</Label>
+          <Label htmlFor="masuk-password" className="text-white">Password</Label>
           <div className="relative">
             <Input
               id="masuk-password"
@@ -77,7 +77,7 @@ export default function FormulirMasuk({
               autoComplete="current-password"
               aria-invalid={galat ? true : undefined}
               aria-describedby={galat ? "masuk-galat" : undefined}
-              className="min-h-12 pr-14"
+              className="min-h-12 border-white/30 bg-white/10 pr-14 text-white placeholder:text-white/50"
             />
             <Button
               type="button"
@@ -85,7 +85,7 @@ export default function FormulirMasuk({
               onClick={() => setTampil((v) => !v)}
               aria-pressed={tampil}
               aria-label={tampil ? "Sembunyikan password" : "Tampilkan password"}
-              className="absolute top-1/2 right-1 min-h-12 w-12 -translate-y-1/2"
+              className="absolute top-1/2 right-1 min-h-12 w-12 -translate-y-1/2 text-white hover:text-white"
             >
               {tampil ? (
                 <EyeClosedIcon aria-hidden="true" />
@@ -97,7 +97,7 @@ export default function FormulirMasuk({
         </div>
         <label
           htmlFor="masuk-ingat"
-          className="flex min-h-12 cursor-pointer items-center gap-3 text-sm"
+          className="flex min-h-12 cursor-pointer items-center gap-3 text-sm text-white"
         >
           <input
             id="masuk-ingat"

@@ -256,6 +256,12 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
 
   const path = pathname ?? "/";
   const gelap = path === "/";
+  const publik =
+    path === "/" ||
+    path === "/transparansi" ||
+    path === "/masuk" ||
+    path.startsWith("/m/") ||
+    path.startsWith("/s/");
   const sembunyi = sembunyikanTabBar(path);
   const diDasbor = zonaDasbor(path);
   const tab = NAVIGASI_TAB[peran];
@@ -387,12 +393,12 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
           aria-label="Navigasi utama seluler"
           className={cn(
             "md:hidden print:hidden",
-            gelap
+            publik
               ? "fixed bottom-4 left-1/2 z-50 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 rounded-full border border-white/15 bg-[#04131E]/75 p-1.5 shadow-2xl backdrop-blur-xl"
               : "fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background backdrop-blur-md"
           )}
         >
-          <div className={gelap ? "grid w-full grid-cols-4 items-center gap-1" : "grid grid-cols-4 pb-2"}>
+          <div className={publik ? "grid w-full grid-cols-4 items-center gap-1" : "grid grid-cols-4 pb-2"}>
             {tab.map((item) => (
               <ItemTab
                 key={item.href}
@@ -400,36 +406,23 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
                 menunggu={antrean + pantau}
                 pantau={pantau}
                 aktif={aktifTab(item.href)}
-                gelap={gelap}
+                gelap={publik}
               />
             ))}
-            {gelap && (
-              <button
-                type="button"
-                onClick={() => setLainnyaBuka(true)}
-                aria-expanded={lainnyaBuka}
-                aria-label="Menu lainnya"
-                className="flex min-h-16 flex-col items-center justify-center gap-0.5 px-1 text-xs font-medium text-white/70"
-              >
-                <MenuDotsVerticalIcon aria-hidden="true" className="size-6" />
-                Lainnya
-              </button>
-            )}
-            {!gelap && (
             <button
               type="button"
               onClick={() => setLainnyaBuka(true)}
               aria-expanded={lainnyaBuka}
               aria-label="Menu lainnya"
-              className={cn(
-                "flex min-h-16 flex-col items-center justify-center gap-0.5 px-1 text-xs font-medium",
-                gelap ? "text-white/70" : "text-muted-foreground"
-              )}
+              className={
+                publik
+                  ? "flex min-h-16 flex-col items-center justify-center gap-0.5 px-1 text-xs font-medium text-white/70"
+                  : "flex min-h-16 flex-col items-center justify-center gap-0.5 px-1 text-xs font-medium text-muted-foreground"
+              }
             >
               <MenuDotsVerticalIcon aria-hidden="true" className="size-6" />
               Lainnya
             </button>
-            )}
           </div>
         </nav>
       )}
@@ -447,7 +440,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
             onClick={() => setLainnyaBuka(false)}
             className="absolute inset-0 cursor-default bg-foreground/40"
           />
-          <div className={cn("absolute inset-x-0 bottom-0 flex flex-col gap-1 rounded-t-2xl border-t p-4 pb-6", gelap ? "border-white/15 bg-[#030D14]/80 text-white backdrop-blur-md" : "border-border bg-background")}>
+          <div className={cn("absolute inset-x-0 bottom-0 flex flex-col gap-1 rounded-t-2xl border-t p-4 pb-6", publik ? "border-white/15 bg-[#030D14]/80 text-white backdrop-blur-md" : "border-border bg-background")}>
             {lainnya.map((item) => {
               const Ikon = IKON_LIN[item.ikon];
               return (
@@ -457,7 +450,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
                   onClick={() => setLainnyaBuka(false)}
                   className="flex min-h-12 items-center gap-3 rounded-xl px-4 text-sm font-medium"
                 >
-                  <Ikon aria-hidden="true" className={cn("size-5", gelap ? "text-white/70" : "text-muted-foreground")} />
+                  <Ikon aria-hidden="true" className={cn("size-5", publik ? "text-white/70" : "text-muted-foreground")} />
                   {item.label}
                 </a>
               );

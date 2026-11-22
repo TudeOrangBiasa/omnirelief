@@ -68,9 +68,9 @@ const CONTOH_KODE = "MNF-2026-0001";
 export default function Home() {
   const [kode, setKode] = useState("");
   const [jenis, setJenis] = useState<"MNF" | "DNT">("MNF");
-  const [totalPosko, setTotalPosko] = useState<number | null>(null);
-  const [totalDiterima, setTotalDiterima] = useState<number | null>(null);
-  const [totalSelisih, setTotalSelisih] = useState<number | null>(null);
+  const [totalPosko, setTotalPosko] = useState(0);
+  const [totalDiterima, setTotalDiterima] = useState(0);
+  const [totalSelisih, setTotalSelisih] = useState(0);
 
   useEffect(() => {
     void fetch("/api/publik/dashboard")
@@ -93,7 +93,7 @@ export default function Home() {
         variant="mesh-gradient"
         colors={["#030D14", "#082032", "#0F3B5F", "#1B7FBF"]}
         aria-hidden
-        className="pointer-events-none fixed inset-0 bg-[#030D14]"
+        className="pointer-events-none absolute inset-x-0 top-0 -bottom-28 h-auto w-full bg-[#030D14] md:bottom-0"
       />
 
       <div className="relative ml-[calc(50%-50vw)] w-screen">
@@ -204,21 +204,15 @@ export default function Home() {
           <dl className="relative flex flex-col divide-y divide-[#0B1F2E]/20 lg:col-span-7">
             <div className="flex items-baseline justify-between gap-4 py-4 first:pt-0 last:pb-0">
               <dt className="text-sm">Posko Terpantau</dt>
-              <dd className="t-h2 t-angka tabular-nums">
-                {totalPosko === null ? "…" : totalPosko}
-              </dd>
+              <dd className="t-h2 t-angka tabular-nums">{totalPosko}</dd>
             </div>
             <div className="flex items-baseline justify-between gap-4 py-4 first:pt-0 last:pb-0">
               <dt className="text-sm">Paket Diterima</dt>
-              <dd className="t-h2 t-angka tabular-nums">
-                {totalDiterima === null ? "…" : totalDiterima}
-              </dd>
+              <dd className="t-h2 t-angka tabular-nums">{totalDiterima}</dd>
             </div>
             <div className="flex items-baseline justify-between gap-4 py-4 first:pt-0 last:pb-0">
               <dt className="text-sm">Masih Kurang</dt>
-              <dd className="t-h2 t-angka tabular-nums">
-                {totalSelisih === null ? "…" : totalSelisih}
-              </dd>
+              <dd className="t-h2 t-angka tabular-nums">{totalSelisih}</dd>
             </div>
           </dl>
         </div>

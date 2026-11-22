@@ -43,9 +43,9 @@ export default async function MasukPage({
     <main className="relative mx-auto flex min-h-screen w-full max-w-md flex-col justify-center gap-6 p-6">
       <ShaderBackground
         variant="mesh-gradient"
-        colors={["#F5F7FA", "#F5F7FA", "#F5F7FA", "#1B7FBFCC", "#0F3B5F80"]}
+        colors={["#030D14", "#082032", "#0F3B5F", "#1B7FBF"]}
         aria-hidden
-        className="pointer-events-none fixed inset-0"
+        className="pointer-events-none absolute inset-x-0 top-0 -bottom-28 h-auto w-full bg-[#030D14] md:bottom-0"
       />
       <div className="relative flex min-h-0 flex-col gap-6">
       <FormulirMasuk

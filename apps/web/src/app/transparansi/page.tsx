@@ -105,15 +105,15 @@ export default function TransparansiPage() {
     <main className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-8 px-5 py-12 md:px-10 md:py-20">
       <ShaderBackground
         variant="mesh-gradient"
-        colors={["#F5F7FA", "#F5F7FA", "#F5F7FA", "#1B7FBFCC", "#0F3B5F80"]}
+        colors={["#030D14", "#082032", "#0F3B5F", "#1B7FBF"]}
         aria-hidden
-        className="pointer-events-none fixed inset-0"
+        className="pointer-events-none absolute inset-x-0 top-0 -bottom-28 h-auto w-full bg-[#030D14] md:bottom-0"
       />
       <div className="relative flex min-h-0 flex-col gap-8">
       <div>
-        <p className="t-micro text-primary">Tanpa login</p>
-        <h1 className="t-h1 t-balance mt-2 text-primary">Transparansi per posko</h1>
-        <p className="t-pretty mt-2 max-w-xl text-muted-foreground">
+        <p className="t-micro text-white/70">Tanpa login</p>
+        <h1 className="t-h1 t-balance mt-2 text-white">Transparansi per posko</h1>
+        <p className="t-pretty mt-2 max-w-xl text-white/70">
           Jatah, pengiriman, penerimaan, dan selisih tiap daerah. Angka tidak digabung antar posko.
         </p>
       </div>
@@ -125,7 +125,7 @@ export default function TransparansiPage() {
             placeholder="Cari kode manifest (MNF-...)"
             aria-label="Cari kode manifest"
             required
-            className="min-h-12 flex-1 rounded-xl"
+            className="min-h-12 flex-1 rounded-xl border-white/30 bg-white/10 text-white placeholder:text-white/50"
           />
           <Button type="submit" className="min-h-12 rounded-xl" aria-label="Cek kode manifest">
             <MagnifierIcon aria-hidden="true" /> Cek
@@ -138,7 +138,7 @@ export default function TransparansiPage() {
             placeholder="Cari kode sumbangan (DNT-...)"
             aria-label="Cari kode sumbangan"
             required
-            className="min-h-12 flex-1 rounded-xl"
+            className="min-h-12 flex-1 rounded-xl border-white/30 bg-white/10 text-white placeholder:text-white/50"
           />
           <Button type="submit" className="min-h-12 rounded-xl" aria-label="Cek kode sumbangan">
             <MagnifierIcon aria-hidden="true" /> Cek
@@ -146,7 +146,7 @@ export default function TransparansiPage() {
         </form>
       </div>
 
-      <section aria-label="Ringkasan angka" className="grid grid-cols-2 gap-y-8 border-y border-border py-8 lg:grid-cols-4">
+      <section aria-label="Ringkasan angka" className="grid grid-cols-2 gap-6 rounded-2xl bg-[#DCE8EE] p-6 text-[#0B1F2E] md:p-8 lg:grid-cols-4">
         <div className="flex flex-col gap-1 pr-4 md:pr-8">
           <span className="t-h2 t-angka text-primary tabular-nums">{data.length}</span>
           <span className="text-xs text-muted-foreground md:text-sm">Posko terpantau</span>
@@ -158,12 +158,12 @@ export default function TransparansiPage() {
             </Badge>
           )}
         </div>
-        <div className="flex flex-col gap-1 pr-4 md:pr-8 lg:border-l lg:border-border lg:pl-8">
+        <div className="flex flex-col gap-1 pr-4 md:pr-8 lg:border-l lg:border-[#0B1F2E]/20 lg:pl-8">
           <span className="t-h2 t-angka text-primary tabular-nums">{ringkas.totalButuh}</span>
           <span className="text-xs text-muted-foreground md:text-sm">Total butuh</span>
           <Badge variant="outline" className="mt-1 w-fit rounded-full">Jatah disetujui</Badge>
         </div>
-        <div className="flex flex-col gap-1 pr-4 md:pr-8 lg:border-l lg:border-border lg:pl-8">
+        <div className="flex flex-col gap-1 pr-4 md:pr-8 lg:border-l lg:border-[#0B1F2E]/20 lg:pl-8">
           <span className="t-h2 t-angka text-primary tabular-nums">{ringkas.totalDiterima}</span>
           <span className="text-xs text-muted-foreground md:text-sm">Total diterima</span>
           {ringkas.totalDiterima > 0 ? (
@@ -174,7 +174,7 @@ export default function TransparansiPage() {
             <Badge variant="outline" className="mt-1 w-fit rounded-full">Belum ada terima</Badge>
           )}
         </div>
-        <div className="flex flex-col gap-1 lg:border-l lg:border-border lg:pl-8">
+        <div className="flex flex-col gap-1 lg:border-l lg:border-[#0B1F2E]/20 lg:pl-8">
           <span className="t-h2 t-angka text-destructive tabular-nums">{ringkas.selisihTerbuka}</span>
           <span className="text-xs text-muted-foreground md:text-sm">Selisih terbuka</span>
           {ringkas.selisihTerbuka > 0 ? (
@@ -195,11 +195,11 @@ export default function TransparansiPage() {
             onChange={(e) => setCari(e.target.value)}
             placeholder="Cari posko atau wilayah..."
             aria-label="Cari posko"
-            className="min-h-12 flex-1 rounded-xl"
+            className="min-h-12 flex-1 rounded-xl border-white/30 bg-white/10 text-white placeholder:text-white/50"
           />
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-1 rounded-full border border-border p-1" role="group" aria-label="Saring status selisih">
+          <div className="flex items-center gap-1 rounded-full border border-white/25 p-1" role="group" aria-label="Saring status selisih">
             {(
               [
                 { nilai: "semua", label: "Semua" },
@@ -214,8 +214,8 @@ export default function TransparansiPage() {
                 aria-pressed={filterStatus === o.nilai}
                 className={
                   filterStatus === o.nilai
-                    ? "min-h-10 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground"
-                    : "min-h-10 rounded-full px-4 text-sm text-muted-foreground hover:text-foreground"
+                    ? "min-h-10 rounded-full bg-white px-4 text-sm font-semibold text-[#0B1F2E]"
+                    : "min-h-10 rounded-full px-4 text-sm text-white/70 hover:text-white"
                 }
               >
                 {o.label}
@@ -223,13 +223,13 @@ export default function TransparansiPage() {
             ))}
           </div>
           {adaFilter && (
-            <button type="button" onClick={aturUlang} className="min-h-12 text-sm underline">
+            <button type="button" onClick={aturUlang} className="min-h-12 text-sm text-white underline">
               Atur ulang
             </button>
           )}
         </div>
         {status === "siap" && (
-          <p role="status" className="text-muted-foreground t-angka text-sm">
+          <p role="status" className="t-angka text-sm text-white/70 tabular-nums">
             {tampil.length} posko · {kurangTampil} kurang
           </p>
         )}
@@ -254,7 +254,7 @@ export default function TransparansiPage() {
         </Alert>
       )}
       {status === "siap" && data.length === 0 && (
-        <Empty>
+        <Empty className="rounded-2xl bg-white text-foreground">
           <EmptyHeader>
             <EmptyMedia variant="icon">
               <MagnifierIcon aria-hidden="true" />
@@ -270,7 +270,7 @@ export default function TransparansiPage() {
         </Empty>
       )}
       {status === "siap" && data.length > 0 && tampil.length === 0 && (
-        <Empty>
+        <Empty className="rounded-2xl bg-white text-foreground">
           <EmptyHeader>
             <EmptyMedia variant="icon">
               <MagnifierIcon aria-hidden="true" />
@@ -287,16 +287,16 @@ export default function TransparansiPage() {
       )}
       {status === "siap" && tampil.length > 0 && (
         <section aria-label="Stok per posko">
-          <p className="t-micro text-primary">Stok per posko</p>
-          <h2 className="t-h2 t-balance mt-2 text-primary">Diterima dibanding butuh</h2>
-          <ul className="mt-6 flex flex-col border-t border-border">
+          <p className="t-micro text-white/70">Stok per posko</p>
+          <h2 className="t-h2 t-balance mt-2 text-white">Diterima dibanding butuh</h2>
+          <ul className="mt-6 flex flex-col gap-4">
             {tampil.map((p) => {
               const persen = persenTerima(p.butuh, p.diterima);
               const kurang = p.selisih > 0;
               return (
                 <li
                   key={p.posko_id}
-                  className="flex flex-col gap-3 border-b border-border py-6"
+                  className="flex flex-col gap-3 rounded-2xl bg-white p-5 text-foreground md:p-6"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">

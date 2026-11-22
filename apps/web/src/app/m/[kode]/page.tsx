@@ -172,14 +172,14 @@ export default function ManifestPage({
     <main className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 p-6">
       <ShaderBackground
         variant="mesh-gradient"
-        colors={["#F5F7FA", "#F5F7FA", "#F5F7FA", "#1B7FBFCC", "#0F3B5F80"]}
+        colors={["#030D14", "#082032", "#0F3B5F", "#1B7FBF"]}
         aria-hidden
-        className="pointer-events-none fixed inset-0"
+        className="pointer-events-none absolute inset-x-0 top-0 -bottom-28 h-auto w-full bg-[#030D14] md:bottom-0"
       />
       <div className="relative flex min-h-0 flex-col gap-6">
       <Link
         href="/transparansi"
-        className="inline-flex min-h-12 items-center gap-2 text-sm text-primary underline"
+        className="inline-flex min-h-12 items-center gap-2 text-sm text-white underline underline-offset-4"
       >
         <ArrowLeftIcon aria-hidden="true" />
         Kembali ke Transparansi
@@ -211,7 +211,7 @@ export default function ManifestPage({
       )}
 
       {status === "kosong" && (
-        <Empty>
+        <Empty className="rounded-2xl bg-white text-foreground">
           <EmptyHeader>
             <EmptyMedia variant="icon">
               <MagnifierIcon aria-hidden="true" />
@@ -241,10 +241,10 @@ export default function ManifestPage({
                 <Badge variant="destructive" className="rounded-full">DIBATALKAN</Badge>
               )}
             </div>
-            <h1 className="mt-2 font-mono text-2xl font-bold break-all">
+            <h1 className="mt-2 font-mono text-2xl font-bold break-all text-white">
               {manifest.kode}
             </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1 text-sm text-white/70">
               {manifest.posko_nama} · {manifest.wilayah} · Tim {manifest.tim} · {tanggal(manifest.dipublikasikan_pada)}
             </p>
           </div>
