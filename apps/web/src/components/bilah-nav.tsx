@@ -287,6 +287,18 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
               </span>
               <span className="font-semibold tracking-tight text-white">OmniRelief</span>
             </a>
+            <span className="col-span-6 flex items-center justify-end md:hidden">
+              <a
+                href="/masuk"
+                className="relative inline-flex min-h-10 items-center justify-center border border-white/40 bg-white/10 px-3.5 font-mono text-[11px] tracking-[0.15em] text-white uppercase backdrop-blur-sm hover:bg-white/20"
+              >
+                <span aria-hidden="true" className="absolute top-0 left-0 h-1.5 w-1.5 border-t border-l border-white" />
+                <span aria-hidden="true" className="absolute top-0 right-0 h-1.5 w-1.5 border-t border-r border-white" />
+                <span aria-hidden="true" className="absolute bottom-0 left-0 h-1.5 w-1.5 border-b border-l border-white" />
+                <span aria-hidden="true" className="absolute right-0 bottom-0 h-1.5 w-1.5 border-r border-b border-white" />
+                Masuk
+              </a>
+            </span>
             <nav aria-label="Navigasi utama" className="col-span-6 hidden items-center justify-between gap-8 md:flex">
               <span className="flex items-center gap-8">
                 <a href="/transparansi" className="font-mono text-[11px] tracking-[0.15em] text-white/80 uppercase hover:text-white">
