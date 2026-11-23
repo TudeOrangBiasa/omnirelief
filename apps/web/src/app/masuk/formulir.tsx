@@ -40,7 +40,7 @@ export default function FormulirMasuk({
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <Logo varian="putih" tinggi={34} />
+        <Logo varian="putih" tinggi={30} />
         <h1 className="mt-3 text-2xl font-bold text-white">Masuk</h1>
         <p className="mt-1 text-sm text-white/70">
           Masuk dengan akun peran yang dibagikan command center.

@@ -686,7 +686,7 @@ export default function Home() {
                     className="flex items-center gap-2"
                     aria-label="OmniRelief beranda"
                   >
-                    <Logo varian="putih" tinggi={30} alt="" />
+                    <Logo varian="putih" tinggi={24} alt="" />
                   </a>
                   <p className="text-sm leading-relaxed text-white/70">
                     Sistem logistik bantuan pangan darurat. Tercatat dari

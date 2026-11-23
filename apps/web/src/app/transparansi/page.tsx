@@ -114,7 +114,7 @@ export default function TransparansiPage() {
       <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-5 pt-12 pb-28 md:px-10 md:py-20">
       <div className="flex w-full items-center justify-between pt-6 pb-4">
         <Link href="/" className="flex items-center gap-2" aria-label="OmniRelief beranda">
-          <Logo varian="putih" tinggi={30} alt="" />
+          <Logo varian="putih" tinggi={24} alt="" />
         </Link>
         <span className="flex items-center gap-5">
           <Link href="/" className="min-h-12 inline-flex items-center font-mono text-[11px] tracking-[0.15em] text-white/80 uppercase hover:text-white">

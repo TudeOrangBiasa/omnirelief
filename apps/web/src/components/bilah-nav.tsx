@@ -283,7 +283,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
         <header className="fixed inset-x-0 top-0 z-40 w-full bg-transparent print:hidden">
           <div className="ml-[3vw] grid w-[97vw] grid-cols-12 items-center py-6 pr-5 md:ml-[7vw] md:w-[93vw] md:pr-10 lg:pr-14">
             <a href="/" className="col-span-6 flex items-center gap-2" aria-label="OmniRelief beranda">
-              <Logo varian="putih" tinggi={30} alt="" />
+              <Logo varian="putih" tinggi={24} alt="" />
             </a>
             <span className="col-span-6 flex items-center justify-end md:hidden">
               <a

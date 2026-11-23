@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-const RASIO = 506.58 / 256;
+const RASIO = 506.58 / 81.3;
 
 export default function Logo({
   varian = "warna",
