@@ -27,17 +27,6 @@ export default async function BerandaPage() {
           <GridAksiCepat label="Aksi cepat" aksi={daftarAksi(profil.peran)} />
         </aside>
       </div>
-      <IsiBeranda nama={profil.nama} peran={profil.peran} />
-      <form action={signOut}>
-        <Button
-          type="submit"
-          variant="outline"
-          className="min-h-12 w-full gap-2"
-        >
-          <LogoutIcon aria-hidden="true" />
-          Keluar
-        </Button>
-      </form>
     </main>
   );
 }

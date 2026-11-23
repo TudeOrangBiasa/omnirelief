@@ -2,13 +2,18 @@ import { redirect } from "next/navigation";
 import type { Route } from "next";
 import { getProfil } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { Alert, AlertDescription, AlertTitle } from "@omnirelief/ui/components/alert";
 import { sha256Hex } from "@/lib/hash";
 import { Card, CardContent, CardHeader, CardTitle } from "@omnirelief/ui/components/card";
-import { InfoCircleIcon, LockIcon } from "@solar-icons/react/linear";
+import { InfoCircleIcon, LockIcon, UserIcon } from "@solar-icons/react/linear";
 import FormulirPassword from "./formulir-password";
+import DuaFaktorForm from "./dua-faktor";
+import IdentitasForm from "./identitas";
+import { KepalaHalaman } from "@/components/kepala-halaman";
 
 export const dynamic = "force-dynamic";
+
+const KARTU = "rounded-none border border-[#0B1F2E]/15 bg-white";
+const LABEL = "font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[#1B7FBF]";
 
 export default async function ProfilPage({
   searchParams,
@@ -66,70 +71,88 @@ export default async function ProfilPage({
   }
   return (
 
-  return (
-    <main className="mx-auto flex min-h-screen w-full max-w-2xl flex-col gap-6 p-6">
-      <div>
-        <h1 className="text-2xl font-bold text-primary">Profil</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Data diri kamu. Tanpa hapus akun mandiri. Minta admin bila akun harus dinonaktifkan.
-        </p>
+    <main className="mx-auto min-h-screen w-full max-w-[1400px] px-6 py-8 lg:px-10">
+      <KepalaHalaman
+        label="Akun dan Keamanan"
+        judul="Profil"
+        deskripsi="Data diri kamu. Tanpa hapus akun mandiri. Minta admin bila akun harus dinonaktifkan."
+        bergaris
+      />
+
+      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <Card className={KARTU}>
+          <CardHeader>
+            <p className={LABEL}>Akun dan Keamanan</p>
+            <CardTitle className="flex items-center gap-2 text-base text-[#0B1F2E]">
+              <UserIcon aria-hidden="true" className="size-5" />
+              Data diri
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex items-center gap-4 text-sm">
+            <span
+              aria-hidden="true"
+              className="flex size-14 items-center justify-center rounded-none bg-[#DCE8EE] text-xl font-bold text-[#0B1F2E]"
+            >
+              {inisial}
+            </span>
+            <dl className="flex flex-col gap-1 tabular-nums">
+              <div className="flex gap-2">
+                <dt className="text-muted-foreground">Nama:</dt>
+                <dd className="font-semibold">{namaProfil}</dd>
+              </div>
+              <div className="flex gap-2">
+                <dt className="text-muted-foreground">Email:</dt>
+                <dd className="font-semibold">{email}</dd>
+              </div>
+              <div className="flex gap-2">
+                <dt className="text-muted-foreground">Peran:</dt>
+                <dd className="font-semibold">{peranProfil}</dd>
+              </div>
+            </dl>
+          </CardContent>
+        </Card>
+
+        <Card className={KARTU}>
+          <CardHeader>
+            <p className={LABEL}>Profil Lapangan</p>
+            <CardTitle className="flex items-center gap-2 text-base text-[#0B1F2E]">
+              <UserIcon aria-hidden="true" className="size-5" />
+              Jabatan dan kontak
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <IdentitasForm />
+          </CardContent>
+        </Card>
+
+        {peranProfil === "BPBD" && (
+          <Card className={KARTU}>
+            <CardHeader>
+              <p className={LABEL}>Keamanan</p>
+              <CardTitle className="flex items-center gap-2 text-base text-[#0B1F2E]">
+                <LockIcon aria-hidden="true" className="size-5" />
+                Kode otorisasi PIN
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <DuaFaktorForm hasPin={hasPin} aksiAtur={aturPin} aksiMatikan={matikanPin} />
+            </CardContent>
+          </Card>
+        )}
       </div>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Data diri</CardTitle>
-        </CardHeader>
-        <CardContent className="flex items-center gap-4 text-sm">
-          <span
-            aria-hidden="true"
-            className="flex size-14 items-center justify-center rounded-full bg-secondary text-xl font-bold text-secondary-foreground"
-          >
-            {inisial}
-          </span>
-          <dl className="flex flex-col gap-1">
-            <div className="flex gap-2">
-              <dt className="text-muted-foreground">Nama:</dt>
-              <dd className="font-semibold">{namaProfil}</dd>
-            </div>
-            <div className="flex gap-2">
-              <dt className="text-muted-foreground">Email:</dt>
-              <dd className="font-semibold">{email}</dd>
-            </div>
-            <div className="flex gap-2">
-              <dt className="text-muted-foreground">Peran:</dt>
-              <dd className="font-semibold">{peranProfil}</dd>
-            </div>
-          </dl>
-        </CardContent>
-      </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <LockIcon aria-hidden="true" className="size-5" />
-            Ubah password
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <FormulirPassword
-            aksi={ubahPassword}
-            ok={params.ok === "1"}
-            gagal={
-              params.gagal === "salah" || params.gagal === "pendek" || params.gagal === "gagal"
-                ? params.gagal
-                : null
-            }
-          />
-        </CardContent>
-      </Card>
-
-      <Alert>
-        <InfoCircleIcon aria-hidden="true" />
-        <AlertTitle>Tanpa hapus akun mandiri</AlertTitle>
-        <AlertDescription>
-          Akun hanya bisa dinonaktifkan oleh admin. Hubungi command center bila kamu berhenti
-          bertugas.
-        </AlertDescription>
-      </Alert>
+      <section aria-label="Zona bahaya" className="mt-6 rounded-none border border-red-700/30 bg-white">
+        <div className="border-t-2 border-red-700/30 p-6">
+          <h2 className="flex items-center gap-2 text-base font-bold text-red-800">
+            <InfoCircleIcon aria-hidden="true" className="size-5" />
+            Zona bahaya: tanpa hapus akun mandiri
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Akun hanya bisa dinonaktifkan oleh admin. Hubungi command center bila kamu berhenti
+            bertugas.
+          </p>
+        </div>
+      </section>
     </main>
   );
 }

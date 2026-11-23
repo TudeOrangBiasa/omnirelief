@@ -11,12 +11,18 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@omnirelief/ui/components/breadcrumb";
-import { Badge } from "@omnirelief/ui/components/badge";
 import { Separator } from "@omnirelief/ui/components/separator";
 import { SidebarTrigger } from "@omnirelief/ui/components/sidebar";
 import { hitungAntrean } from "@/components/banner-offline";
 import { mintaBukaPintasan } from "@/components/pintasan-keyboard";
 import { zonaDasbor } from "@/lib/navigasi";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@omnirelief/ui/components/tooltip";
+import PusatNotifikasi from "@/components/pusat-notifikasi";
 
 const PETA_LABEL: Record<string, string> = {
   beranda: "Beranda",
@@ -47,13 +53,7 @@ function remah(pathname: string): { label: string; href?: string }[] {
   ];
 }
 
-export default function Header({
-  nama,
-  peranLabel,
-}: {
-  nama: string | null;
-  peranLabel: string;
-}) {
+export default function Header({ nama }: { nama: string | null }) {
   const pathname = usePathname();
   const [daring, setDaring] = useState(true);
   const [antre, setAntre] = useState(0);
@@ -110,23 +110,27 @@ export default function Header({
           </BreadcrumbList>
         </Breadcrumb>
         <div className="ms-auto flex items-center gap-2 py-1">
-          <button
-            type="button"
-            onClick={() => mintaBukaPintasan()}
-            aria-label="Buka pintasan dan panduan cepat"
-            title="Pintasan dan panduan cepat (?)"
-            className="flex min-h-12 min-w-12 items-center justify-center rounded-full border border-slate-300 bg-white text-lg font-bold text-foreground hover:bg-slate-100"
-          >
-            <span aria-hidden="true">?</span>
-          </button>
-          {nama ? (
-            <Badge
-              variant="secondary"
-              render={<a href="/profil" aria-label={`Profil ${nama}`} />}
-            >
-              {peranLabel}
-            </Badge>
-          ) : (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <button
+                    type="button"
+                    onClick={() => mintaBukaPintasan()}
+                    aria-label="Buka pintasan dan panduan cepat"
+                    className="relative flex h-9 w-9 items-center justify-center rounded-none border border-[#0B1F2E]/20 bg-white font-mono text-xs text-foreground after:absolute after:-inset-1.5 after:content-[''] hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                  >
+                    <span aria-hidden="true">?</span>
+                  </button>
+                }
+              />
+              <TooltipContent side="bottom">
+                Pintasan dan panduan cepat
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <PusatNotifikasi />
+          {!nama && (
             <a
               href="/masuk"
               className="flex h-9 items-center rounded-none bg-primary px-4 text-sm font-semibold text-primary-foreground"

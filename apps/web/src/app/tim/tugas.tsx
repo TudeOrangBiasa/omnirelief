@@ -8,13 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from "@omnirelief/ui/components/a
 import { Badge } from "@omnirelief/ui/components/badge";
 import { Button } from "@omnirelief/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@omnirelief/ui/components/card";
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@omnirelief/ui/components/empty";
+import { BantuanIstilah } from "@/components/bantuan-istilah";
 import {
   Dialog,
   DialogContent,
@@ -24,13 +18,11 @@ import {
   DialogTitle,
 } from "@omnirelief/ui/components/dialog";
 import { Skeleton } from "@omnirelief/ui/components/skeleton";
-import { BoxIcon, CheckIcon, WiFiOffIcon } from "@solar-icons/react/linear";
+import { CheckIcon, WiFiOffIcon } from "@solar-icons/react/linear";
 import { Textarea } from "@omnirelief/ui/components/textarea";
 import { kirimAntrean, kirimSatuAntrean, tambahAntrean } from "@/lib/offline";
 import TombolSalin from "@/components/tombol-salin";
 import { formatTanggalLokal, labelStatusRiwayat } from "@/lib/tanggal";
-import { BantuanIstilah } from "@/components/bantuan-istilah";
-import { PetaAlur, PetaAlurRingkasan } from "@/components/peta-alur";
 import { BarisSegarkan } from "@/components/kepala-halaman";
 
 type Tugas = {
@@ -67,6 +59,7 @@ export default function TugasTim() {
   const [darurat, setDarurat] = useState(false);
   const [tanyaDarurat, setTanyaDarurat] = useState(false);
   const [antre, setAntre] = useState(0);
+  const [diperbarui, setDiperbarui] = useState("");
 
   const muat = useCallback(async () => {
     setStatus("memuat");
@@ -79,6 +72,7 @@ export default function TugasTim() {
       }
       setTugas(data.tugas);
       if (data.tugas.length === 1) setPilih(data.tugas[0].id);
+      setDiperbarui(new Intl.DateTimeFormat("id-ID", { hour: "2-digit", minute: "2-digit" }).format(new Date()));
       setStatus("siap");
     } catch {
       setStatus("gagal");
@@ -157,8 +151,27 @@ export default function TugasTim() {
 
   return (
     <div className="flex flex-col gap-4">
-      <PetaAlur />
-      <PetaAlurRingkasan peran="TIM" langkah="Check-in tepat waktu. Antar sampai posko." />
+      <BarisSegarkan
+        diperbarui={diperbarui}
+        memuat={status === "memuat"}
+        onMuat={() => void muat()}
+      />
+      <section aria-label="Ringkasan tugas" className="grid grid-cols-3 gap-3 rounded-none border bg-[#DCE8EE] p-4">
+        <div className="border bg-card p-3">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Tugas aktif</p>
+          <p className="text-4xl font-light tabular-nums text-primary">{tugas.length}</p>
+        </div>
+        <div className="border bg-card p-3">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Perlu check-in</p>
+          <p className="text-4xl font-light tabular-nums text-primary">{perluDicek}</p>
+        </div>
+        <div className="border bg-card p-3">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Sudah tiba</p>
+          <p className="text-4xl font-light tabular-nums text-primary">{tugas.filter((t) => t.log_terakhir?.status === "TIBA").length}</p>
+        </div>
+      </section>
+      <div className="grid grid-cols-12 gap-6">
+        <div className="col-span-12 flex flex-col gap-4 lg:col-span-8">
       <p className="text-muted-foreground text-sm">
         <BantuanIstilah istilah="check-in" label="Check-in" /> tepat waktu agar tidak kena status{" "}
         <BantuanIstilah istilah="perlu-dicek" label="Perlu Dicek" />.
@@ -211,18 +224,18 @@ export default function TugasTim() {
       )}
 
       {status === "siap" && tugas.length === 0 && (
-        <Empty>
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <BoxIcon aria-hidden="true" />
-            </EmptyMedia>
-            <EmptyTitle>Tidak ada tugas hari ini</EmptyTitle>
-            <EmptyDescription>
-              Belum ada kiriman untuk tim kamu. Tetap siaga dan check-in bila diminta command
-              center.
-            </EmptyDescription>
-          </EmptyHeader>
-        </Empty>
+        <div role="status" className="flex flex-col gap-2 rounded-none border border-dashed p-4">
+          <p className="text-base font-semibold">Belum ada manifest perlu dicek</p>
+          <p className="text-sm text-muted-foreground">
+            Manifest baru dari BPBD muncul di sini setelah dipublikasikan. Tetap siaga dan
+            check-in bila diminta command center.
+          </p>
+          <span aria-hidden="true" className="font-mono text-xs text-muted-foreground">┌ ──┐</span>
+          <Button onClick={() => void muat()} variant="outline" className="min-h-12 rounded-none">
+            Muat ulang tugas
+          </Button>
+          <span aria-hidden="true" className="font-mono text-xs text-muted-foreground">└ ──┘</span>
+        </div>
       )}
 
       {status === "siap" && tugas.length > 0 && (
@@ -272,7 +285,17 @@ export default function TugasTim() {
           })}
         </>
       )}
-
+        </div>
+        <aside className="col-span-12 lg:col-span-4">
+          <div className="flex flex-col gap-4 lg:sticky lg:top-4">
+      {status === "siap" && tugas.length === 0 && (
+        <div role="status" className="flex flex-col gap-2 rounded-none border border-dashed p-4">
+          <p className="text-base font-semibold">Belum ada manifest perlu dicek</p>
+          <p className="text-sm text-muted-foreground">
+            Panel update status tampil di sini setelah ada manifest untuk tim kamu.
+          </p>
+        </div>
+      )}
       {aktif &&
         (() => {
           const sisaAktif = menitMenujuBatas(aktif);
@@ -412,6 +435,9 @@ export default function TugasTim() {
             </Card>
           );
         })()}
+          </div>
+        </aside>
+      </div>
       <Dialog open={tanyaDarurat} onOpenChange={(buka) => !buka && setTanyaDarurat(false)}>
         <DialogContent>
           <DialogHeader>

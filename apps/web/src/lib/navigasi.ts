@@ -64,12 +64,14 @@ export const NAVIGASI_SIDEBAR: Record<NavPeran, NavItem[]> = {
     { href: "/", label: "Beranda", ikon: "beranda" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
     { href: "/audit", label: "Audit log", ikon: "verifikasi" },
+    { href: "/bantuan", label: "Pusat bantuan", ikon: "bantuan" },
     { href: "/masuk", label: "Masuk", ikon: "masuk" },
   ],
   BPBD: [
     { href: "/beranda", label: "Beranda", ikon: "beranda" },
     { href: "/bpbd", label: "Verifikasi", ikon: "verifikasi", lencana: "antrean" },
     { href: "/bpbd/kirim", label: "Buat manifest", ikon: "kirim" },
+    { href: "/bantuan", label: "Pusat bantuan", ikon: "bantuan" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
     { href: "/audit", label: "Audit log", ikon: "verifikasi" },
     { href: "/profil", label: "Profil", ikon: "profil" },
@@ -78,6 +80,7 @@ export const NAVIGASI_SIDEBAR: Record<NavPeran, NavItem[]> = {
   GUDANG: [
     { href: "/beranda", label: "Beranda", ikon: "beranda" },
     { href: "/gudang", label: "Catat sumbangan", ikon: "catat" },
+    { href: "/bantuan", label: "Pusat bantuan", ikon: "bantuan" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
     { href: "/audit", label: "Audit log", ikon: "verifikasi" },
     { href: "/profil", label: "Profil", ikon: "profil" },
@@ -87,6 +90,7 @@ export const NAVIGASI_SIDEBAR: Record<NavPeran, NavItem[]> = {
     { href: "/beranda", label: "Beranda", ikon: "beranda" },
     { href: "/posko#lapor", label: "Lapor", ikon: "lapor" },
     { href: "/posko#bantuan", label: "Bantuan", ikon: "bantuan" },
+    { href: "/bantuan", label: "Pusat bantuan", ikon: "bantuan" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
     { href: "/audit", label: "Audit log", ikon: "verifikasi" },
     { href: "/profil", label: "Profil", ikon: "profil" },
@@ -95,6 +99,7 @@ export const NAVIGASI_SIDEBAR: Record<NavPeran, NavItem[]> = {
   TIM: [
     { href: "/beranda", label: "Beranda", ikon: "beranda" },
     { href: "/tim", label: "Tugas", ikon: "tugas", lencana: "antrean" },
+    { href: "/bantuan", label: "Pusat bantuan", ikon: "bantuan" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
     { href: "/audit", label: "Audit log", ikon: "verifikasi" },
     { href: "/profil", label: "Profil", ikon: "profil" },
@@ -103,6 +108,7 @@ export const NAVIGASI_SIDEBAR: Record<NavPeran, NavItem[]> = {
   ADMIN: [
     { href: "/beranda", label: "Beranda", ikon: "beranda" },
     { href: "/admin", label: "Admin", ikon: "admin" },
+    { href: "/bantuan", label: "Pusat bantuan", ikon: "bantuan" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
     { href: "/audit", label: "Audit log", ikon: "verifikasi" },
     { href: "/profil", label: "Profil", ikon: "profil" },
@@ -148,29 +154,34 @@ export const NAVIGASI_TAB: Record<NavPeran, NavItem[]> = {
 export const NAVIGASI_LAINNYA: Record<NavPeran, NavItem[]> = {
   PUBLIK: [
     { href: "/masuk", label: "Masuk", ikon: "masuk" },
-    { href: "/pengaturan#bantuan", label: "Bantuan", ikon: "bantuan" },
+    { href: "/bantuan", label: "Pusat bantuan", ikon: "bantuan" },
     { href: "/transparansi", label: "Tentang", ikon: "transparansi" },
   ],
   BPBD: [
+    { href: "/bantuan", label: "Pusat bantuan", ikon: "bantuan" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
     { href: "/profil", label: "Profil", ikon: "profil" },
     { href: "/pengaturan", label: "Pengaturan", ikon: "pengaturan" },
   ],
   GUDANG: [
+    { href: "/bantuan", label: "Pusat bantuan", ikon: "bantuan" },
     { href: "/profil", label: "Profil", ikon: "profil" },
     { href: "/pengaturan", label: "Pengaturan", ikon: "pengaturan" },
   ],
   POSKO: [
+    { href: "/bantuan", label: "Pusat bantuan", ikon: "bantuan" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
     { href: "/profil", label: "Profil", ikon: "profil" },
     { href: "/pengaturan", label: "Pengaturan", ikon: "pengaturan" },
   ],
   TIM: [
+    { href: "/bantuan", label: "Pusat bantuan", ikon: "bantuan" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
     { href: "/profil", label: "Profil", ikon: "profil" },
     { href: "/pengaturan", label: "Pengaturan", ikon: "pengaturan" },
   ],
   ADMIN: [
+    { href: "/bantuan", label: "Pusat bantuan", ikon: "bantuan" },
     { href: "/profil", label: "Profil", ikon: "profil" },
     { href: "/pengaturan", label: "Pengaturan", ikon: "pengaturan" },
   ],
@@ -201,7 +212,7 @@ export function tabAktif(pathname: string, hash: string, href: string): boolean 
  * Halaman publik (landing, transparansi, detail, masuk) hanya pakai top-nav.
  */
 export function zonaDasbor(pathname: string): boolean {
-  return ["/beranda", "/bpbd", "/gudang", "/posko", "/tim", "/pengaturan", "/profil", "/admin"].some(
+  return ["/beranda", "/bpbd", "/gudang", "/posko", "/tim", "/pengaturan", "/profil", "/admin", "/bantuan", "/audit"].some(
     (dasar) => pathname === dasar || pathname.startsWith(`${dasar}/`)
   );
 }

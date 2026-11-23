@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -200,6 +201,15 @@ export default function PintasanKeyboard({
                 </li>
               ))}
             </ul>
+          </section>
+          <section aria-label="Pusat bantuan" className="mt-4">
+            <Link
+              href="/bantuan"
+              onClick={() => setBuka(false)}
+              className="flex min-h-12 items-center justify-center rounded-none bg-[#0B1F2E] px-4 text-sm font-semibold text-white"
+            >
+              Buka Pusat Bantuan Lengkap
+            </Link>
           </section>
         </DialogContent>
       </Dialog>

@@ -10,6 +10,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@omnirelief/ui/components/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@omnirelief/ui/components/tooltip";
 
 const DAFTAR = {
   fefo: {
@@ -80,15 +86,23 @@ export function BantuanIstilah({
 
   return (
     <span className="inline-flex min-h-12 items-center">
-      <button
-        type="button"
-        title={info.ringkas}
-        aria-label={`Penjelasan: ${info.judul}`}
-        onClick={() => setBuka(true)}
-        className="inline-flex min-h-12 min-w-12 items-center text-primary underline decoration-dotted underline-offset-4"
-      >
-        {label ?? info.judul}
-      </button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <button
+                type="button"
+                aria-label={`Penjelasan: ${info.judul}. Ketuk untuk penjelasan lengkap.`}
+                onClick={() => setBuka(true)}
+                className="inline-flex min-h-12 min-w-12 items-center text-primary underline decoration-dotted underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              >
+                {label ?? info.judul}
+              </button>
+            }
+          />
+          <TooltipContent side="top">{info.ringkas}</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       <Dialog open={buka} onOpenChange={tutup}>
         <DialogContent>
           <DialogHeader>

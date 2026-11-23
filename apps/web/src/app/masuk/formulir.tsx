@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { EyeClosedIcon, EyeIcon } from "@solar-icons/react/linear";
@@ -15,9 +14,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@omnirelief/ui/components/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@omnirelief/ui/components/dialog";
 import { Input } from "@omnirelief/ui/components/input";
 import { Label } from "@omnirelief/ui/components/label";
 import Logo from "@/components/logo";
+import TombolSalin from "@/components/tombol-salin";
 
 function TombolMasuk({ label }: { label: string }) {
   const { pending } = useFormStatus();
@@ -38,11 +45,60 @@ export default function FormulirMasuk({
   galat: string | null;
 }) {
   const [tampil, setTampil] = useState(false);
+  const [lupaBuka, setLupaBuka] = useState(false);
+  const [emailReset, setEmailReset] = useState("");
+  const [poskoReset, setPoskoReset] = useState("");
+  const [tiket, setTiket] = useState<string | null>(null);
+  const [membuat, setMembuat] = useState(false);
   const [tahap, setTahap] = useState<"kredensial" | "pin">("kredensial");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [pin, setPin] = useState("");
   const [galatPin, setGalatPin] = useState<string | null>(null);
+
+  async function buatTiketReset(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const emailTiket = emailReset.trim().toLowerCase();
+    const posko = poskoReset.trim();
+    if (!emailTiket || !posko || membuat) return;
+    setMembuat(true);
+    try {
+      // Setara sha256Hex di lib/hash.ts. WebCrypto dipakai di klien agar
+      // tidak membundel node:crypto. Tidak ada password yang disimpan.
+      const dasar = `reset|${emailTiket}|${posko}|${Date.now()}`;
+      const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(dasar));
+      const hex = Array.from(new Uint8Array(buf))
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+      setTiket(hex.slice(0, 12).toUpperCase());
+    } finally {
+      setMembuat(false);
+    }
+  }
+
+  async function kirimKredensial(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const data = new FormData();
+    data.set("email", email);
+    data.set("password", password);
+    const hasil = await tahapSatu(data);
+    if (hasil && hasil.perluPin) setTahap("pin");
+  }
+
+  async function kirimPin(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const bersih = pin.replace(/[^0-9]/g, "").slice(0, 6);
+    if (!/^[0-9]{6}$/.test(bersih)) {
+      setGalatPin("PIN harus 6 digit angka.");
+      return;
+    }
+    setGalatPin(null);
+    const data = new FormData();
+    data.set("email", email);
+    data.set("password", password);
+    data.set("pin", bersih);
+    await tahapDua(data);
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -167,20 +223,89 @@ export default function FormulirMasuk({
           </Button>
         </form>
       )}
+      <div className="flex justify-end">
+        <Button
+          type="button"
+          variant="link"
+          onClick={() => {
+            setTiket(null);
+            setLupaBuka(true);
+          }}
+          className="min-h-12 text-white underline"
         >
+          Lupa password?
+        </Button>
+      </div>
+      <Dialog open={lupaBuka} onOpenChange={setLupaBuka}>
+        <DialogContent className="max-h-[85vh] overflow-y-auto rounded-none sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reset password lewat command center</DialogTitle>
+            <DialogDescription>
+              Buat kode tiket lalu sebutkan ke operator. Password baru diberikan
+              operator setelah identitas diperiksa.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={(e) => void buatTiketReset(e)} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="reset-email">Email akun</Label>
+              <Input
+                id="reset-email"
+                type="email"
+                required
+                value={emailReset}
+                onChange={(e) => setEmailReset(e.target.value)}
+                placeholder="nama@contoh.id"
+                autoComplete="username"
+                className="min-h-12 rounded-none"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="reset-posko">Nama posko</Label>
+              <Input
+                id="reset-posko"
+                type="text"
+                required
+                value={poskoReset}
+                onChange={(e) => setPoskoReset(e.target.value)}
+                placeholder="Contoh: Posko Balai Warga"
+                className="min-h-12 rounded-none"
+              />
+            </div>
+            <Button type="submit" disabled={membuat} className="min-h-12 w-full rounded-none">
+              {membuat ? "Membuat tiket..." : "Buat Tiket Reset"}
+            </Button>
+          </form>
+          {tiket && (
+            <div className="flex flex-col gap-3 rounded-none border border-[#0B1F2E]/15 bg-[#DCE8EE] p-4">
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[#1B7FBF]">
+                Kode tiket reset
+              </p>
+              <p aria-live="polite" className="font-mono text-2xl font-bold tracking-widest text-[#0B1F2E] tabular-nums">
+                {tiket}
+              </p>
+              <TombolSalin teks={tiket} label="Salin Kode" pesanSukses="Kode tiket disalin" variant="outline" className="rounded-none" />
+              <ol className="list-decimal pl-5 text-sm text-[#0B1F2E]">
+                <li>Siapkan KTP atau SIM petugas untuk pemeriksaan identitas.</li>
+                <li>Sebutkan kode tiket ini ke operator command center.</li>
+                <li>Jangan bagikan password ke siapa pun lewat chat.</li>
+              </ol>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Akun demo untuk juri</CardTitle>
         </CardHeader>
         <CardContent className="text-muted-foreground flex flex-col gap-1 text-sm">
-          <p>Pilih salah satu email berikut lalu minta password ke pendamping demo:</p>
+          <p>Pilih salah satu akun berikut. Password sama untuk semua: JuriDemo2026!</p>
           <ul className="list-disc pl-5">
-            <li>bpbd@demo: command center</li>
-            <li>gudang@demo: pencatat batch</li>
-            <li>posko-a@demo: relawan posko</li>
-            <li>tim@demo: tim distribusi</li>
+            <li><span className="font-mono">bpbd@demo</span>: command center</li>
+            <li><span className="font-mono">gudang@demo</span>: pencatat batch</li>
+            <li><span className="font-mono">posko-a@demo</span>: relawan posko</li>
+            <li><span className="font-mono">tim@demo</span>: tim distribusi</li>
           </ul>
-          <p>Password tidak ditulis di sini dan tidak diketik saat demo video.</p>
+          <p>Akun demo hanya untuk penilaian. Ganti password setelah kompetisi selesai.</p>
         </CardContent>
       </Card>
     </div>

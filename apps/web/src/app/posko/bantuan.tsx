@@ -7,12 +7,6 @@ import { Alert, AlertDescription, AlertTitle } from "@omnirelief/ui/components/a
 import { Badge } from "@omnirelief/ui/components/badge";
 import { Button } from "@omnirelief/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@omnirelief/ui/components/card";
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyTitle,
-} from "@omnirelief/ui/components/empty";
 import { Label } from "@omnirelief/ui/components/label";
 import {
   Select,
@@ -55,6 +49,7 @@ export default function BantuanPosko() {
   const [galat, setGalat] = useState<string | null>(null);
   const [sibukKonfirmasi, setSibukKonfirmasi] = useState<number | null>(null);
   const [sibukLapor, setSibukLapor] = useState(false);
+  const [diperbarui, setDiperbarui] = useState("");
 
   async function muat() {
     setStatus("memuat");
@@ -64,6 +59,7 @@ export default function BantuanPosko() {
       const data = (await res.json()) as { ok: boolean; bantuan?: Bantuan[]; galat?: string };
       if (data.ok && data.bantuan) {
         setBantuan(data.bantuan);
+        setDiperbarui(new Intl.DateTimeFormat("id-ID", { hour: "2-digit", minute: "2-digit" }).format(new Date()));
         setStatus("siap");
       } else {
         setGalat(data.galat ?? "Gagal memuat kiriman.");
@@ -136,7 +132,16 @@ export default function BantuanPosko() {
 
   return (
     <section id="bantuan" aria-label="Bantuan untuk posko ini" className="flex scroll-mt-20 flex-col gap-2">
-      <h2 className="text-lg font-bold text-primary">Bantuan untuk posko ini</h2>
+      <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">Kiriman BPBD</p>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-lg font-bold text-primary">Bantuan untuk posko ini</h2>
+        <BarisSegarkan
+          diperbarui={diperbarui}
+          memuat={status === "memuat"}
+          onMuat={() => void muat()}
+          sebaris
+        />
+      </div>
       <PetaAlurRingkasan peran="POSKO" langkah="Konfirmasi terima kiriman. Lapor masalah bila ada." />
       <Link href="/transparansi" className="inline-flex min-h-12 w-fit items-center gap-1 text-sm text-primary underline">
         Lihat di halaman publik
@@ -164,14 +169,18 @@ export default function BantuanPosko() {
         </Button>
       )}
       {status === "siap" && bantuan.length === 0 && (
-        <Empty>
-          <EmptyHeader>
-            <EmptyTitle>Belum ada kiriman</EmptyTitle>
-            <EmptyDescription>
-              Kiriman bantuan dari BPBD muncul di sini setelah dipublikasikan.
-            </EmptyDescription>
-          </EmptyHeader>
-        </Empty>
+        <div role="status" className="flex flex-col gap-2 rounded-none border border-dashed p-4">
+          <p className="text-base font-semibold">Belum ada kiriman perlu dicek</p>
+          <p className="text-sm text-muted-foreground">
+            Kiriman bantuan dari BPBD muncul di sini setelah dipublikasikan. Konfirmasi terima
+            segera agar tercatat publik.
+          </p>
+          <span aria-hidden="true" className="font-mono text-xs text-muted-foreground">┌ ──┐</span>
+          <Button onClick={() => void muat()} variant="outline" className="min-h-12 rounded-none">
+            Muat ulang kiriman
+          </Button>
+          <span aria-hidden="true" className="font-mono text-xs text-muted-foreground">└ ──┘</span>
+        </div>
       )}
       {status === "siap" &&
         bantuan.map((b) => {

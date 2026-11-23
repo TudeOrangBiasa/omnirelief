@@ -3,8 +3,7 @@
 import type { Route } from "next";
 
 import { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { HistoryIcon } from "@solar-icons/react/linear";
+import { BarisSegarkan } from "@/components/kepala-halaman";
 import {
   Alert,
   AlertDescription,
@@ -45,7 +44,7 @@ type Aktivitas = {
   waktu: string;
 };
 
-type Ringkasan = { angka: string; label: string }[];
+type Ringkasan = { angka: string; label: string; konteks: string }[];
 
 const KUNCI_KUNJUNGAN = "omnirelief-kunjungan-terakhir";
 
@@ -61,17 +60,6 @@ function formatTanggal(iso: string): string {
   }).format(d);
 }
 
-function Lencana({ badge }: { badge: Aktivitas["badge"] }) {
-  if (badge.varian === "success") {
-    return (
-      <Badge className="border-transparent bg-success-bg text-success">
-        {badge.teks}
-      </Badge>
-    );
-  }
-  return <Badge variant={badge.varian}>{badge.teks}</Badge>;
-}
-
 export default function IsiBeranda({
   nama,
   peran,
@@ -79,7 +67,6 @@ export default function IsiBeranda({
   nama: string;
   peran: Peran;
 }) {
-  const router = useRouter();
   const [status, setStatus] = useState<StatusMuat>("memuat");
   const [ringkasan, setRingkasan] = useState<Ringkasan>([]);
   const [aktivitas, setAktivitas] = useState<Aktivitas[]>([]);
@@ -126,9 +113,9 @@ export default function IsiBeranda({
         const pantau = baris<PantauRow>(w.perlu_dicek);
         const kritis = prioritas.filter((x) => x.selisih > 0);
         setRingkasan([
-          { angka: String(pantau.length), label: "Perlu Dicek" },
-          { angka: String(antrean.length), label: "Menunggu verifikasi" },
-          { angka: String(kritis.length), label: "Posko kurang" },
+          { angka: String(pantau.length), label: "Perlu dicek", konteks: `Dari ${antrean.length} antrean aktif` },
+          { angka: String(antrean.length), label: "Menunggu verifikasi", konteks: "Prioritas kirim hari ini" },
+          { angka: String(kritis.length), label: "Posko kurang", konteks: `Dari ${prioritas.length} posko dipantau` },
         ]);
         const daftar: Aktivitas[] = [
           ...pantau.map((x) => ({
@@ -176,9 +163,9 @@ export default function IsiBeranda({
         );
         const totalSisa = batch.reduce((s, b) => s + Math.max(0, b.sisa), 0);
         setRingkasan([
-          { angka: String(batch.length), label: "Batch tercatat" },
-          { angka: String(totalSisa), label: "Paket siap kirim" },
-          { angka: String(hampir.length), label: "Kedaluwarsa < 30 hari" },
+          { angka: String(batch.length), label: "Batch tercatat", konteks: `Dari ${batch.length} batch aktif` },
+          { angka: String(totalSisa), label: "Paket siap kirim", konteks: "Prioritas kirim hari ini" },
+          { angka: String(hampir.length), label: "Kedaluwarsa < 30 hari", konteks: `Dari ${batch.length} batch aktif` },
         ]);
         const daftar = [...batch]
           .sort((x, y) => x.id - y.id)
@@ -216,9 +203,9 @@ export default function IsiBeranda({
         );
         const menunggu = laporan.filter((x) => x.status !== "DISETUJUI").length;
         setRingkasan([
-          { angka: String(berjalan.length), label: "Kiriman berjalan" },
-          { angka: String(menunggu), label: "Laporan menunggu verifikasi" },
-          { angka: String(laporan.length), label: "Laporan terkirim" },
+          { angka: String(berjalan.length), label: "Kiriman berjalan", konteks: `Dari ${bantuan.length} kiriman aktif` },
+          { angka: String(menunggu), label: "Menunggu verifikasi", konteks: "Prioritas kirim hari ini" },
+          { angka: String(laporan.length), label: "Laporan terkirim", konteks: `Dari ${laporan.length} laporan aktif` },
         ]);
         const daftar: Aktivitas[] = [
           ...bantuan.slice(0, 5).map((x) => ({
@@ -264,13 +251,14 @@ export default function IsiBeranda({
           (t) => t.batas_checkin !== null && t.batas_checkin < sekarang,
         );
         setRingkasan([
-          { angka: String(tugas.length), label: "Tugas aktif" },
-          { angka: String(dicek.length), label: "Perlu check-in" },
+          { angka: String(tugas.length), label: "Tugas aktif", konteks: `Dari ${tugas.length} tugas aktif` },
+          { angka: String(dicek.length), label: "Perlu check-in", konteks: "Prioritas kirim hari ini" },
           {
             angka: String(
               tugas.filter((t) => t.log_terakhir?.status === "TIBA").length,
             ),
             label: "Sudah tiba",
+            konteks: `Dari ${tugas.length} tugas aktif`,
           },
         ]);
         const daftar = tugas.slice(0, 5).map((t) => ({
@@ -307,73 +295,68 @@ export default function IsiBeranda({
   }, [muat]);
 
   const langkahAksi = AKSI_PERAN[peran][0]?.label ?? "Tugas berikutnya";
+  const penting = aktivitas.filter((a) => a.badge.varian === "destructive");
 
   return (
     <div className="flex flex-col gap-8">
       <Onboarding peran={peran} />
       <PetaAlur />
       <PetaAlurRingkasan peran={peran} langkah={langkahAksi} />
+      {status === "siap" &&
+        penting.slice(0, 1).map((p) => (
+          <BannerAksi
+            key={p.id}
+            nada="prioritas"
+            judul={`${penting.length} hal perlu perhatian sekarang`}
+            deskripsi={`${p.judul} — ${p.sub}`}
+            aksiLabel="Tindak lanjuti"
+            href={p.href}
+          />
+        ))}
       <section aria-label="Ringkasan sejak kunjungan terakhir">
-        <h1 className="text-lg font-bold text-primary">
+        <h2 className="text-xl font-bold text-[#0B1F2E]">
           Halo, {nama}. Rangkuman kunjungan terakhir
           {baru > 0 ? `: ${baru} pembaruan baru` : ""}
-        </h1>
-        <p className="text-muted-foreground mt-1 text-xs">
-          Angka hari ini{diperbarui ? ` · diperbarui ${diperbarui}` : ""}
-        </p>
+        </h2>
+        <BarisSegarkan
+          diperbarui={diperbarui}
+          memuat={status === "memuat"}
+          onMuat={() => void muat()}
+        />
         {status === "memuat" && (
-          <div role="status" aria-label="Memuat ringkasan" className="mt-3 grid grid-cols-3 gap-3">
+          <div role="status" aria-label="Memuat ringkasan" className="mt-3 grid grid-cols-1 gap-0 sm:grid-cols-3">
             {[0, 1, 2].map((i) => (
-              <Skeleton key={i} className="h-20" />
+              <Skeleton key={i} className="h-20 rounded-none" />
             ))}
           </div>
         )}
         {status === "gagal" && (
-          <Alert variant="destructive" className="mt-3">
+          <Alert variant="destructive" className="mt-3 rounded-none">
             <AlertTitle>Gagal memuat ringkasan</AlertTitle>
             <AlertDescription>
               Periksa koneksi lalu coba lagi.
             </AlertDescription>
-            <Button onClick={() => void muat()} className="mt-3 min-h-12">
+            <Button onClick={() => void muat()} className="mt-3 min-h-12 rounded-none">
               Coba lagi
             </Button>
           </Alert>
         )}
         {status === "siap" && (
-          <div className="mt-3 grid grid-cols-3 gap-3">
-            {ringkasan.map((r) => (
-              <Card key={r.label}>
-                <CardContent className="flex flex-col gap-1 p-4">
-                  <span className="text-2xl font-bold text-primary">{r.angka}</span>
-                  <span className="text-muted-foreground text-xs">{r.label}</span>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="mt-3">
+            <StripKpi label="Angka kunci" item={ringkasan} />
           </div>
         )}
       </section>
-
-      <section aria-label="Aksi utama" className="flex flex-col gap-2">
-        <Button onClick={() => router.push(aksi.href)} className="min-h-12 w-full">
-          {aksi.label}
-        </Button>
-        {kedua && (
-          <Button
-            variant="outline"
-            onClick={() => router.push(kedua.href)}
-            className="min-h-12 w-full"
-          >
-            {kedua.label}
-          </Button>
-        )}
-      </section>
-
       <section aria-label="Aktivitas terakhir">
-        <h2 className="text-lg font-bold text-primary">Aktivitas terakhir</h2>
+        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">Aktivitas</p>
+        <div className="flex flex-wrap items-center gap-2">
+          <h2 className="text-xl font-bold text-[#0B1F2E]">Aktivitas terakhir</h2>
+          {baru > 0 && <Badge variant="destructive">{baru} baru</Badge>}
+        </div>
         {status === "memuat" && (
           <div role="status" aria-label="Memuat aktivitas" className="mt-3 flex flex-col gap-2">
             {[0, 1, 2].map((i) => (
-              <Skeleton key={i} className="h-16" />
+              <Skeleton key={i} className="h-16 rounded-none" />
             ))}
           </div>
         )}
@@ -389,28 +372,16 @@ export default function IsiBeranda({
           </div>
         )}
         {status === "siap" && aktivitas.length > 0 && (
-          <ul className="mt-3 flex flex-col gap-2">
-            {aktivitas.map((a) => (
-              <li key={a.id}>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between gap-2 text-base">
-                      <a
-                        href={a.href}
-                        className="min-h-12 content-center text-primary underline-offset-4 hover:underline"
-                      >
-                        {a.judul}
-                      </a>
-                      <Lencana badge={a.badge} />
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-muted-foreground -mt-2 text-sm">
-                    {a.sub}
-                  </CardContent>
-                </Card>
-              </li>
-            ))}
-          </ul>
+          <DaftarAktivitas
+            item={aktivitas.map((a) => ({
+              id: a.id,
+              judul: a.judul,
+              sub: a.sub,
+              href: a.href,
+              badge: a.badge,
+              waktuLabel: a.waktu === "" ? "" : formatTanggal(a.waktu),
+            }))}
+          />
         )}
       </section>
     </div>

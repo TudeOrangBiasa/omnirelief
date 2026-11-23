@@ -9,7 +9,7 @@ import PendaftaranSw from "@/components/pendaftaran-sw";
 import Providers from "@/components/providers";
 import PintasanKeyboard from "@/components/pintasan-keyboard";
 import { getProfil } from "@/lib/auth";
-import { LABEL_PERAN, peranDariString } from "@/lib/navigasi";
+import { peranDariString } from "@/lib/navigasi";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,9 +57,9 @@ export default async function RootLayout({
           <PintasanKeyboard>
             <SidebarProvider>
               <BilahNav peran={peran} nama={profil?.nama ?? null} />
-              <SidebarInset className="bg-slate-50">
-                <Header nama={profil?.nama ?? null} peranLabel={LABEL_PERAN[peran]} />
-                <div className="mx-auto w-full max-w-5xl min-w-0 flex-1 pb-28 md:pb-0">
+              <SidebarInset className="bg-[#F4F7F9]">
+                <Header nama={profil?.nama ?? null} />
+                <div className="mx-auto w-full max-w-[1400px] min-w-0 flex-1 px-6 py-8 lg:px-10">
                   {children}
                 </div>
               </SidebarInset>

@@ -13,7 +13,7 @@ import { Label } from "@omnirelief/ui/components/label";
 import { kirimAntrean, kirimSatuAntrean, tambahAntrean } from "@/lib/offline";
 
 import { BantuanIstilah } from "@/components/bantuan-istilah";
-import { PetaAlur, PetaAlurRingkasan } from "@/components/peta-alur";
+import { PetaAlur, bukaPanduan } from "@/components/peta-alur";
 
 type Laporan = {
   id: number;
@@ -53,11 +53,14 @@ export default function FormulirPosko() {
   const [galat, setGalat] = useState<string | null>(null);
   const [galatField, setGalatField] = useState<Partial<Record<NamaMedan, string>>>({});
   const [modeSibuk, setModeSibuk] = useState<"kirim" | "draf" | null>(null);
-
+  const [diperbarui, setDiperbarui] = useState("");
   async function muat() {
     const res = await fetch("/api/posko/laporan");
     const data = (await res.json()) as { ok: boolean; laporan?: Laporan[] };
-    if (data.ok && data.laporan) setLaporan(data.laporan);
+    if (data.ok && data.laporan) {
+      setLaporan(data.laporan);
+      setDiperbarui(new Intl.DateTimeFormat("id-ID", { hour: "2-digit", minute: "2-digit" }).format(new Date()));
+    }
   }
 
   useEffect(() => {
@@ -126,8 +129,53 @@ export default function FormulirPosko() {
 
   return (
     <div id="lapor" className="flex scroll-mt-20 flex-col gap-6">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          Laporan penyintas · agregat
+        </p>
+        <BarisSegarkan
+          diperbarui={diperbarui}
+          memuat={false}
+          onMuat={() => void muat()}
+          sebaris
+        />
+      </div>
+      <section aria-label="Ringkasan laporan" className="grid grid-cols-3 gap-3 rounded-none border bg-[#DCE8EE] p-4">
+        <div className="border bg-card p-3">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Laporan terkirim</p>
+          <p className="text-4xl font-light tabular-nums text-primary">{laporan.length}</p>
+        </div>
+        <div className="border bg-card p-3">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Menunggu verifikasi</p>
+          <p className="text-4xl font-light tabular-nums text-primary">{laporan.filter((l) => l.status !== "DISETUJUI").length}</p>
+        </div>
+        <div className="border bg-card p-3">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Jiwa laporan terakhir</p>
+          <p className="text-4xl font-light tabular-nums text-primary">{terbaru ? terbaru.bayi + terbaru.balita + terbaru.ibu_hamil + terbaru.lansia + terbaru.disabilitas + terbaru.umum : 0}</p>
+        </div>
+      </section>
+      <ol aria-label="Alur bantuan" className="flex flex-wrap items-center gap-2 font-mono text-[11px] uppercase tracking-widest">
+        <li className="border px-2 py-1">Gudang</li>
+        <li aria-hidden="true">→</li>
+        <li className="border px-2 py-1">BPBD</li>
+        <li aria-hidden="true">→</li>
+        <li className="border px-2 py-1">Tim</li>
+        <li aria-hidden="true">→</li>
+        <li className="border bg-[#0B1F2E] px-2 py-1 text-white">Posko</li>
+        <li aria-hidden="true">→</li>
+        <li className="border px-2 py-1">Publik</li>
+        <li>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => bukaPanduan("POSKO", "Kirim angka penyintas. Lalu tunggu verifikasi BPBD.")}
+            className="min-h-12 rounded-none font-mono text-[11px] uppercase tracking-widest"
+          >
+            Lihat peta alur
+          </Button>
+        </li>
+      </ol>
       <PetaAlur />
-      <PetaAlurRingkasan peran="POSKO" langkah="Kirim angka penyintas. Lalu tunggu verifikasi BPBD." />
       <p className="text-muted-foreground text-sm">
         Cukup kirim angka <BantuanIstilah istilah="agregat" label="agregat tanpa NIK" />. Tanpa nama.
         Tanpa NIK.
@@ -263,7 +311,12 @@ export default function FormulirPosko() {
             : "Belum ada snapshot disetujui. Jatah dihitung setelah BPBD menyetujui laporan."}
         </div>
         {laporan.length === 0 && (
-          <p className="text-muted-foreground text-sm">Belum ada laporan.</p>
+          <div role="status" className="flex flex-col gap-2 rounded-none border border-dashed p-4">
+            <p className="text-base font-semibold">Belum ada laporan terkirim</p>
+            <p className="text-sm text-muted-foreground">
+              Laporan pertama muncul di sini setelah data di atas dikirim. Simpan draf bila koneksi lemah.
+            </p>
+          </div>
         )}
         {laporan.map((l) => (
           <Card key={l.id}>

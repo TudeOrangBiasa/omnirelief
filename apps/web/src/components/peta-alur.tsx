@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { Badge } from "@omnirelief/ui/components/badge";
 import { Button } from "@omnirelief/ui/components/button";
-import { Card, CardContent } from "@omnirelief/ui/components/card";
 import {
   Dialog,
   DialogContent,
@@ -85,23 +84,65 @@ export function PetaAlurRingkasan({
   peran: PeranAlur;
   langkah: string;
 }) {
+  const posisi = TAHAP.findIndex((t) => t.peran === peran);
   return (
-    <Card>
-      <CardContent className="flex flex-col gap-2 p-4 text-sm">
-        <p className="font-bold text-primary">
-          Alur bantuan: Gudang → BPBD → Tim → Posko → Publik
-        </p>
-        <p className="text-muted-foreground">Langkah kamu: {langkah}</p>
+    <div className="rounded-none border border-[#0B1F2E]/15 bg-white px-4 py-3">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">
+            Peta alur bantuan
+          </p>
+          <p className="mt-0.5 truncate text-sm text-[#0B1F2E]">
+            Langkah kamu: <strong>{langkah}</strong>
+          </p>
+        </div>
         <Button
           type="button"
           variant="outline"
           onClick={() => bukaPanduan(peran, langkah)}
-          className="min-h-12 min-w-12 w-full sm:w-fit"
+          className="min-h-12 shrink-0 rounded-none border border-[#0B1F2E]/30 sm:w-auto"
         >
-          Lihat peta alur
+          Lihat Peta Alur
         </Button>
-      </CardContent>
-    </Card>
+      </div>
+      <ol
+        className="mt-3 flex items-start border-t border-[#0B1F2E]/10 pt-4"
+        aria-label="Tahapan alur bantuan"
+      >
+        {TAHAP.map((t, i) => {
+          const aktif = i === posisi;
+          const selesai = posisi >= 0 && i < posisi;
+          return (
+            <li key={t.peran} className="relative flex flex-1 flex-col items-center gap-1.5 px-1 text-center">
+              {i > 0 && (
+                <span aria-hidden="true" className="absolute top-3.5 right-[calc(50%+14px)] left-[-50%] h-px bg-[#0B1F2E]/20" />
+              )}
+              <span
+                aria-current={aktif ? "step" : undefined}
+                className={
+                  aktif
+                    ? "flex size-7 shrink-0 items-center justify-center rounded-full bg-[#0B1F2E] font-mono text-[11px] font-bold text-white"
+                    : selesai
+                      ? "flex size-7 shrink-0 items-center justify-center rounded-full bg-[#DCE8EE] font-mono text-[11px] font-bold text-[#0B1F2E]"
+                      : "flex size-7 shrink-0 items-center justify-center rounded-full border border-[#0B1F2E]/25 font-mono text-[11px] text-[#0B1F2E]/55"
+                }
+              >
+                {i + 1}
+              </span>
+              <span
+                className={
+                  aktif
+                    ? "text-[11px] leading-tight font-semibold text-[#0B1F2E]"
+                    : "text-[11px] leading-tight text-[#0B1F2E]/60"
+                }
+              >
+                {t.judul}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
   );
 }
 

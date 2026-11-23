@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import QRCode from "qrcode";
 import { toast } from "sonner";
 import {
@@ -20,12 +21,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@omnirelief/ui/components/dialog";
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyTitle,
-} from "@omnirelief/ui/components/empty";
 import { Input } from "@omnirelief/ui/components/input";
 import { Label } from "@omnirelief/ui/components/label";
 import {
@@ -48,7 +43,7 @@ import { cn } from "@omnirelief/ui/lib/utils";
 import { baris } from "@/lib/supabase/baris";
 import { sisaHariKalender } from "@/lib/tanggal";
 import { BantuanIstilah } from "@/components/bantuan-istilah";
-import { PetaAlur, PetaAlurRingkasan } from "@/components/peta-alur";
+import { PetaAlur, bukaPanduan } from "@/components/peta-alur";
 import { BarisSegarkan } from "@/components/kepala-halaman";
 
 type Posko = { id: number; nama: string; wilayah: string };
@@ -91,7 +86,8 @@ function labelKedaluwarsa(b: Batch): { teks: string; lewat: boolean; dekat: bool
   return { teks: `Sisa ${hari} hari (${tgl})`, lewat: false, dekat: false };
 }
 
-export default function FormulirKirim() {
+function IsiFormulirKirim() {
+  const cariPosko = useSearchParams();
   const [posko, setPosko] = useState<Posko[]>([]);
   const [batch, setBatch] = useState<Batch[]>([]);
   const [poskoId, setPoskoId] = useState("");
@@ -104,6 +100,8 @@ export default function FormulirKirim() {
   const [memuat, setMemuat] = useState(true);
   const [sibuk, setSibuk] = useState(false);
   const [tanyaKunci, setTanyaKunci] = useState(false);
+  const [poskoOtomatis, setPoskoOtomatis] = useState(false);
+  const [diperbarui, setDiperbarui] = useState("");
 
   useEffect(() => {
     void (async () => {
@@ -124,10 +122,24 @@ export default function FormulirKirim() {
       } catch {
         setGalat("Gagal memuat posko dan batch. Coba muat ulang halaman.");
       } finally {
+        setDiperbarui(new Intl.DateTimeFormat("id-ID", { hour: "2-digit", minute: "2-digit" }).format(new Date()));
         setMemuat(false);
       }
     })();
   }, []);
+
+  useEffect(() => {
+    if (poskoOtomatis || posko.length === 0) return;
+    const mentah = cariPosko.get("posko")?.trim().toLowerCase();
+    if (!mentah) return;
+    const cocok = posko.find(
+      (p) => String(p.id) === mentah || p.nama.toLowerCase().includes(mentah),
+    );
+    if (cocok) {
+      setPoskoId(String(cocok.id));
+      setPoskoOtomatis(true);
+    }
+  }, [cariPosko, posko, poskoOtomatis]);
 
   const idDipilih = new Set(barisKirim.filter((r) => r.batch_id > 0).map((r) => r.batch_id));
   const expDipilih = barisKirim
@@ -138,6 +150,27 @@ export default function FormulirKirim() {
     const exp: string = b.kedaluwarsa;
     return expDipilih.some((e) => exp < e);
   });
+  const poskoTujuan = posko.find((p) => String(p.id) === poskoId) ?? null;
+  const ringkasKirim = barisKirim
+    .filter((r) => r.batch_id > 0 && r.jumlah > 0)
+    .map((r) => {
+      const b = batch.find((x) => x.id === r.batch_id);
+      return {
+        batch_id: r.batch_id,
+        kode: b?.kode_sumbangan ?? `Batch ${r.batch_id}`,
+        item: b?.item_nama ?? "-",
+        satuan: b?.satuan ?? "",
+        jumlah: r.jumlah,
+      };
+    });
+  const totalKirim = ringkasKirim.reduce((s, r) => s + r.jumlah, 0);
+  const cekMasuk = new Date(Date.now() + Math.max(30, totalKirim * 2) * 60000);
+  const cekMasukTeks = new Intl.DateTimeFormat("id-ID", {
+    day: "numeric",
+    month: "long",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(cekMasuk);
 
   const kataKunci = cariBatch.trim().toLowerCase();
   const batchTampil = batch.filter(
@@ -242,8 +275,53 @@ export default function FormulirKirim() {
 
   return (
     <div className="flex flex-col gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          Manifest · FEFO
+        </p>
+        <BarisSegarkan
+          diperbarui={diperbarui}
+          memuat={false}
+          onMuat={() => window.location.reload()}
+          sebaris
+        />
+      </div>
+      <section aria-label="Ringkasan stok" className="grid grid-cols-3 gap-3 rounded-none border bg-[#DCE8EE] p-4">
+        <div className="border bg-card p-3">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Batch tersedia</p>
+          <p className="text-4xl font-light tabular-nums text-primary">{batch.length}</p>
+        </div>
+        <div className="border bg-card p-3">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Paket tersedia</p>
+          <p className="text-4xl font-light tabular-nums text-primary">{batch.reduce((s, b) => s + Math.max(0, b.sisa), 0)}</p>
+        </div>
+        <div className="border bg-card p-3">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Posko tujuan</p>
+          <p className="text-4xl font-light tabular-nums text-primary">{posko.length}</p>
+        </div>
+      </section>
+      <ol aria-label="Alur bantuan" className="flex flex-wrap items-center gap-2 font-mono text-[11px] uppercase tracking-widest">
+        <li className="border px-2 py-1">Gudang</li>
+        <li aria-hidden="true">→</li>
+        <li className="border bg-[#0B1F2E] px-2 py-1 text-white">BPBD</li>
+        <li aria-hidden="true">→</li>
+        <li className="border px-2 py-1">Tim</li>
+        <li aria-hidden="true">→</li>
+        <li className="border px-2 py-1">Posko</li>
+        <li aria-hidden="true">→</li>
+        <li className="border px-2 py-1">Publik</li>
+        <li>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => bukaPanduan("BPBD", "Pilih posko dan batch FEFO. Lalu kunci manifest.")}
+            className="min-h-12 rounded-none font-mono text-[11px] uppercase tracking-widest"
+          >
+            Lihat peta alur
+          </Button>
+        </li>
+      </ol>
       <PetaAlur />
-      <PetaAlurRingkasan peran="BPBD" langkah="Pilih posko dan batch FEFO. Lalu kunci manifest." />
       {galat && (
         <Alert variant="destructive">
           <DangerTriangleIcon aria-hidden="true" />
@@ -292,21 +370,67 @@ export default function FormulirKirim() {
             <Dialog open={tanyaKunci} onOpenChange={(buka) => !buka && setTanyaKunci(false)}>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Kunci manifest {draf.kode}?</DialogTitle>
+                  <DialogTitle>Periksa akhir manifest {draf.kode}</DialogTitle>
                   <DialogDescription>
-                    Manifest terkunci permanen dan tidak bisa diubah atau dihapus.
-                    Alokasi batch langsung mengurangi sisa stok untuk manifest lain.
-                    Pastikan posko, tim, dan jumlah sudah benar.
+                    Manifest terkunci permanen dengan hash SHA-256 dan tidak bisa diubah atau dihapus.
+                    Periksa ringkasan di bawah sebelum mengunci.
                   </DialogDescription>
                 </DialogHeader>
+                <dl className="flex flex-col gap-2 text-sm">
+                  <div className="flex flex-col gap-1 border p-3">
+                    <dt className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Posko tujuan</dt>
+                    <dd className="font-semibold">{poskoTujuan ? `${poskoTujuan.nama} (${poskoTujuan.wilayah})` : "-"}</dd>
+                  </div>
+                  <div className="flex flex-col gap-1 border p-3">
+                    <dt className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Tim distribusi</dt>
+                    <dd className="font-semibold">{tim.trim() === "" ? "-" : tim.trim()}</dd>
+                  </div>
+                  <div className="flex flex-col gap-1 border p-3">
+                    <dt className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Estimasi waktu check-in</dt>
+                    <dd className="font-semibold">Sekitar {cekMasukTeks}</dd>
+                  </div>
+                </dl>
+                <div className="overflow-x-auto border">
+                  <Table>
+                    <TableHeader className="bg-[#0B1F2E]">
+                      <TableRow className="hover:bg-[#0B1F2E]">
+                        <TableHead className="font-mono text-[11px] uppercase text-white">Barang</TableHead>
+                        <TableHead className="font-mono text-[11px] uppercase text-white">Kode batch</TableHead>
+                        <TableHead className="font-mono text-[11px] uppercase text-white">Jumlah</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {ringkasKirim.map((r) => (
+                        <TableRow key={r.batch_id}>
+                          <TableCell>{r.item}</TableCell>
+                          <TableCell className="font-mono text-xs break-all">{r.kode}</TableCell>
+                          <TableCell className="tabular-nums">{r.jumlah} {r.satuan}</TableCell>
+                        </TableRow>
+                      ))}
+                      <TableRow>
+                        <TableCell colSpan={2} className="font-semibold">Total</TableCell>
+                        <TableCell className="font-semibold tabular-nums">{totalKirim}</TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </div>
+                {terlewat.length > 0 ? (
+                  <p role="status" className="rounded-none bg-warning-bg p-3 text-sm text-warning">
+                    Peringatan FEFO: {terlewat.map((b) => `${b.kode_sumbangan} (${new Date(b.kedaluwarsa ?? "").toLocaleDateString("id-ID")})`).join(", ")} kedaluwarsanya lebih dekat tapi tidak ikut dipakai. Pakai yang terdekat dulu agar tidak kedaluwarsa di gudang.
+                  </p>
+                ) : (
+                  <p role="status" className="rounded-none bg-success-bg p-3 text-sm text-success">
+                    Aman: semua batch terdekat ikut dipakai.
+                  </p>
+                )}
                 <DialogFooter>
                   <Button
                     variant="outline"
                     onClick={() => setTanyaKunci(false)}
                     disabled={sibuk}
-                    className="min-h-12 flex-1"
+                    className="min-h-12 flex-1 rounded-none"
                   >
-                    Periksa lagi
+                    Kembali untuk ubah
                   </Button>
                   <Button
                     onClick={() => {
@@ -314,9 +438,9 @@ export default function FormulirKirim() {
                       void publikasikan();
                     }}
                     disabled={sibuk}
-                    className="min-h-12 flex-1"
+                    className="min-h-12 flex-1 rounded-none"
                   >
-                    {sibuk ? "Mengunci..." : "Ya, kunci"}
+                    {sibuk ? "Mengunci..." : "Kunci permanen"}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -324,15 +448,17 @@ export default function FormulirKirim() {
           </CardContent>
         </Card>
       ) : batch.length === 0 ? (
-        <Empty>
-          <EmptyHeader>
-            <EmptyTitle>Belum ada stok batch</EmptyTitle>
-            <EmptyDescription>
-              Gudang belum mencatat batch dengan sisa stok. Isi stok dulu sebelum membuat
-              manifest.
-            </EmptyDescription>
-          </EmptyHeader>
-        </Empty>
+        <div role="status" className="flex flex-col gap-2 rounded-none border border-dashed p-4">
+          <p className="text-base font-semibold">Belum ada manifest perlu dicek</p>
+          <p className="text-sm text-muted-foreground">
+            Gudang belum mencatat batch dengan sisa stok. Isi stok dulu sebelum membuat manifest.
+          </p>
+          <span aria-hidden="true" className="font-mono text-xs text-muted-foreground">┌ ──┐</span>
+          <Button onClick={() => window.location.reload()} variant="outline" className="min-h-12 rounded-none">
+            Muat ulang data
+          </Button>
+          <span aria-hidden="true" className="font-mono text-xs text-muted-foreground">└ ──┘</span>
+        </div>
       ) : (
         <>
           <div className="flex flex-col gap-1">
@@ -381,15 +507,15 @@ export default function FormulirKirim() {
                 Tidak ada batch yang cocok dengan pencarian.
               </p>
             ) : (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto border">
               <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Kode</TableHead>
-                    <TableHead>Barang</TableHead>
-                    <TableHead>Sisa</TableHead>
-                    <TableHead>Kedaluwarsa</TableHead>
-                    <TableHead>Aksi</TableHead>
+                <TableHeader className="bg-[#0B1F2E]">
+                  <TableRow className="hover:bg-[#0B1F2E]">
+                    <TableHead className="font-mono text-xs uppercase tracking-widest text-white">Kode</TableHead>
+                    <TableHead className="font-mono text-xs uppercase tracking-widest text-white">Barang</TableHead>
+                    <TableHead className="font-mono text-xs uppercase tracking-widest text-white">Sisa</TableHead>
+                    <TableHead className="font-mono text-xs uppercase tracking-widest text-white">Kedaluwarsa</TableHead>
+                    <TableHead className="font-mono text-xs uppercase tracking-widest text-white">Aksi</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -507,5 +633,13 @@ export default function FormulirKirim() {
         </>
       )}
     </div>
+  );
+}
+
+export default function FormulirKirim() {
+  return (
+    <Suspense>
+      <IsiFormulirKirim />
+    </Suspense>
   );
 }

@@ -51,6 +51,8 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@omnirelief/ui/components/sidebar";
+import { hitungAntrean } from "@/components/banner-offline";
+import { mintaBukaPintasan } from "@/components/pintasan-keyboard";
 import Logo from "@/components/logo";
 import {
   grupSidebar,
@@ -64,6 +66,16 @@ import {
   type NavPeran,
 } from "@/lib/navigasi";
 import { cn } from "@omnirelief/ui/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@omnirelief/ui/components/dropdown-menu";
+import { createClient } from "@/lib/supabase/client";
+import { bacaIdentitas, type Identitas } from "@/lib/identitas";
+
 type Ikon = typeof HomeIcon;
 
 const IKON_LIN: Record<NavItem["ikon"], Ikon> = {
@@ -168,18 +180,23 @@ function ItemMenu({
   aktif,
   menunggu,
   pantau,
+  indeks,
 }: {
   item: NavItem;
   aktif: boolean;
   menunggu: number;
   pantau: number;
+  indeks: string;
 }) {
   const Ikon = aktif ? IKON_DUO[item.ikon] : IKON_LIN[item.ikon];
   return (
     <SidebarMenuItem>
       <SidebarMenuButton
         isActive={aktif}
-        tooltip={item.label}
+        className={cn(
+          "rounded-none",
+          aktif && "border-l-4 border-[#1B7FBF] bg-[#0B1F2E] font-medium text-white hover:bg-[#0B1F2E] hover:text-white",
+        )}
         render={
           <a
             href={item.href}
@@ -193,7 +210,10 @@ function ItemMenu({
         }
       >
         <Ikon aria-hidden="true" />
-        <span>{item.label}</span>
+        <span className="flex-1">{item.label}</span>
+        <span aria-hidden="true" className="font-mono text-[10px] tabular-nums opacity-60 group-data-[collapsible=icon]:hidden">
+          {indeks}
+        </span>
       </SidebarMenuButton>
       {item.lencana === "antrean" && menunggu > 0 && (
         <span className="absolute top-1 end-1">
@@ -210,6 +230,8 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
   const [lainnyaBuka, setLainnyaBuka] = useState(false);
   const [antrean, setAntrean] = useState(0);
   const [pantau, setPantau] = useState(0);
+  const [daring, setDaring] = useState(true);
+  const [antreLokal, setAntreLokal] = useState(0);
 
   useEffect(() => {
     function segarkanHash() {
@@ -247,6 +269,20 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
   }, [peran, pathname]);
 
   useEffect(() => {
+    function segarkanLokal() {
+      setDaring(window.navigator.onLine);
+      setAntreLokal(hitungAntrean());
+    }
+    segarkanLokal();
+    window.addEventListener("online", segarkanLokal);
+    window.addEventListener("offline", segarkanLokal);
+    return () => {
+      window.removeEventListener("online", segarkanLokal);
+      window.removeEventListener("offline", segarkanLokal);
+    };
+  }, [pathname]);
+
+  useEffect(() => {
     if (!lainnyaBuka) return;
     function saatTombol(e: KeyboardEvent) {
       if (e.key === "Escape") setLainnyaBuka(false);
@@ -275,7 +311,36 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
   const aktifTab = (href: string) =>
     tabAktif(path, hash, href) || (!cocokTabAda && diDasbor && href === "/beranda");
 
-  const inisial = (nama ?? "?").trim().charAt(0).toUpperCase() || "?";
+  const [identitas, setIdentitas] = useState<Identitas | null>(null);
+
+  useEffect(() => {
+    function segarkanIdentitas(): void {
+      setIdentitas(bacaIdentitas());
+    }
+    segarkanIdentitas();
+    window.addEventListener("storage", segarkanIdentitas);
+    return () => window.removeEventListener("storage", segarkanIdentitas);
+  }, []);
+
+  const namaTampil = identitas && identitas.nama !== "" ? identitas.nama : nama;
+  const inisialTampil = (namaTampil ?? "?").trim().charAt(0).toUpperCase() || "?";
+  const warnaAvatar = identitas?.warna ?? "#0B1F2E";
+  const nomorMenu = new Map(grup.flatMap((g) => g.item).map((item, i) => [item.href, String(i + 1).padStart(2, "0")]));
+  const statusSinkron = !daring
+    ? `LURING · ${antreLokal} ANTRE`
+    : antreLokal > 0
+      ? `${antreLokal} MENUNGGU SINKRON`
+      : "TERSINKRON";
+  async function keluar(): Promise<void> {
+    try {
+      const sb = createClient();
+      await sb.auth.signOut();
+    } catch {
+      /* abaikan, tetap arahkan ke masuk */
+    } finally {
+      window.location.href = "/masuk";
+    }
+  }
 
   return (
     <>
@@ -327,36 +392,28 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
         </header>
       )}
       {diDasbor && (
-        <Sidebar variant="inset" collapsible="icon" aria-label="Navigasi utama">
-          <SidebarHeader>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  size="lg"
-                  tooltip="Beranda"
-                  render={
-                    <a href="/beranda" aria-label="OmniRelief work zone" />
-                  }
-                >
-                  <Logo
-                    tinggi={26}
-                    alt=""
-                    kelas="group-data-[collapsible=icon]:hidden"
-                  />
-                  <Logo
-                    simbol
-                    tinggi={26}
-                    alt=""
-                    kelas="hidden group-data-[collapsible=icon]:block"
-                  />
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
+        <Sidebar
+          variant="inset"
+          collapsible="icon"
+          aria-label="Navigasi utama"
+          className="border-r border-[#0B1F2E]/20 bg-[#DCE8EE] [--sidebar:#DCE8EE] print:hidden"
+        >
+          <SidebarHeader className="flex h-14 justify-center border-b border-[#0B1F2E]/15 px-4">
+            <a
+              href="/beranda"
+              aria-label="OmniRelief work zone"
+              className="flex min-w-0 items-center gap-3"
+            >
+              <Logo simbol tinggi={28} alt="" />
+              <span className="truncate text-base font-bold tracking-tight text-[#0B1F2E] group-data-[collapsible=icon]:hidden">
+                OmniRelief
+              </span>
+            </a>
           </SidebarHeader>
           <SidebarContent>
             {grup.map((g) => (
               <SidebarGroup key={g.judul}>
-                <SidebarGroupLabel>{g.judul}</SidebarGroupLabel>
+                <SidebarGroupLabel className="font-mono text-[10px] tracking-[0.15em] uppercase">{g.judul}</SidebarGroupLabel>
                 <SidebarGroupContent>
                   <SidebarMenu>
                     {g.item.map((item) => (
@@ -366,6 +423,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
                         menunggu={antrean + pantau}
                         pantau={pantau}
                         aktif={aktifItem(item.href)}
+                        indeks={nomorMenu.get(item.href) ?? "00"}
                       />
                     ))}
                   </SidebarMenu>
@@ -373,37 +431,73 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
               </SidebarGroup>
             ))}
           </SidebarContent>
-          {nama && (
-            <SidebarFooter>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    size="lg"
-                    tooltip={`Profil ${nama}`}
-                    render={
-                      <a
-                        href="/profil"
-                        aria-label={`Profil ${nama}, ${LABEL_SINGKAT[peran]}`}
-                      />
-                    }
+          <SidebarFooter>
+            <div className="border border-[#0B1F2E]/15 p-3 font-mono text-[10px]">
+              <p className="flex items-center gap-1.5">
+                <span aria-hidden="true" className="inline-block size-1.5 rounded-full bg-emerald-600" />
+                LEDGER SHA-256 AKTIF
+              </p>
+              <p className="mt-1">
+                SINKRON LOKAL · {statusSinkron}{" "}
+                <button
+                  type="button"
+                  onClick={() => mintaBukaPintasan()}
+                  aria-label="Buka pintasan keyboard"
+                  className="underline underline-offset-2 hover:no-underline"
+                >
+                  [?]
+                </button>
+              </p>
+            </div>
+            {nama && (
+              <div className="flex h-11 items-center gap-1 border-t border-[#0B1F2E]/15 px-3">
+                <a
+                  href="/profil"
+                  aria-label={`Profil ${namaTampil}, ${LABEL_PERAN[peran]}`}
+                  className="flex min-w-0 flex-1 items-center gap-2 rounded-none"
+                >
+                  <span
+                    aria-hidden="true"
+                    style={{ backgroundColor: warnaAvatar }}
+                    className="flex size-7 shrink-0 items-center justify-center rounded-none text-xs font-bold text-white"
                   >
-                    <span
-                      aria-hidden="true"
-                      className="flex size-8 shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-bold text-secondary-foreground"
-                    >
-                      {inisial}
+                    {inisialTampil}
+                  </span>
+                  <span className="min-w-0 flex-1 leading-tight group-data-[collapsible=icon]:hidden">
+                    <span className="block truncate text-xs font-medium">{namaTampil}</span>
+                    <span className="block truncate font-mono text-[10px] uppercase tracking-wider text-[#0B1F2E]/60">
+                      {LABEL_PERAN[peran]}
                     </span>
-                    <span className="min-w-0 flex-1 leading-tight">
-                      <span className="block truncate font-semibold">{nama}</span>
-                      <span className="block truncate text-xs font-normal text-muted-foreground">
-                        {LABEL_SINGKAT[peran]}
-                      </span>
-                    </span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarFooter>
-          )}
+                  </span>
+                </a>
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={
+                      <button
+                        type="button"
+                        aria-label="Menu profil lainnya"
+                        className="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-none text-[#0B1F2E]/70 after:absolute after:-inset-[10px] after:content-[''] group-data-[collapsible=icon]:hidden hover:bg-[#0B1F2E]/5"
+                      >
+                        <MenuDotsVerticalIcon aria-hidden="true" className="size-4" />
+                      </button>
+                    }
+                  />
+                  <DropdownMenuContent align="end" side="top" className="min-w-48">
+                    <DropdownMenuItem render={<a href="/profil" />}>
+                      Profil saya
+                    </DropdownMenuItem>
+                    <DropdownMenuItem render={<a href="/beranda" />}>
+                      Kembali ke beranda
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem variant="destructive" onClick={() => void keluar()}>
+                      Keluar akun
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            )}
+          </SidebarFooter>
           <SidebarRail />
         </Sidebar>
       )}

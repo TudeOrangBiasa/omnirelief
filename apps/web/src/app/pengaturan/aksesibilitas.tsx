@@ -9,6 +9,8 @@ const KUNCI = "omnirelief-aksesibilitas";
 type Ukuran = "biasa" | "besar" | "sangat";
 type Pilihan = { teks: Ukuran; kontras: boolean; gerak: boolean };
 
+const BAKU: Pilihan = { teks: "biasa", kontras: false, gerak: false };
+
 const UKURAN: { nilai: Ukuran; label: string }[] = [
   { nilai: "biasa", label: "Biasa" },
   { nilai: "besar", label: "Besar" },
@@ -16,16 +18,15 @@ const UKURAN: { nilai: Ukuran; label: string }[] = [
 ];
 
 function baca(): Pilihan {
-  const baku: Pilihan = { teks: "biasa", kontras: false, gerak: false };
   try {
     const mentah = window.localStorage.getItem(KUNCI);
-    if (!mentah) return baku;
+    if (!mentah) return { ...BAKU };
     const p = JSON.parse(mentah) as Partial<Pilihan>;
     const teks: Ukuran =
       p.teks === "besar" || p.teks === "sangat" ? p.teks : "biasa";
     return { teks, kontras: p.kontras === true, gerak: p.gerak === true };
   } catch {
-    return { teks: "biasa", kontras: false, gerak: false };
+    return { ...BAKU };
   }
 }
 
@@ -37,7 +38,7 @@ function terapkan(p: Pilihan): void {
 }
 
 export default function AksesibilitasForm() {
-  const [pilihan, setPilihan] = useState<Pilihan>({ teks: "biasa", kontras: false, gerak: false });
+  const [pilihan, setPilihan] = useState<Pilihan>({ ...BAKU });
   const [siap, setSiap] = useState(false);
 
   useEffect(() => {
@@ -57,6 +58,10 @@ export default function AksesibilitasForm() {
     }
   }
 
+  function aturUlang(): void {
+    simpan({ ...BAKU });
+  }
+
   return (
     <div className="flex flex-col gap-3 text-sm">
       <fieldset className="flex flex-col gap-2">
@@ -68,24 +73,24 @@ export default function AksesibilitasForm() {
               type="button"
               aria-pressed={siap && pilihan.teks === u.nilai}
               onClick={() => simpan({ ...pilihan, teks: u.nilai })}
-              className={`min-h-12 flex-1 rounded-xl border px-3 font-semibold ${
+              className={`flex min-h-12 flex-1 items-center justify-center rounded-none border px-3 font-semibold ${
                 pilihan.teks === u.nilai
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border"
+                  ? "border-[#0B1F2E] bg-[#0B1F2E] text-white"
+                  : "border-[#0B1F2E]/15 bg-white text-[#0B1F2E]"
               }`}
             >
               {u.label}
             </button>
           ))}
         </div>
-        <p aria-live="polite" className="text-muted-foreground text-xs">
+        <p aria-live="polite" className="text-xs text-muted-foreground">
           Pratinjau: Posko A melayani 120 penyintas hari ini.
         </p>
       </fieldset>
-      <div className="flex min-h-12 items-center justify-between gap-3">
+      <div className="flex min-h-12 items-center justify-between gap-3 border-t border-[#0B1F2E]/10 pt-2">
         <div className="flex flex-col">
           <Label htmlFor="a11y-kontras">Kontras tinggi</Label>
-          <span className="text-muted-foreground text-xs">Teks lebih tegas, tetap terang.</span>
+          <span className="text-xs text-muted-foreground">Teks lebih tegas, tetap terang.</span>
         </div>
         <Switch
           id="a11y-kontras"
@@ -94,10 +99,10 @@ export default function AksesibilitasForm() {
           aria-label={`Kontras tinggi, ${pilihan.kontras ? "aktif" : "nonaktif"}`}
         />
       </div>
-      <div className="flex min-h-12 items-center justify-between gap-3">
+      <div className="flex min-h-12 items-center justify-between gap-3 border-t border-[#0B1F2E]/10 pt-2">
         <div className="flex flex-col">
           <Label htmlFor="a11y-gerak">Kurangi gerak dan animasi</Label>
-          <span className="text-muted-foreground text-xs">Menghormati preferensi perangkat.</span>
+          <span className="text-xs text-muted-foreground">Menghormati preferensi perangkat.</span>
         </div>
         <Switch
           id="a11y-gerak"
@@ -106,9 +111,19 @@ export default function AksesibilitasForm() {
           aria-label={`Kurangi gerak dan animasi, ${pilihan.gerak ? "aktif" : "nonaktif"}`}
         />
       </div>
-      <p role="status" id="a11y-info" className="text-muted-foreground">
-        {siap ? "Pilihan aksesibilitas tersimpan di perangkat ini." : "Memuat pilihan…"}
-      </p>
+      <div className="mt-1 flex flex-wrap items-center justify-between gap-3">
+        <p role="status" id="a11y-info" className="flex items-center gap-2 text-xs font-semibold text-[#0B1F2E]">
+          <span aria-hidden="true" className="inline-block size-2 rounded-none bg-emerald-600" />
+          {siap ? "Tersimpan otomatis di perangkat ini." : "Memuat pilihan…"}
+        </p>
+        <button
+          type="button"
+          onClick={aturUlang}
+          className="flex min-h-12 items-center rounded-none border border-[#0B1F2E]/15 bg-white px-4 text-xs font-bold uppercase tracking-wide text-[#0B1F2E] hover:bg-[#DCE8EE]"
+        >
+          Reset ke Default
+        </button>
+      </div>
     </div>
   );
 }

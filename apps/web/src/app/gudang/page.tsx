@@ -31,7 +31,7 @@ import { sisaHariKalender } from "@/lib/tanggal";
 import { baris, type GudangBatchRow, type ItemKatalogRow } from "@/lib/supabase/baris";
 import TombolSalin from "@/components/tombol-salin";
 import { BantuanIstilah } from "@/components/bantuan-istilah";
-import { PetaAlur, PetaAlurRingkasan } from "@/components/peta-alur";
+import { PetaAlur, bukaPanduan } from "@/components/peta-alur";
 import { BarisSegarkan, KepalaHalaman } from "@/components/kepala-halaman";
 import { BilahHalaman, BilahSaring } from "@/components/kontrol-tabel";
 import { KotakKosong } from "@/components/widget-laporan";
@@ -43,6 +43,8 @@ type GalatField = {
   sumber?: string;
 };
 
+type FilterBatch = "semua" | "segera" | "menipis";
+type KunciUrut = "kode" | "barang" | "sisa" | "kedaluwarsa";
 type IntakeHariIni = {
   kode: string;
   jumlah: number;
@@ -93,6 +95,11 @@ export default function GudangPage() {
   const [katalog, setKatalog] = useState<ItemKatalogRow[]>([]);
   const [statusKatalog, setStatusKatalog] = useState<StatusBatch>("memuat");
   const [cariBatch, setCariBatch] = useState("");
+  const [filterBatch, setFilterBatch] = useState<FilterBatch>("semua");
+  const [kunciUrut, setKunciUrut] = useState<KunciUrut | null>(null);
+  const [arahUrut, setArahUrut] = useState<"naik" | "turun">("naik");
+  const [halaman, setHalaman] = useState(1);
+  const [ukuranHalaman, setUkuranHalaman] = useState<5 | 10 | 20>(10);
   const formRef = useRef<HTMLFormElement>(null);
 
   const muatBatch = useCallback(() => {
@@ -154,22 +161,67 @@ export default function GudangPage() {
 
   const tampilBatch = useMemo(() => {
     const kata = cariBatch.trim().toLowerCase();
-    const saring = batch.filter(
-      (b) =>
+    const saring = batch.filter((b) => {
+      const cocokKata =
         kata === "" ||
         b.kode_sumbangan.toLowerCase().includes(kata) ||
         b.item_nama.toLowerCase().includes(kata) ||
-        b.sumber.toLowerCase().includes(kata)
-    );
-    return urutFEFO(
+        b.sumber.toLowerCase().includes(kata);
+      if (!cocokKata) return false;
+      if (filterBatch === "segera") {
+        if (b.kedaluwarsa === null) return false;
+        const hari = sisaHariKalender(b.kedaluwarsa);
+        return hari <= 30;
+      }
+      if (filterBatch === "menipis") return b.sisa <= 5;
+      return true;
+    });
+    const fefo = urutFEFO(
       saring.map((b) => ({ ...b, kode: b.kode_sumbangan, tersedia: b.sisa }))
     );
-  }, [batch, cariBatch]);
+    if (kunciUrut === null) return fefo;
+    const banding = (a: (typeof fefo)[number], c: (typeof fefo)[number]) => {
+      if (kunciUrut === "kode") return a.kode_sumbangan.localeCompare(c.kode_sumbangan);
+      if (kunciUrut === "barang") return a.item_nama.localeCompare(c.item_nama);
+      if (kunciUrut === "sisa") return a.sisa - c.sisa;
+      const waktu = (tanggal: string | null) =>
+        tanggal === null ? Number.POSITIVE_INFINITY : new Date(tanggal).getTime();
+      return waktu(a.kedaluwarsa) - waktu(c.kedaluwarsa);
+    };
+    return [...fefo].sort((a, c) => (arahUrut === "naik" ? banding(a, c) : banding(c, a)));
+  }, [batch, cariBatch, filterBatch, kunciUrut, arahUrut]);
 
   const sisaTampil = useMemo(
     () => tampilBatch.reduce((s, b) => s + b.sisa, 0),
     [tampilBatch]
   );
+
+  const totalHalaman = Math.max(1, Math.ceil(tampilBatch.length / ukuranHalaman));
+  const halamanAman = Math.min(halaman, totalHalaman);
+  const awal = tampilBatch.length === 0 ? 0 : (halamanAman - 1) * ukuranHalaman + 1;
+  const akhir = Math.min(halamanAman * ukuranHalaman, tampilBatch.length);
+  const batchHalaman = tampilBatch.slice((halamanAman - 1) * ukuranHalaman, halamanAman * ukuranHalaman);
+
+  function gantiUrut(kunci: KunciUrut) {
+    if (kunciUrut !== kunci) {
+      setKunciUrut(kunci);
+      setArahUrut("naik");
+    } else {
+      setArahUrut((a) => (a === "naik" ? "turun" : "naik"));
+    }
+    setHalaman(1);
+  }
+
+  function ikonUrut(kunci: KunciUrut) {
+    if (kunciUrut !== kunci) return "▲▼";
+    return arahUrut === "naik" ? "▲" : "▼";
+  }
+
+  function aturUlangFilter() {
+    setCariBatch("");
+    setFilterBatch("semua");
+    setHalaman(1);
+  }
 
   function fokusForm() {
     formRef.current?.scrollIntoView({ block: "start" });
@@ -222,17 +274,46 @@ export default function GudangPage() {
   }
 
 
+  const diperbarui = new Date().toLocaleString("id-ID", { hour: "2-digit", minute: "2-digit" });
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-6 p-6">
-      <div>
-        <h1 className="text-2xl font-bold text-primary">Gudang</h1>
-        <p className="text-muted-foreground mt-1 text-sm">
-          Catat pangan masuk. Satu pencatatan sama dengan satu kode sumbangan.
-        </p>
+    <main className="mx-auto w-full max-w-[1400px] px-6 py-8 lg:px-10">
+      <KepalaHalaman
+        label="Operasional · Gudang"
+        judul="Gudang"
+        deskripsi="Catat pangan masuk. Satu pencatatan sama dengan satu kode sumbangan."
+      />
+      <div className="mt-4">
+        <BarisSegarkan
+          diperbarui={diperbarui}
+          memuat={statusBatch === "memuat"}
+          onMuat={() => { muatBatch(); muatKatalog(); }}
+          sebaris
+        />
       </div>
+      <ol aria-label="Alur bantuan" className="mt-4 flex flex-wrap items-center gap-2 font-mono text-[11px] uppercase tracking-widest">
+        <li className="border bg-[#0B1F2E] px-2 py-1 text-white">Gudang</li>
+        <li aria-hidden="true">→</li>
+        <li className="border px-2 py-1">BPBD</li>
+        <li aria-hidden="true">→</li>
+        <li className="border px-2 py-1">Tim</li>
+        <li aria-hidden="true">→</li>
+        <li className="border px-2 py-1">Posko</li>
+        <li aria-hidden="true">→</li>
+        <li className="border px-2 py-1">Publik</li>
+        <li>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => bukaPanduan("GUDANG", "Catat sumbangan. Satu pencatatan sama dengan satu kode sumbangan.")}
+            className="min-h-12 rounded-none font-mono text-[11px] uppercase tracking-widest"
+          >
+            Lihat peta alur
+          </Button>
+        </li>
+      </ol>
       <PetaAlur />
-      <PetaAlurRingkasan peran="GUDANG" langkah="Catat sumbangan. Satu pencatatan sama dengan satu kode sumbangan." />
-
+      <div className="mt-6 grid grid-cols-12 gap-6">
+        <div className="col-span-12 flex flex-col gap-6 lg:col-span-8">
       {hasil && (
         <Card className="border-transparent bg-success-bg">
           <CardHeader>
@@ -369,21 +450,48 @@ export default function GudangPage() {
         </Button>
       </form>
 
-      <section aria-label="Stok batch" className="flex flex-col gap-3">
-        <h2 className="text-lg font-bold text-primary">Stok batch</h2>
+      <section aria-label="Stok batch" className="flex flex-col gap-3 rounded-none border bg-[#DCE8EE] p-4">
+        <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-[#0B1F2E]">Stok batch · FEFO</h2>
+        <dl className="grid grid-cols-3 gap-3">
+          <div className="border bg-card p-3">
+            <dt className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Batch tercatat</dt>
+            <dd className="text-4xl font-light tabular-nums text-primary">{batch.length}</dd>
+          </div>
+          <div className="border bg-card p-3">
+            <dt className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Paket siap kirim</dt>
+            <dd className="text-4xl font-light tabular-nums text-primary">{batch.reduce((s, b) => s + Math.max(0, b.sisa), 0)}</dd>
+          </div>
+          <div className="border bg-card p-3">
+            <dt className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Kedaluwarsa &lt; 30 hari</dt>
+            <dd className="text-4xl font-light tabular-nums text-primary">{batch.filter((b) => b.kedaluwarsa !== null && new Date(b.kedaluwarsa).getTime() < Date.now() + 30 * 24 * 3600 * 1000 && b.sisa > 0).length}</dd>
+          </div>
+        </dl>
         <p className="text-muted-foreground text-sm">
           Urutan <BantuanIstilah istilah="fefo" label="FEFO" />: kedaluwarsa paling dekat
           keluar duluan.
         </p>
-        <Input
-          value={cariBatch}
-          onChange={(e) => setCariBatch(e.target.value)}
+        <BilahSaring
+          idCari="cari-batch"
+          labelCari="Cari batch"
           placeholder="Cari kode, barang, atau sumber..."
-          aria-label="Cari batch"
-          className="min-h-12"
+          cari={cariBatch}
+          onCari={(nilai) => { setCariBatch(nilai); setHalaman(1); }}
+          labelGrup="Saring batch"
+          pilihan={[
+            { nilai: "semua", label: "Semua" },
+            { nilai: "segera", label: "Segera kedaluwarsa (<30 hari)" },
+            { nilai: "menipis", label: "Stok menipis (sisa ≤ 5)" },
+          ]}
+          aktif={filterBatch}
+          onPilih={(nilai) => {
+            if (nilai === "semua" || nilai === "segera" || nilai === "menipis") {
+              setFilterBatch(nilai);
+              setHalaman(1);
+            }
+          }}
         />
         {statusBatch === "siap" && (
-          <p role="status" className="text-muted-foreground t-angka text-sm">
+          <p role="status" className="text-muted-foreground text-sm tabular-nums">
             {tampilBatch.length} batch · sisa {sisaTampil}
           </p>
         )}
@@ -422,61 +530,65 @@ export default function GudangPage() {
           </Alert>
         )}
         {statusBatch === "siap" && batch.length === 0 && (
-          <Empty>
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <MagnifierIcon aria-hidden="true" />
-              </EmptyMedia>
-              <EmptyTitle>Belum ada batch</EmptyTitle>
-              <EmptyDescription>
-                Batch muncul di sini setiap ada intake tersimpan, siap disalurkan FEFO.
-              </EmptyDescription>
-            </EmptyHeader>
-            <Button onClick={fokusForm} className="mt-4 min-h-12">
-              Catat sumbangan
-            </Button>
-          </Empty>
+          <KotakKosong
+            label="Kosong"
+            judul="Belum ada intake batch hari ini"
+            deskripsi="Batch muncul di sini setiap ada intake tersimpan, siap disalurkan FEFO."
+            aksiLabel="Catat batch masuk"
+            onAksi={fokusForm}
+          />
         )}
         {statusBatch === "siap" && batch.length > 0 && tampilBatch.length === 0 && (
-          <Empty>
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <MagnifierIcon aria-hidden="true" />
-              </EmptyMedia>
-              <EmptyTitle>Tidak ada hasil</EmptyTitle>
-              <EmptyDescription>
-                Tidak ada batch yang cocok dengan pencarian. Coba kata lain atau atur ulang.
-              </EmptyDescription>
-            </EmptyHeader>
-            <Button onClick={() => setCariBatch("")} variant="outline" className="mt-4 min-h-12">
-              Atur ulang pencarian
-            </Button>
-          </Empty>
+          <KotakKosong
+            label="Kosong"
+            judul="Tidak ada hasil"
+            deskripsi="Tidak ada batch yang cocok dengan filter. Coba kata lain atau atur ulang filter."
+            aksiLabel="Atur ulang filter"
+            onAksi={aturUlangFilter}
+          />
         )}
         {statusBatch === "siap" && tampilBatch.length > 0 && (
-          <div className="overflow-x-auto">
+          <div className="flex flex-col gap-3">
+          <div className="overflow-x-auto border bg-card">
           <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Kode</TableHead>
-                <TableHead>Barang</TableHead>
-                <TableHead>Sisa</TableHead>
-                <TableHead>Kedaluwarsa</TableHead>
+            <TableHeader className="bg-[#0B1F2E]">
+              <TableRow className="hover:bg-[#0B1F2E]">
+                <TableHead className="font-mono text-xs uppercase tracking-widest text-white">
+                  <button type="button" onClick={() => gantiUrut("kode")} aria-label="Urutkan kode" className="flex min-h-12 items-center gap-1 uppercase">
+                    Kode <span aria-hidden="true">{ikonUrut("kode")}</span>
+                  </button>
+                </TableHead>
+                <TableHead className="font-mono text-xs uppercase tracking-widest text-white">
+                  <button type="button" onClick={() => gantiUrut("barang")} aria-label="Urutkan barang" className="flex min-h-12 items-center gap-1 uppercase">
+                    Barang <span aria-hidden="true">{ikonUrut("barang")}</span>
+                  </button>
+                </TableHead>
+                <TableHead className="font-mono text-xs uppercase tracking-widest text-white">
+                  <button type="button" onClick={() => gantiUrut("sisa")} aria-label="Urutkan sisa" className="flex min-h-12 items-center gap-1 uppercase">
+                    Sisa <span aria-hidden="true">{ikonUrut("sisa")}</span>
+                  </button>
+                </TableHead>
+                <TableHead className="font-mono text-xs uppercase tracking-widest text-white">
+                  <button type="button" onClick={() => gantiUrut("kedaluwarsa")} aria-label="Urutkan kedaluwarsa" className="flex min-h-12 items-center gap-1 uppercase">
+                    Kedaluwarsa <span aria-hidden="true">{ikonUrut("kedaluwarsa")}</span>
+                  </button>
+                </TableHead>
+                <TableHead className="font-mono text-xs uppercase tracking-widest text-white">Aksi</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {tampilBatch.map((b) => {
+              {batchHalaman.map((b) => {
                 const hari = b.kedaluwarsa ? sisaHariKalender(b.kedaluwarsa) : null;
                 return (
                   <TableRow key={b.id}>
                     <TableCell className="font-mono text-xs break-all">{b.kode_sumbangan}</TableCell>
                     <TableCell>
                       {b.item_nama}
-                      <span className="text-muted-foreground t-angka block text-xs">
+                      <span className="text-muted-foreground block text-xs tabular-nums">
                         {b.jumlah} {b.satuan}
                       </span>
                     </TableCell>
-                    <TableCell className="t-angka">
+                    <TableCell className="tabular-nums">
                       {b.sisa} {b.satuan}
                     </TableCell>
                     <TableCell className="text-xs">
@@ -495,29 +607,63 @@ export default function GudangPage() {
                         </Badge>
                       )}
                     </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col gap-2">
+                        <TombolSalin
+                          teks={b.kode_sumbangan}
+                          label="Salin kode"
+                          pesanSukses="Kode sumbangan disalin."
+                          variant="outline"
+                          className="w-auto rounded-none"
+                        />
+                        <Button
+                          render={<Link href={`/s/${b.kode_sumbangan}`}>Lihat publik</Link>}
+                          variant="outline"
+                          className="min-h-12 w-auto rounded-none"
+                        />
+                      </div>
+                    </TableCell>
                   </TableRow>
                 );
               })}
             </TableBody>
           </Table>
           </div>
+          <BilahHalaman
+            awal={awal}
+            akhir={akhir}
+            total={tampilBatch.length}
+            perHalaman={ukuranHalaman}
+            onPerHalaman={(nilai) => { setUkuranHalaman(nilai); setHalaman(1); }}
+            bisaMundur={halamanAman > 1}
+            bisaMaju={halamanAman < totalHalaman}
+            onMundur={() => setHalaman((h) => Math.max(1, h - 1))}
+            onMaju={() => setHalaman((h) => Math.min(totalHalaman, h + 1))}
+            idPilih="ukuran-halaman"
+          />
+          </div>
         )}
       </section>
-
-      <section aria-label="Riwayat intake hari ini" className="flex flex-col gap-2">
-        <h2 className="text-lg font-bold text-primary">Riwayat intake hari ini</h2>
+        </div>
+        <aside className="col-span-12 flex flex-col gap-4 lg:col-span-4">
+          <div className="flex flex-col gap-2 lg:sticky lg:top-4">
+      <section aria-label="Riwayat intake hari ini" className="flex flex-col gap-2 rounded-none border border-dashed p-4">
+        <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-[#0B1F2E]">Riwayat intake hari ini</h2>
         {riwayat.length === 0 ? (
-          <Empty>
-            <EmptyHeader>
-              <EmptyTitle>Belum ada intake hari ini</EmptyTitle>
-              <EmptyDescription>
-                Setiap batch yang tersimpan muncul di sini beserta kodenya.
-              </EmptyDescription>
-            </EmptyHeader>
-          </Empty>
+          <div role="status" className="flex flex-col gap-2">
+            <p className="text-base font-semibold">Belum ada intake batch hari ini</p>
+            <p className="text-sm text-muted-foreground">
+              Setiap batch yang tersimpan lewat formulir muncul di sini beserta kodenya.
+            </p>
+            <span aria-hidden="true" className="font-mono text-xs text-muted-foreground">┌ ──┐</span>
+            <Button onClick={fokusForm} className="min-h-12 rounded-none">
+              Catat batch masuk
+            </Button>
+            <span aria-hidden="true" className="font-mono text-xs text-muted-foreground">└ ──┘</span>
+          </div>
         ) : (
           riwayat.map((r) => (
-            <Card key={r.kode}>
+            <Card key={r.kode} className="rounded-none">
               <CardContent className="flex flex-col gap-1 p-4 text-sm">
                 <p className="font-semibold">{r.kode}</p>
                 <p className="text-muted-foreground">
@@ -528,6 +674,9 @@ export default function GudangPage() {
           ))
         )}
       </section>
+          </div>
+        </aside>
+      </div>
     </main>
   );
 }
