@@ -1,6 +1,7 @@
 import { requireRole } from "@/lib/auth";
 import BantuanPosko from "./bantuan";
 import FormulirPosko from "./formulir";
+import { KepalaHalaman } from "@/components/kepala-halaman";
 
 export default async function PoskoPage() {
   await requireRole(["POSKO"]);

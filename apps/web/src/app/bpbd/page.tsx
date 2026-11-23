@@ -1,5 +1,6 @@
 import { requireRole } from "@/lib/auth";
 import DasborBpbd from "./dasbor";
+import { KepalaHalaman } from "@/components/kepala-halaman";
 
 export default async function BpbdPage() {
   await requireRole(["BPBD"]);

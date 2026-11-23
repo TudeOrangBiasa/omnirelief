@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
+import type { Route } from "next";
 import { getProfil } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { sha256Hex } from "@/lib/hash";
 import FormulirMasuk from "./formulir";
 import { ShaderBackground } from "@/components/motion/shader-background";
 
@@ -10,6 +12,7 @@ const PESAN_GAGAL: Record<string, string> = {
   kredensial: "Email atau password salah. Periksa kembali lalu coba lagi.",
   batas: "Terlalu sering mencoba. Tunggu sebentar lalu coba lagi.",
   jaringan: "Tidak bisa menghubungi server. Periksa koneksi lalu coba lagi.",
+  pin: "Kode otorisasi salah atau kedaluwarsa.",
 };
 
 export default async function MasukPage({
@@ -21,22 +24,57 @@ export default async function MasukPage({
   if (profil) redirect("/beranda");
   const { gagal } = await searchParams;
 
-  async function signIn(formData: FormData) {
+  async function tahapSatu(formData: FormData) {
     "use server";
     const supabase = await createClient();
+    const email = String(formData.get("email") ?? "");
+    const password = String(formData.get("password") ?? "");
+    let gagalMasuk: string | null = null;
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: String(formData.get("email") ?? ""),
-        password: String(formData.get("password") ?? ""),
-      });
-      if (error) {
-        if (error.message.toLowerCase().includes("rate")) redirect("/masuk?gagal=batas");
-        redirect("/masuk?gagal=kredensial");
-      }
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) gagalMasuk = error.message.toLowerCase().includes("rate") ? "batas" : "kredensial";
     } catch {
-      redirect("/masuk?gagal=jaringan");
+      gagalMasuk = "jaringan";
     }
-    redirect("/beranda");
+    if (gagalMasuk === "batas") redirect("/masuk?gagal=batas" as Route);
+    if (gagalMasuk) redirect("/masuk?gagal=kredensial" as Route);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const meta: Record<string, unknown> = user?.user_metadata ?? {};
+    const tersimpan = meta["pin_hash"];
+    if (typeof tersimpan === "string" && tersimpan.length > 0) {
+      await supabase.auth.signOut();
+      return { perluPin: true as const };
+    }
+    redirect("/beranda" as Route);
+  }
+
+  async function tahapDua(formData: FormData) {
+    "use server";
+    const supabase = await createClient();
+    const email = String(formData.get("email") ?? "");
+    const password = String(formData.get("password") ?? "");
+    let gagalMasuk: string | null = null;
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) gagalMasuk = error.message.toLowerCase().includes("rate") ? "batas" : "kredensial";
+    } catch {
+      gagalMasuk = "jaringan";
+    }
+    if (gagalMasuk === "batas") redirect("/masuk?gagal=batas" as Route);
+    if (gagalMasuk) redirect("/masuk?gagal=kredensial" as Route);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const meta: Record<string, unknown> = user?.user_metadata ?? {};
+    const tersimpan = meta["pin_hash"];
+    const pin = String(formData.get("pin") ?? "");
+    if (typeof tersimpan !== "string" || tersimpan.length === 0 || sha256Hex("pin|" + pin) !== tersimpan) {
+      await supabase.auth.signOut();
+      redirect("/masuk?gagal=pin" as Route);
+    }
+    redirect("/beranda" as Route);
   }
 
   return (
@@ -58,7 +96,8 @@ export default async function MasukPage({
       </nav>
       <div className="relative flex min-h-0 flex-col gap-6">
       <FormulirMasuk
-        aksi={signIn}
+        tahapSatu={tahapSatu}
+        tahapDua={tahapDua}
         galat={gagal ? (PESAN_GAGAL[gagal] ?? PESAN_GAGAL.kredensial) : null}
       />
       </div>

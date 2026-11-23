@@ -1,5 +1,6 @@
 import { requireRole } from "@/lib/auth";
 import TugasTim from "./tugas";
+import { KepalaHalaman } from "@/components/kepala-halaman";
 
 export default async function TimPage() {
   await requireRole(["TIM"]);

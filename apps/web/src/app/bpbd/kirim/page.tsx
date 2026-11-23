@@ -1,5 +1,6 @@
 import { requireRole } from "@/lib/auth";
 import FormulirKirim from "./formulir";
+import { KepalaHalaman } from "@/components/kepala-halaman";
 
 export default async function KirimPage() {
   await requireRole(["BPBD"]);

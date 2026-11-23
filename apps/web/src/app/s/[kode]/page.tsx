@@ -213,7 +213,7 @@ export default function SumbanganPage({
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div className="flex flex-col gap-6 lg:col-span-2">
-              <Card className="bg-white rounded-xl border border-slate-200 shadow-xs">
+              <Card className="bg-white rounded-none border border-slate-200 shadow-xs">
                 <CardHeader>
                   <CardTitle>Alokasi</CardTitle>
                   <CardDescription>
@@ -222,11 +222,11 @@ export default function SumbanganPage({
                 </CardHeader>
                 <CardContent className="flex flex-col gap-2">
                   {penuh ? (
-                    <Badge className="rounded-full border-transparent bg-success-bg text-success-badge-fg">
+                    <Badge className="rounded-none border-transparent bg-success-bg text-success-badge-fg">
                       Penuh · 100%
                     </Badge>
                   ) : (
-                    <Badge variant="outline" className="rounded-full">
+                    <Badge variant="outline" className="rounded-none">
                       Terpakai {persen}%
                     </Badge>
                   )}
@@ -242,7 +242,7 @@ export default function SumbanganPage({
                 </CardContent>
               </Card>
 
-              <Card className="bg-white rounded-xl border border-slate-200 shadow-xs">
+              <Card className="bg-white rounded-none border border-slate-200 shadow-xs">
                 <CardHeader>
                   <CardTitle>Dipakai di manifest ({dipakai.length})</CardTitle>
                   <CardDescription>
@@ -261,7 +261,7 @@ export default function SumbanganPage({
                         <li key={p.kode}>
                           <Link
                             href={`/m/${p.kode}`}
-                            className="flex min-h-12 items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white p-3 text-sm shadow-xs"
+                            className="flex min-h-12 items-center justify-between gap-2 rounded-none border border-slate-200 bg-white p-3 text-sm shadow-xs"
                           >
                             <span className="font-mono font-semibold whitespace-nowrap text-primary">
                               {p.kode}
@@ -281,7 +281,7 @@ export default function SumbanganPage({
 
             <aside aria-label="Verifikasi publik" className="lg:col-span-1">
               <div className="flex flex-col gap-6 lg:sticky lg:top-24">
-                <Card className="bg-white rounded-xl border border-slate-200 shadow-xs">
+              <Card className="bg-white rounded-none border border-slate-200 shadow-xs">
                   <CardHeader className="items-center text-center">
                     <CardTitle>Verifikasi Publik</CardTitle>
                     <CardDescription>
@@ -301,7 +301,7 @@ export default function SumbanganPage({
                     ) : (
                       <Skeleton className="size-64 rounded-xl" />
                     )}
-                    <Badge className="rounded-full border-transparent bg-success-bg text-success">
+                    <Badge className="rounded-none border-transparent bg-success-bg text-success">
                       TERCATAT dan TERLACAK
                     </Badge>
                     <p className="font-mono text-sm font-semibold break-all">{sumbangan.kode_sumbangan}</p>

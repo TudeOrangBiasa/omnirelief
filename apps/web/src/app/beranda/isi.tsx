@@ -37,7 +37,9 @@ import {
   type PrioritasRow,
   type TugasRow,
 } from "@/lib/supabase/baris";
+import Onboarding from "@/components/onboarding";
 import { PetaAlur, PetaAlurRingkasan } from "@/components/peta-alur";
+import { AKSI_PERAN } from "@/lib/aksi";
 
 type StatusMuat = "memuat" | "siap" | "gagal";
 
@@ -54,20 +56,6 @@ type Ringkasan = { angka: string; label: string }[];
 
 const KUNCI_KUNJUNGAN = "omnirelief-kunjungan-terakhir";
 
-const PRIMER: Record<Peran, { label: string; href: Route; kedua?: { label: string; href: Route } }> = {
-  BPBD: {
-    label: "Buat manifest",
-    href: "/bpbd/kirim",
-    kedua: { label: "Buka command center", href: "/bpbd" },
-  },
-  GUDANG: { label: "Catat batch masuk", href: "/gudang" },
-  POSKO: {
-    label: "Lapor penyintas",
-    href: "/posko",
-    kedua: { label: "Lihat kiriman posko", href: "/posko#bantuan" },
-  },
-  TIM: { label: "Buka tugas distribusi", href: "/tim" },
-};
 
 function formatTanggal(iso: string): string {
   const d = new Date(iso);
@@ -325,13 +313,13 @@ export default function IsiBeranda({
     void muat();
   }, [muat]);
 
-  const aksi = PRIMER[peran];
-  const kedua = aksi.kedua;
+  const langkahAksi = AKSI_PERAN[peran][0]?.label ?? "Tugas berikutnya";
 
   return (
     <div className="flex flex-col gap-6">
+      <Onboarding peran={peran} />
       <PetaAlur />
-      <PetaAlurRingkasan peran={peran} langkah={aksi.label} />
+      <PetaAlurRingkasan peran={peran} langkah={langkahAksi} />
       <section aria-label="Ringkasan sejak kunjungan terakhir">
         <h1 className="text-lg font-bold text-primary">
           Halo, {nama}. Rangkuman kunjungan terakhir

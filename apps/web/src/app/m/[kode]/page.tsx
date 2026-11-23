@@ -226,12 +226,12 @@ export default function ManifestPage({
           <div>
             <div className="flex flex-wrap items-center gap-2">
               {!dibatalkan && (
-                <Badge className="rounded-full border-transparent bg-success-bg text-success">
+                <Badge className="rounded-none border-transparent bg-success-bg text-success">
                   TERKUNCI
                 </Badge>
               )}
               {dibatalkan && (
-                <Badge variant="destructive" className="rounded-full">DIBATALKAN</Badge>
+                <Badge variant="destructive" className="rounded-none">DIBATALKAN</Badge>
               )}
             </div>
             <h1 className="mt-2 font-mono text-2xl font-bold break-all text-white print:text-black">
@@ -244,7 +244,7 @@ export default function ManifestPage({
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div className="flex flex-col gap-6 lg:col-span-2">
-              <Card className="bg-white rounded-xl border border-slate-200 shadow-xs">
+              <Card className="bg-white rounded-none border border-slate-200 shadow-xs">
                 <CardHeader>
                   <CardTitle>Isi pengiriman</CardTitle>
                   <CardDescription>
@@ -296,7 +296,7 @@ export default function ManifestPage({
                 </CardContent>
               </Card>
 
-              <Card className="bg-white rounded-xl border border-slate-200 shadow-xs">
+              <Card className="bg-white rounded-none border border-slate-200 shadow-xs">
                 <CardHeader>
                   <CardTitle>Riwayat</CardTitle>
                   <CardDescription>
@@ -336,7 +336,7 @@ export default function ManifestPage({
               {(dibatalkan || batal.length > 0) && (
                 <section
                   aria-labelledby="batal"
-                  className="rounded-xl bg-destructive/10 p-4"
+                  className="rounded-none bg-destructive/10 p-4"
                 >
                   <h2 id="batal" className="font-bold text-destructive">
                     Dokumen pembatalan
@@ -361,7 +361,7 @@ export default function ManifestPage({
               {lapor.length > 0 && (
                 <section
                   aria-labelledby="tidak-sesuai"
-                  className="rounded-xl bg-warning-bg p-4"
+                  className="rounded-none bg-warning-bg p-4"
                 >
                   <h2 id="tidak-sesuai" className="font-bold text-warning">
                     Laporan ketidaksesuaian
@@ -382,7 +382,7 @@ export default function ManifestPage({
 
             <aside aria-label="Verifikasi publik" className="lg:col-span-1">
               <div className="flex flex-col gap-6 lg:sticky lg:top-24">
-                <Card className="bg-white rounded-xl border border-slate-200 shadow-xs">
+                <Card className="bg-white rounded-none border border-slate-200 shadow-xs">
                   <CardHeader className="items-center text-center">
                     <CardTitle>Verifikasi Publik</CardTitle>
                     <CardDescription>
@@ -402,7 +402,7 @@ export default function ManifestPage({
                     ) : (
                       <Skeleton className="size-64 rounded-xl" />
                     )}
-                    <Badge className="rounded-full border-transparent bg-success-bg text-success">
+                    <Badge className="rounded-none border-transparent bg-success-bg text-success">
                       TERKUNCI dan TERVERIFIKASI
                     </Badge>
                     <p className="font-mono text-sm font-semibold">{manifest.kode}</p>

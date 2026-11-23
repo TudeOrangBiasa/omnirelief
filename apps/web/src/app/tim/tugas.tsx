@@ -31,6 +31,7 @@ import TombolSalin from "@/components/tombol-salin";
 import { formatTanggalLokal, labelStatusRiwayat } from "@/lib/tanggal";
 import { BantuanIstilah } from "@/components/bantuan-istilah";
 import { PetaAlur, PetaAlurRingkasan } from "@/components/peta-alur";
+import { BarisSegarkan } from "@/components/kepala-halaman";
 
 type Tugas = {
   id: number;
@@ -166,7 +167,7 @@ export default function TugasTim() {
       {antre > 0 && (
         <div
           role="status"
-          className="flex flex-col gap-2 rounded-xl bg-warning-bg p-3 text-sm font-semibold text-warning-badge-fg"
+          className="flex flex-col gap-2 rounded-none bg-warning-bg p-3 text-sm font-semibold text-warning-badge-fg"
         >
           <p className="flex min-h-12 items-center gap-2">
             <WiFiOffIcon aria-hidden="true" className="size-5" />
@@ -182,7 +183,7 @@ export default function TugasTim() {
             </Button>
             <a
               href="/pengaturan#notifikasi"
-              className="flex min-h-12 flex-1 items-center justify-center rounded-xl border border-border px-4 font-semibold"
+              className="flex min-h-12 flex-1 items-center justify-center rounded-none border border-border px-4 font-semibold"
             >
               Atur notifikasi
             </a>
@@ -331,7 +332,7 @@ export default function TugasTim() {
                             }
                             aria-current={tahapKini ? "step" : undefined}
                             aria-label={`Kirim status ${a.label}`}
-                            className="flex min-h-12 w-full flex-col items-center gap-1 rounded-xl px-1 py-2 focus-visible:ring-2 focus-visible:ring-primary"
+                            className="flex min-h-12 w-full flex-col items-center gap-1 rounded-none px-1 py-2 focus-visible:ring-2 focus-visible:ring-primary"
                           >
                             <span aria-hidden="true" className="flex w-full items-center">
                               <span

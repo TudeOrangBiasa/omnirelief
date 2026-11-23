@@ -3,6 +3,7 @@ import type { Route } from "next";
 import { getProfil } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { Alert, AlertDescription, AlertTitle } from "@omnirelief/ui/components/alert";
+import { sha256Hex } from "@/lib/hash";
 import { Card, CardContent, CardHeader, CardTitle } from "@omnirelief/ui/components/card";
 import { InfoCircleIcon, LockIcon } from "@solar-icons/react/linear";
 import FormulirPassword from "./formulir-password";
@@ -25,6 +26,27 @@ export default async function ProfilPage({
   } = await supabase.auth.getUser();
   const email = user?.email ?? "-";
   const inisial = namaProfil.trim().charAt(0).toUpperCase() || "?";
+  const meta: Record<string, unknown> = user?.user_metadata ?? {};
+  const mentahPin = meta["pin_hash"];
+  const hasPin = typeof mentahPin === "string" && mentahPin.length > 0;
+
+  async function aturPin(formData: FormData) {
+    "use server";
+    const pin = String(formData.get("pin") ?? "");
+    if (!/^[0-9]{6}$/.test(pin)) return { ok: false, pesan: "PIN harus 6 digit angka." };
+    const supabase = await createClient();
+    const { error } = await supabase.auth.updateUser({ data: { pin_hash: sha256Hex("pin|" + pin) } });
+    if (error) return { ok: false, pesan: "Gagal menyimpan PIN. Coba lagi." };
+    return { ok: true, pesan: "PIN otorisasi aktif." };
+  }
+
+  async function matikanPin() {
+    "use server";
+    const supabase = await createClient();
+    const { error } = await supabase.auth.updateUser({ data: { pin_hash: null } });
+    if (error) return { ok: false, pesan: "Gagal mematikan PIN. Coba lagi." };
+    return { ok: true, pesan: "PIN otorisasi dimatikan." };
+  }
 
   async function ubahPassword(formData: FormData) {
     "use server";
@@ -42,6 +64,7 @@ export default async function ProfilPage({
     if (error) redirect("/profil?gagal=gagal" as Route);
     redirect("/profil?ok=1" as Route);
   }
+  return (
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-2xl flex-col gap-6 p-6">

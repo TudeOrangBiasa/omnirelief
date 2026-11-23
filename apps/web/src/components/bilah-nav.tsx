@@ -54,7 +54,7 @@ import {
 import Logo from "@/components/logo";
 import {
   grupSidebar,
-  LABEL_SINGKAT,
+  LABEL_PERAN,
   NAVIGASI_LAINNYA,
   NAVIGASI_TAB,
   sembunyikanTabBar,
@@ -461,7 +461,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
             onClick={() => setLainnyaBuka(false)}
             className="absolute inset-0 cursor-default bg-foreground/40"
           />
-          <div className={cn("absolute inset-x-0 bottom-0 flex flex-col gap-1 rounded-t-2xl border-t p-4 pb-6", publik ? "border-white/15 bg-[#030D14]/80 text-white backdrop-blur-md" : "border-border bg-background")}>
+          <div className={cn("absolute inset-x-0 bottom-0 flex flex-col gap-1 rounded-none border-t p-4 pb-6", publik ? "border-white/15 bg-[#030D14]/80 text-white backdrop-blur-md" : "border-border bg-background")}>
             {lainnya.map((item) => {
               const Ikon = IKON_LIN[item.ikon];
               return (
@@ -469,7 +469,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
                   key={item.href}
                   href={item.href}
                   onClick={() => setLainnyaBuka(false)}
-                  className="flex min-h-12 items-center gap-3 rounded-xl px-4 text-sm font-medium"
+                  className="flex min-h-12 items-center gap-3 rounded-none px-4 text-sm font-medium"
                 >
                   <Ikon aria-hidden="true" className={cn("size-5", publik ? "text-white/70" : "text-muted-foreground")} />
                   {item.label}
@@ -480,7 +480,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
               type="button"
               onClick={() => setLainnyaBuka(false)}
               autoFocus
-              className="mt-2 flex min-h-12 items-center justify-center gap-2 rounded-xl bg-secondary text-sm font-semibold text-secondary-foreground"
+              className="mt-2 flex min-h-12 items-center justify-center gap-2 rounded-none bg-secondary text-sm font-semibold text-secondary-foreground"
             >
               <CloseCircleIcon aria-hidden="true" className="size-5" />
               Tutup

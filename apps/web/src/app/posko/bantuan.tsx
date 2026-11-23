@@ -25,6 +25,7 @@ import { Skeleton } from "@omnirelief/ui/components/skeleton";
 import { Textarea } from "@omnirelief/ui/components/textarea";
 import { BantuanIstilah } from "@/components/bantuan-istilah";
 import { PetaAlurRingkasan } from "@/components/peta-alur";
+import { BarisSegarkan } from "@/components/kepala-halaman";
 
 type Bantuan = {
   id: number;
@@ -141,7 +142,7 @@ export default function BantuanPosko() {
         Lihat di halaman publik
       </Link>
       {pesan && (
-        <p role="status" className="rounded-xl bg-success-bg p-3 text-sm text-success">
+        <p role="status" className="rounded-none bg-success-bg p-3 text-sm text-success">
           {pesan}
         </p>
       )}

@@ -49,6 +49,7 @@ import { baris } from "@/lib/supabase/baris";
 import { sisaHariKalender } from "@/lib/tanggal";
 import { BantuanIstilah } from "@/components/bantuan-istilah";
 import { PetaAlur, PetaAlurRingkasan } from "@/components/peta-alur";
+import { BarisSegarkan } from "@/components/kepala-halaman";
 
 type Posko = { id: number; nama: string; wilayah: string };
 
@@ -437,7 +438,7 @@ export default function FormulirKirim() {
             )}
           </div>
           {terlewat.length > 0 && (
-            <p role="status" className="rounded-xl bg-warning-bg p-3 text-sm text-warning">
+            <p role="status" className="rounded-none bg-warning-bg p-3 text-sm text-warning">
               Peringatan FEFO: {terlewat.map((b) => b.kode_sumbangan).join(", ")} kedaluwarsa
               lebih dekat tapi belum dipilih. Pakai yang terdekat dulu agar tidak kedaluwarsa
               di gudang.

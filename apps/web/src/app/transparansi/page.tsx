@@ -40,10 +40,21 @@ function KartuMuat() {
   );
 }
 
-function persenTerima(butuh: number, diterima: number) {
-  if (butuh <= 0) return diterima > 0 ? 100 : 0;
-  return Math.min(100, Math.round((diterima / butuh) * 100));
+const KUNCI_RIWAYAT_CARI = "omnirelief-transparansi-cari";
+
+function selCsv(nilai: string | number): string {
+  const teks = String(nilai);
+  return /[",\n]/.test(teks) ? `"${teks.replace(/"/g, '""')}"` : teks;
 }
+
+function formatWaktuID(tanggal: Date): string {
+  return tanggal.toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" });
+}
+
+function persenTerima(butuh: number, diterima: number) {
+   if (butuh <= 0) return diterima > 0 ? 100 : 0;
+   return Math.min(100, Math.round((diterima / butuh) * 100));
+ }
 
 export default function TransparansiPage() {
   const [data, setData] = useState<DashboardRow[]>([]);
@@ -51,6 +62,8 @@ export default function TransparansiPage() {
   const [kode, setKode] = useState("");
   const [cari, setCari] = useState("");
   const [filterStatus, setFilterStatus] = useState<FilterStatus>("semua");
+  const [riwayat, setRiwayat] = useState<string[]>([]);
+  const [waktuMuat, setWaktuMuat] = useState<Date | null>(null);
 
   const muat = useCallback(() => {
     setStatus("memuat");
@@ -59,6 +72,7 @@ export default function TransparansiPage() {
       .then((d: { ok: boolean; dashboard?: unknown }) => {
         if (d.ok) {
           setData(baris<DashboardRow>(d.dashboard));
+          setWaktuMuat(new Date());
           setStatus("siap");
         } else {
           setStatus("gagal");
@@ -70,6 +84,38 @@ export default function TransparansiPage() {
   useEffect(() => {
     muat();
   }, [muat]);
+
+  useEffect(() => {
+    try {
+      const mentah = window.localStorage.getItem(KUNCI_RIWAYAT_CARI);
+      if (mentah) {
+        const daftar: unknown = JSON.parse(mentah);
+        if (Array.isArray(daftar)) {
+          setRiwayat(daftar.filter((r): r is string => typeof r === "string").slice(0, 3));
+        }
+      }
+    } catch {
+      /* abaikan, riwayat opsional */
+    }
+  }, []);
+
+  useEffect(() => {
+    const kata = cari.trim();
+    if (kata.length < 2) return;
+    const id = window.setTimeout(() => {
+      setRiwayat((sebelum) => {
+        const berikutnya = [kata, ...sebelum.filter((r) => r.toLowerCase() !== kata.toLowerCase())].slice(0, 3);
+        try {
+          window.localStorage.setItem(KUNCI_RIWAYAT_CARI, JSON.stringify(berikutnya));
+        } catch {
+          /* abaikan */
+        }
+        return berikutnya;
+      });
+    }, 800);
+    return () => window.clearTimeout(id);
+  }, [cari]);
+
 
   const tampil = useMemo(() => {
     const kata = cari.trim().toLowerCase();
@@ -101,6 +147,31 @@ export default function TransparansiPage() {
   function aturUlang() {
     setCari("");
     setFilterStatus("semua");
+  }
+
+  function unduhCsv() {
+    const judul = ["posko", "wilayah", "butuh", "dikirim", "diterima", "persen_pemenuhan", "selisih"];
+    const barisData = tampil.map((p) =>
+      [
+        selCsv(p.posko_nama),
+        selCsv(p.wilayah),
+        selCsv(p.butuh),
+        selCsv(p.dikirim),
+        selCsv(p.diterima),
+        selCsv(persenTerima(p.butuh, p.diterima)),
+        selCsv(p.selisih),
+      ].join(",")
+    );
+    const isi = ["\uFEFF" + judul.join(","), ...barisData].join("\n");
+    const blob = new Blob([isi], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const tautan = document.createElement("a");
+    tautan.href = url;
+    tautan.download = "laporan-transparansi-posko.csv";
+    document.body.appendChild(tautan);
+    tautan.click();
+    tautan.remove();
+    URL.revokeObjectURL(url);
   }
 
   return (
@@ -140,7 +211,29 @@ export default function TransparansiPage() {
           Jatah, pengiriman, penerimaan, dan selisih tiap daerah. Angka tidak digabung antar posko.
         </p>
       </div>
-      <form action={ruteKode(normalisasiKode(kode))} className="flex gap-2">
+      <section aria-label="Sumber dan masa data" className="flex flex-col gap-2 rounded-none border border-white/20 bg-white/10 p-4 text-sm text-white md:flex-row md:flex-wrap md:items-center md:gap-x-6">
+        <p><span className="font-mono text-[11px] tracking-[0.15em] text-white/60 uppercase">Periode Pemantauan</span><br /><span className="font-semibold">Aktif</span></p>
+        <p><span className="font-mono text-[11px] tracking-[0.15em] text-white/60 uppercase">Sumber Data</span><br /><span className="font-semibold">Ledger Terkunci BPBD</span></p>
+        <p><span className="font-mono text-[11px] tracking-[0.15em] text-white/60 uppercase">Waktu Pembaruan Terakhir</span><br /><span className="t-angka font-semibold tabular-nums">{status === "siap" && waktuMuat ? formatWaktuID(waktuMuat) : "Belum dimuat"}</span></p>
+      </section>
+      <div className="flex flex-wrap gap-2 print:hidden">
+        <button
+          type="button"
+          onClick={unduhCsv}
+          disabled={status !== "siap" || tampil.length === 0}
+          className="inline-flex min-h-12 items-center gap-2 rounded-none bg-white px-6 font-semibold text-[#0B1F2E] hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Unduh Laporan CSV
+        </button>
+        <button
+          type="button"
+          onClick={() => window.print()}
+          className="inline-flex min-h-12 items-center gap-2 rounded-none border border-white/40 bg-white/10 px-6 font-semibold text-white hover:bg-white/20"
+        >
+          Cetak Laporan
+        </button>
+      </div>
+      <form action={ruteKode(normalisasiKode(kode))} className="flex gap-2 print:hidden">
         <div className="relative min-w-0 flex-1">
           <Input
             value={kode}
@@ -210,7 +303,7 @@ export default function TransparansiPage() {
         </div>
       </section>
 
-      <section aria-label="Cari dan saring posko" className="flex flex-col gap-3">
+      <section aria-label="Cari dan saring posko" className="flex flex-col gap-3 print:hidden">
         <div className="relative flex gap-2">
           <Input
             id="cari-posko"
@@ -231,7 +324,7 @@ export default function TransparansiPage() {
             </button>
           )}
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 print:hidden">
           <div className="flex items-center gap-1 rounded-none border border-white/25 p-1" role="group" aria-label="Saring status selisih">
             {(
               [
@@ -261,9 +354,25 @@ export default function TransparansiPage() {
             </button>
           )}
         </div>
+        {riwayat.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2 print:hidden">
+            <span className="font-mono text-[11px] tracking-[0.15em] text-white/60 uppercase">Terakhir dicari</span>
+            {riwayat.map((r) => (
+              <button
+                key={r}
+                type="button"
+                onClick={() => setCari(r)}
+                aria-label={`Cari ${r}`}
+                className="inline-flex min-h-12 items-center rounded-none border border-white/40 bg-white/10 px-4 text-sm text-white hover:bg-white/20"
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+        )}
         {status === "siap" && (
           <p role="status" className="t-angka text-sm text-white/70 tabular-nums">
-            {tampil.length} posko · {kurangTampil} kurang
+            Menampilkan {tampil.length} posko · {kurangTampil} kurang
           </p>
         )}
       </section>

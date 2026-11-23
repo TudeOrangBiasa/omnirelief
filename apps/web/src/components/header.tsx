@@ -27,6 +27,8 @@ const PETA_LABEL: Record<string, string> = {
   tim: "Tugas",
   pengaturan: "Pengaturan",
   profil: "Profil",
+  bantuan: "Pusat bantuan",
+  audit: "Audit log",
   admin: "Admin",
   transparansi: "Transparansi",
 };
@@ -82,11 +84,11 @@ export default function Header({
   const macet = !daring || antre > 0;
 
   return (
-    <header className="sticky top-0 z-40 min-h-14 border-b border-slate-300/60 bg-white/70 backdrop-blur-md">
-      <div className="mx-auto flex min-h-14 w-full max-w-5xl items-center gap-2 px-4">
-        <SidebarTrigger className="hidden min-h-12 min-w-12 md:flex" />
-        <Separator orientation="vertical" className="hidden h-4 md:block" />
-        <Breadcrumb aria-label="Lokasi halaman" className="min-w-0">
+    <header className="sticky top-0 z-40 h-14 border-b border-[#0B1F2E]/15 bg-white print:hidden">
+      <div className="flex h-14 w-full items-center gap-2 pr-3 pl-3 md:pl-4">
+        <SidebarTrigger className="hidden h-9 w-9 rounded-none border border-[#0B1F2E]/15 after:absolute after:-inset-1.5 after:content-[''] md:flex" />
+        <Separator orientation="vertical" className="hidden h-4 w-px bg-[#0B1F2E]/20 md:block" />
+        <Breadcrumb aria-label="Lokasi halaman" className="min-w-0 font-mono text-[#0B1F2E]/70 [&_li]:text-xs [&_li]:uppercase [&_li]:tracking-wider">
           <BreadcrumbList>
             {daftar.map((c, i) => {
               const terakhir = i === daftar.length - 1;
@@ -127,18 +129,18 @@ export default function Header({
           ) : (
             <a
               href="/masuk"
-              className="flex min-h-12 items-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground"
+              className="flex h-9 items-center rounded-none bg-primary px-4 text-sm font-semibold text-primary-foreground"
             >
               Masuk
             </a>
           )}
           <p
             role="status"
-            className={
-              macet
-                ? "flex min-h-12 items-center gap-1.5 rounded-full bg-warning-bg px-3 text-xs font-semibold text-warning-badge-fg"
-                : "flex min-h-12 items-center gap-1.5 rounded-full bg-success-bg px-3 text-xs font-semibold text-success"
-            }
+          className={
+            macet
+              ? "flex h-9 items-center gap-1.5 rounded-none border border-emerald-700/30 bg-warning-bg px-3 font-mono text-[11px] uppercase tracking-wider text-warning-badge-fg"
+              : "flex h-9 items-center gap-1.5 rounded-none border border-emerald-700/30 bg-emerald-50 px-3 font-mono text-[11px] uppercase tracking-wider text-emerald-900"
+          }
           >
             {macet ? (
               <WiFiOffIcon aria-hidden="true" className="size-4" />

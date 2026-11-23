@@ -14,6 +14,7 @@ import {
 } from "@solar-icons/react/linear";
 import AksesibilitasForm from "./aksesibilitas";
 import NotifikasiForm from "./notifikasi";
+import { KepalaHalaman } from "@/components/kepala-halaman";
 
 export const dynamic = "force-dynamic";
 

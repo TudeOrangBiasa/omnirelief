@@ -32,6 +32,9 @@ import { baris, type GudangBatchRow, type ItemKatalogRow } from "@/lib/supabase/
 import TombolSalin from "@/components/tombol-salin";
 import { BantuanIstilah } from "@/components/bantuan-istilah";
 import { PetaAlur, PetaAlurRingkasan } from "@/components/peta-alur";
+import { BarisSegarkan, KepalaHalaman } from "@/components/kepala-halaman";
+import { BilahHalaman, BilahSaring } from "@/components/kontrol-tabel";
+import { KotakKosong } from "@/components/widget-laporan";
 
 type GalatField = {
   item_id?: string;
@@ -274,7 +277,7 @@ export default function GudangPage() {
             defaultValue=""
             required
             disabled={statusKatalog !== "siap"}
-            className="min-h-12 w-full rounded-xl border border-input bg-card px-3 text-sm disabled:opacity-50"
+            className="min-h-12 w-full rounded-none border border-input bg-card px-3 text-sm disabled:opacity-50"
             aria-invalid={galatField.item_id ? true : undefined}
             aria-describedby={galatField.item_id ? "gudang-item-galat" : undefined}
           >

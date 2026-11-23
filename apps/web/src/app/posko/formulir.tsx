@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import BannerOffline from "@/components/banner-offline";
+import { BarisSegarkan } from "@/components/kepala-halaman";
 import { Alert, AlertDescription, AlertTitle } from "@omnirelief/ui/components/alert";
 import { Badge } from "@omnirelief/ui/components/badge";
 import { Button } from "@omnirelief/ui/components/button";
@@ -193,12 +194,12 @@ export default function FormulirPosko() {
             role="status"
             className={
               terbaru.status === "DISETUJUI"
-                ? "rounded-xl bg-success-bg p-3 text-sm font-semibold text-success"
+                ? "rounded-none bg-success-bg p-3 text-sm font-semibold text-success"
                 : terbaru.status === "MINTA_REVISI"
-                  ? "rounded-xl bg-warning-bg p-3 text-sm font-semibold text-warning"
+                  ? "rounded-none bg-warning-bg p-3 text-sm font-semibold text-warning"
                   : terbaru.status === "DITOLAK"
-                    ? "rounded-xl bg-destructive/10 p-3 text-sm font-semibold text-destructive"
-                    : "rounded-xl bg-muted p-3 text-sm font-semibold text-muted-foreground"
+                    ? "rounded-none bg-destructive/10 p-3 text-sm font-semibold text-destructive"
+                    : "rounded-none bg-muted p-3 text-sm font-semibold text-muted-foreground"
             }
           >
             {terbaru.status === "MENUNGGU_VERIFIKASI" &&
@@ -214,7 +215,7 @@ export default function FormulirPosko() {
                   jiwa). Periksa keenam angka lalu kirim ulang.
                 </span>
                 {terbaru.alasan && (
-                  <span className="rounded-lg bg-background/60 p-2 font-normal">
+                  <span className="rounded-none bg-background/60 p-2 font-normal">
                     Alasan BPBD: {terbaru.alasan}
                   </span>
                 )}
@@ -232,7 +233,7 @@ export default function FormulirPosko() {
               <span className="flex flex-col gap-2">
                 <span>Laporan terakhir: Ditolak BPBD. Kirim data baru yang benar.</span>
                 {terbaru.alasan && (
-                  <span className="rounded-lg bg-background/60 p-2 font-normal">
+                  <span className="rounded-none bg-background/60 p-2 font-normal">
                     Alasan BPBD: {terbaru.alasan}
                   </span>
                 )}
@@ -253,8 +254,8 @@ export default function FormulirPosko() {
           aria-label="Status jatah"
           className={
             jatah
-              ? "rounded-xl bg-success-bg p-3 text-sm font-semibold text-success"
-              : "rounded-xl bg-muted p-3 text-sm font-semibold text-muted-foreground"
+              ? "rounded-none bg-success-bg p-3 text-sm font-semibold text-success"
+              : "rounded-none bg-muted p-3 text-sm font-semibold text-muted-foreground"
           }
         >
           {jatah

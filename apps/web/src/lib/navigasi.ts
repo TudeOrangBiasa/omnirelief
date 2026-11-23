@@ -63,6 +63,7 @@ export const NAVIGASI_SIDEBAR: Record<NavPeran, NavItem[]> = {
   PUBLIK: [
     { href: "/", label: "Beranda", ikon: "beranda" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
+    { href: "/audit", label: "Audit log", ikon: "verifikasi" },
     { href: "/masuk", label: "Masuk", ikon: "masuk" },
   ],
   BPBD: [
@@ -70,6 +71,7 @@ export const NAVIGASI_SIDEBAR: Record<NavPeran, NavItem[]> = {
     { href: "/bpbd", label: "Verifikasi", ikon: "verifikasi", lencana: "antrean" },
     { href: "/bpbd/kirim", label: "Buat manifest", ikon: "kirim" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
+    { href: "/audit", label: "Audit log", ikon: "verifikasi" },
     { href: "/profil", label: "Profil", ikon: "profil" },
     { href: "/pengaturan", label: "Pengaturan", ikon: "pengaturan" },
   ],
@@ -77,6 +79,7 @@ export const NAVIGASI_SIDEBAR: Record<NavPeran, NavItem[]> = {
     { href: "/beranda", label: "Beranda", ikon: "beranda" },
     { href: "/gudang", label: "Catat sumbangan", ikon: "catat" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
+    { href: "/audit", label: "Audit log", ikon: "verifikasi" },
     { href: "/profil", label: "Profil", ikon: "profil" },
     { href: "/pengaturan", label: "Pengaturan", ikon: "pengaturan" },
   ],
@@ -85,6 +88,7 @@ export const NAVIGASI_SIDEBAR: Record<NavPeran, NavItem[]> = {
     { href: "/posko#lapor", label: "Lapor", ikon: "lapor" },
     { href: "/posko#bantuan", label: "Bantuan", ikon: "bantuan" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
+    { href: "/audit", label: "Audit log", ikon: "verifikasi" },
     { href: "/profil", label: "Profil", ikon: "profil" },
     { href: "/pengaturan", label: "Pengaturan", ikon: "pengaturan" },
   ],
@@ -92,6 +96,7 @@ export const NAVIGASI_SIDEBAR: Record<NavPeran, NavItem[]> = {
     { href: "/beranda", label: "Beranda", ikon: "beranda" },
     { href: "/tim", label: "Tugas", ikon: "tugas", lencana: "antrean" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
+    { href: "/audit", label: "Audit log", ikon: "verifikasi" },
     { href: "/profil", label: "Profil", ikon: "profil" },
     { href: "/pengaturan", label: "Pengaturan", ikon: "pengaturan" },
   ],
@@ -99,6 +104,7 @@ export const NAVIGASI_SIDEBAR: Record<NavPeran, NavItem[]> = {
     { href: "/beranda", label: "Beranda", ikon: "beranda" },
     { href: "/admin", label: "Admin", ikon: "admin" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
+    { href: "/audit", label: "Audit log", ikon: "verifikasi" },
     { href: "/profil", label: "Profil", ikon: "profil" },
     { href: "/pengaturan", label: "Pengaturan", ikon: "pengaturan" },
   ],
@@ -222,13 +228,14 @@ export function grupSidebar(peran: NavPeran): GrupSidebar[] {
       (i) =>
         i.href !== "/beranda" &&
         i.href !== "/transparansi" &&
+        i.href !== "/audit" &&
         i.ikon !== "profil" &&
         i.ikon !== "pengaturan"
     )
   );
   dorong(
     "Pantau",
-    semua.filter((i) => i.href === "/transparansi")
+    semua.filter((i) => i.href === "/transparansi" || i.href === "/audit")
   );
   dorong(
     "Akun",
