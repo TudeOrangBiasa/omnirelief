@@ -294,7 +294,7 @@ export default function Home() {
         <section
           id="cek-kode"
           aria-label="Cek kode kiriman"
-          className="relative ml-[6vw] w-[94vw] scroll-mt-20 md:ml-[14vw] md:w-[86vw]"
+          className="relative ml-[3vw] w-[97vw] scroll-mt-20 md:ml-[7vw] md:w-[93vw]"
         >
           <div
             className={`grid grid-cols-1 gap-8 pt-24 pb-16 sm:pt-28 md:pb-24 lg:grid-cols-12 ${PAD}`}
@@ -387,7 +387,7 @@ export default function Home() {
           </div>
         </section>
 
-        <div className="ml-[6vw] w-[94vw] md:ml-[14vw] md:w-[86vw]">
+        <div className="ml-[3vw] w-[97vw] md:ml-[7vw] md:w-[93vw]">
           {/* Band 2. KPI live */}
           <section
             aria-label="Ringkasan angka"

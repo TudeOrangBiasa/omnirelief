@@ -280,7 +280,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
     <>
       {gelap && (
         <header className="fixed inset-x-0 top-0 z-40 w-full bg-transparent print:hidden">
-          <div className="ml-[6vw] grid w-[94vw] grid-cols-12 items-center py-6 pr-5 md:ml-[14vw] md:w-[86vw] md:pr-10 lg:pr-14">
+          <div className="ml-[3vw] grid w-[97vw] grid-cols-12 items-center py-6 pr-5 md:ml-[7vw] md:w-[93vw] md:pr-10 lg:pr-14">
             <a href="/" className="col-span-6 flex items-center gap-2" aria-label="OmniRelief beranda">
               <span aria-hidden="true" className="flex size-8 items-center justify-center rounded-lg bg-white text-sm font-bold text-[#0B1F2E]">
                 O
