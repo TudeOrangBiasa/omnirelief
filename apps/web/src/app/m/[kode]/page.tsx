@@ -38,7 +38,8 @@ import {
   TableRow,
 } from "@omnirelief/ui/components/table";
 import { baris, tunggal } from "@/lib/supabase/baris";
-import { formatHariLokal, formatTanggalLokal } from "@/lib/tanggal";
+import { catatanRamah, formatHariLokal, formatTanggalLokal, labelStatusRiwayat } from "@/lib/tanggal";
+import { BantuanIstilah } from "@/components/bantuan-istilah";
 import TombolSalin from "@/components/tombol-salin";
 import { ShaderBackground } from "@/components/motion/shader-background";
 
@@ -160,13 +161,14 @@ export default function ManifestPage({
   const dibatalkan = manifest?.status === "DIBATALKAN";
 
   return (
-    <main className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 p-6 print:min-h-0 print:bg-white">
+    <div className="relative min-h-screen w-full overflow-x-hidden">
       <ShaderBackground
         variant="mesh-gradient"
         colors={["#030D14", "#082032", "#0F3B5F", "#1B7FBF"]}
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -bottom-28 h-auto w-full bg-[#030D14] print:hidden md:bottom-0"
+        className="pointer-events-none fixed inset-0 h-full w-full bg-[#030D14] print:hidden"
       />
+      <main className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 p-6 pb-28 print:min-h-0 print:bg-white md:pb-6">
       <div className="relative flex min-h-0 flex-col gap-6">
       <Link
         href="/transparansi"
@@ -202,7 +204,7 @@ export default function ManifestPage({
       )}
 
       {status === "kosong" && (
-        <Empty className="rounded-2xl bg-white text-foreground">
+        <Empty className="rounded-none border border-white/20 bg-white text-foreground">
           <EmptyHeader>
             <EmptyMedia variant="icon">
               <MagnifierIcon aria-hidden="true" />
@@ -255,8 +257,13 @@ export default function ManifestPage({
                       Belum ada barang tercatat.
                     </p>
                   ) : (
-                    <div className="overflow-x-auto">
-                    <Table>
+                    <div
+                      role="region"
+                      aria-label="Tabel isi pengiriman, gulir ke samping bila sempit"
+                      tabIndex={0}
+                      className="tabel-gulir"
+                    >
+                    <Table className="min-w-140">
                       <TableHeader className="bg-slate-50">
                         <TableRow>
                           <TableHead>Barang</TableHead>
@@ -293,7 +300,8 @@ export default function ManifestPage({
                 <CardHeader>
                   <CardTitle>Riwayat</CardTitle>
                   <CardDescription>
-                    Catatan append-only, tidak dapat diubah.
+                    Catatan <BantuanIstilah istilah="append-only" label="append-only" />, tidak
+                    dapat diubah.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -312,9 +320,10 @@ export default function ManifestPage({
                             )}
                           </span>
                           <div className="pb-1 text-sm">
-                            <p className="font-semibold">{r.status}</p>
+                            <p className="font-semibold">{labelStatusRiwayat(r.status)}</p>
                             <p className="text-muted-foreground">
-                              {r.catatan} · oleh {r.aktor ?? "sistem"} · {tanggal(r.dibuat_pada)}
+                              {catatanRamah(r.catatan) ?? "Tanpa catatan"} · oleh {r.aktor ?? "sistem"} ·{" "}
+                              {tanggal(r.dibuat_pada)}
                             </p>
                           </div>
                         </li>
@@ -418,6 +427,7 @@ export default function ManifestPage({
         </>
       )}
       </div>
-    </main>
+      </main>
+    </div>
   );
 }

@@ -15,6 +15,7 @@ import { Badge } from "@omnirelief/ui/components/badge";
 import { Separator } from "@omnirelief/ui/components/separator";
 import { SidebarTrigger } from "@omnirelief/ui/components/sidebar";
 import { hitungAntrean } from "@/components/banner-offline";
+import { mintaBukaPintasan } from "@/components/pintasan-keyboard";
 import { zonaDasbor } from "@/lib/navigasi";
 
 const PETA_LABEL: Record<string, string> = {
@@ -107,6 +108,15 @@ export default function Header({
           </BreadcrumbList>
         </Breadcrumb>
         <div className="ms-auto flex items-center gap-2 py-1">
+          <button
+            type="button"
+            onClick={() => mintaBukaPintasan()}
+            aria-label="Buka pintasan dan panduan cepat"
+            title="Pintasan dan panduan cepat (?)"
+            className="flex min-h-12 min-w-12 items-center justify-center rounded-full border border-slate-300 bg-white text-lg font-bold text-foreground hover:bg-slate-100"
+          >
+            <span aria-hidden="true">?</span>
+          </button>
           {nama ? (
             <Badge
               variant="secondary"

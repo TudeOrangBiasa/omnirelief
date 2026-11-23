@@ -7,6 +7,7 @@ import {
   ArrowLeftIcon,
   MagnifierIcon,
 } from "@solar-icons/react/linear";
+import { BantuanIstilah } from "@/components/bantuan-istilah";
 import TombolSalin from "@/components/tombol-salin";
 import {
   Alert,
@@ -136,13 +137,14 @@ export default function SumbanganPage({
   const penuh = !!sumbangan && sumbangan.jumlah > 0 && sumbangan.tersisa <= 0;
 
   return (
-    <main className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 p-6">
+    <div className="relative min-h-screen w-full overflow-x-hidden">
       <ShaderBackground
         variant="mesh-gradient"
         colors={["#030D14", "#082032", "#0F3B5F", "#1B7FBF"]}
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -bottom-28 h-auto w-full bg-[#030D14] md:bottom-0"
+        className="pointer-events-none fixed inset-0 h-full w-full bg-[#030D14]"
       />
+      <main className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 p-6 pb-28 md:pb-6">
       <div className="relative flex min-h-0 flex-col gap-6">
       <Link
         href="/transparansi"
@@ -177,7 +179,7 @@ export default function SumbanganPage({
       )}
 
       {status === "kosong" && (
-        <Empty className="rounded-2xl bg-white text-foreground">
+        <Empty className="rounded-none border border-white/20 bg-white text-foreground">
           <EmptyHeader>
             <EmptyMedia variant="icon">
               <MagnifierIcon aria-hidden="true" />
@@ -197,7 +199,7 @@ export default function SumbanganPage({
       {status === "siap" && sumbangan && (
         <>
           <div>
-            <h1 className="font-mono text-2xl font-bold break-all text-white">
+            <h1 className="font-mono text-2xl font-bold whitespace-nowrap text-white">
               {sumbangan.kode_sumbangan}
             </h1>
             <p className="mt-1 text-sm text-white/70">
@@ -244,7 +246,8 @@ export default function SumbanganPage({
                 <CardHeader>
                   <CardTitle>Dipakai di manifest ({dipakai.length})</CardTitle>
                   <CardDescription>
-                    Daftar manifest yang memakai batch ini, dari hash chain.
+                    Daftar manifest yang memakai batch ini, dari{" "}
+                    <BantuanIstilah istilah="hash-pengunci" label="hash chain" />.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -260,7 +263,7 @@ export default function SumbanganPage({
                             href={`/m/${p.kode}`}
                             className="flex min-h-12 items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white p-3 text-sm shadow-xs"
                           >
-                            <span className="font-mono font-semibold break-all text-primary">
+                            <span className="font-mono font-semibold whitespace-nowrap text-primary">
                               {p.kode}
                             </span>
                             <span className="text-right text-muted-foreground tabular-nums">
@@ -314,6 +317,7 @@ export default function SumbanganPage({
         </>
       )}
       </div>
-    </main>
+      </main>
+    </div>
   );
 }

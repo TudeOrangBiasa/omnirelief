@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@omnirelief/ui/components/alert";
 import { Badge } from "@omnirelief/ui/components/badge";
@@ -22,6 +23,8 @@ import {
 } from "@omnirelief/ui/components/select";
 import { Skeleton } from "@omnirelief/ui/components/skeleton";
 import { Textarea } from "@omnirelief/ui/components/textarea";
+import { BantuanIstilah } from "@/components/bantuan-istilah";
+import { PetaAlurRingkasan } from "@/components/peta-alur";
 
 type Bantuan = {
   id: number;
@@ -133,6 +136,10 @@ export default function BantuanPosko() {
   return (
     <section id="bantuan" aria-label="Bantuan untuk posko ini" className="flex scroll-mt-20 flex-col gap-2">
       <h2 className="text-lg font-bold text-primary">Bantuan untuk posko ini</h2>
+      <PetaAlurRingkasan peran="POSKO" langkah="Konfirmasi terima kiriman. Lapor masalah bila ada." />
+      <Link href="/transparansi" className="inline-flex min-h-12 w-fit items-center gap-1 text-sm text-primary underline">
+        Lihat di halaman publik
+      </Link>
       {pesan && (
         <p role="status" className="rounded-xl bg-success-bg p-3 text-sm text-success">
           {pesan}
@@ -253,6 +260,10 @@ export default function BantuanPosko() {
             </Card>
           );
         })}
+      <p className="text-muted-foreground text-xs">
+        Laporan tersimpan <BantuanIstilah istilah="append-only" label="append-only" />. Tidak bisa
+        diubah atau dihapus.
+      </p>
     </section>
   );
 }

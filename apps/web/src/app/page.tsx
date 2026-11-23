@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MagnifierIcon } from "@solar-icons/react/linear";
+import { CloseCircleIcon, MagnifierIcon } from "@solar-icons/react/linear";
 import { Badge } from "@omnirelief/ui/components/badge";
 import {
   Card,
@@ -20,6 +20,7 @@ import {
   DialogTitle,
 } from "@omnirelief/ui/components/dialog";
 import { Input } from "@omnirelief/ui/components/input";
+import TombolKeAtas from "@/components/tombol-ke-atas";
 import { ShaderBackground } from "@/components/motion/shader-background";
 import { normalisasiKode, ruteKode } from "@/lib/kode";
 
@@ -101,7 +102,7 @@ const ARSITEKTUR = [
   {
     nomor: "01",
     judul: "Append-Only Ledger (Hash SHA-256)",
-    isi: "Dokumen manifest terkunci tidak dapat diubah atau dihapus diam-diam. Setiap koreksi membentuk jejak riwayat baru yang permanen dan terikat hash sebelumnya.",
+    isi: "Dokumen manifest terkunci tidak bisa diubah atau dihapus diam-diam. Setiap koreksi membentuk jejak riwayat baru yang permanen. Ibarat segel: kalau ada yang nekat mengubah, segelnya rusak dan semua orang bisa lihat.",
   },
   {
     nomor: "02",
@@ -290,7 +291,7 @@ export default function Home() {
   const legalAktif = LEGAL.find((l) => l.judul === legal) ?? null;
 
   return (
-    <main className="relative w-full">
+    <main className="relative w-full pb-28 md:pb-0">
       <ShaderBackground
         variant="mesh-gradient"
         colors={["#030D14", "#082032", "#0F3B5F", "#1B7FBF"]}
@@ -326,14 +327,26 @@ export default function Home() {
                 action={ruteKode(normalisasiKode(kodeKetik))}
                 className="flex max-w-xl gap-2"
               >
-                <Input
-                  value={kode}
-                  onChange={(e) => setKode(e.target.value.toUpperCase())}
-                  placeholder="Ketik kode MNF-... atau DNT-..."
-                  aria-label="Kode manifest atau sumbangan"
-                  required
-                  className="min-h-12 flex-1 border-white/30 bg-white/10 font-mono text-white placeholder:text-white/50"
-                />
+                <div className="relative min-w-0 flex-1">
+                  <Input
+                    value={kode}
+                    onChange={(e) => setKode(e.target.value.toUpperCase())}
+                    placeholder="Ketik kode MNF-... atau DNT-..."
+                    aria-label="Kode manifest atau sumbangan"
+                    required
+                    className="min-h-12 w-full border-white/30 bg-white/10 pr-12 font-mono text-white placeholder:text-white/50"
+                  />
+                  {kode !== "" && (
+                    <button
+                      type="button"
+                      onClick={() => setKode("")}
+                      aria-label="Hapus kode"
+                      className="absolute top-1/2 right-1 inline-flex min-h-12 min-w-12 -translate-y-1/2 items-center justify-center text-white/70 hover:text-white"
+                    >
+                      <CloseCircleIcon aria-hidden="true" className="size-5" />
+                    </button>
+                  )}
+                </div>
                 <button
                   type="submit"
                   className="relative inline-flex min-h-12 items-center gap-2 bg-white px-5 font-mono text-[11px] tracking-[0.15em] text-[#0B1F2E] uppercase hover:bg-white/90"
@@ -787,6 +800,7 @@ export default function Home() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <TombolKeAtas />
     </main>
   );
 }

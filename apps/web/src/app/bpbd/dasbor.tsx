@@ -43,6 +43,8 @@ import {
 import { Textarea } from "@omnirelief/ui/components/textarea";
 import { cn } from "@omnirelief/ui/lib/utils";
 import { baris } from "@/lib/supabase/baris";
+import { BantuanIstilah } from "@/components/bantuan-istilah";
+import { PetaAlur, PetaAlurRingkasan } from "@/components/peta-alur";
 
 type StatusMuat = "memuat" | "siap" | "gagal";
 
@@ -362,6 +364,8 @@ export default function DasborBpbd() {
 
   return (
     <div className="flex flex-col gap-8">
+      <PetaAlur />
+      <PetaAlurRingkasan peran="BPBD" langkah="Verifikasi snapshot posko. Lalu buat manifest untuk posko yang kurang." />
       {status === "gagal" && (
         <Alert variant="destructive" role="status">
           <DangerTriangleIcon aria-hidden="true" />
@@ -428,6 +432,10 @@ export default function DasborBpbd() {
             {status === "memuat" ? "Memuat..." : "Muat ulang"}
           </Button>
         </div>
+        <p className="text-sm text-muted-foreground">
+          Angka posko berupa <BantuanIstilah istilah="agregat" label="data agregat tanpa NIK" />.
+          Tidak ada nama penyintas.
+        </p>
       </section>
 
       <div className="flex flex-col gap-2">
@@ -498,6 +506,10 @@ export default function DasborBpbd() {
 
       <section aria-label="Antrean verifikasi" className="flex flex-col gap-2">
         <h2 className="text-lg font-bold text-primary">Antrean verifikasi ({antrean.length})</h2>
+        <p className="text-sm text-muted-foreground">
+          <BantuanIstilah istilah="verifikasi" label="Verifikasi" />: setujui, minta revisi, atau
+          tolak. Hanya yang disetujui jadi jatah.
+        </p>
         {terpilih.length > 0 && (
           <div
             className="flex flex-col gap-2 rounded-xl bg-muted p-3 sm:flex-row sm:items-center"

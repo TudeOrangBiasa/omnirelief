@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { formatHariLokal, formatTanggalLokal } from "./tanggal";
+import {
+  catatanRamah,
+  formatHariLokal,
+  formatTanggalLokal,
+  labelStatusRiwayat,
+  sisaHariKalender,
+} from "./tanggal";
 
 describe("formatTanggalLokal", () => {
   it("memformat ISO menjadi tanggal lokal rapi plus zona", () => {
@@ -14,6 +20,48 @@ describe("formatTanggalLokal", () => {
 
   it("mengembalikan mentah bila bukan tanggal valid", () => {
     expect(formatTanggalLokal("bukan-tanggal")).toBe("bukan-tanggal");
+  });
+});
+
+describe("sisaHariKalender", () => {
+  it("menghitung selisih tanggal kalender, bukan 24 jam", () => {
+    expect(sisaHariKalender("2026-11-25", new Date("2026-11-23T12:00:00+08:00"))).toBe(2);
+  });
+
+  it("nol untuk hari yang sama walau jam berbeda", () => {
+    expect(sisaHariKalender("2026-11-23", new Date("2026-11-23T22:00:00+08:00"))).toBe(0);
+  });
+
+  it("negatif untuk tanggal lewat", () => {
+    expect(sisaHariKalender("2026-11-20", new Date("2026-11-23T12:00:00+08:00"))).toBe(-3);
+  });
+});
+
+describe("labelStatusRiwayat", () => {
+  it("memanusiakan kode status internal", () => {
+    expect(labelStatusRiwayat("PERLU_DICEK")).toBe("Perlu dicek");
+    expect(labelStatusRiwayat("DIPUBLIKASIKAN")).toBe("Dipublikasikan");
+    expect(labelStatusRiwayat("DITERIMA")).toBe("Diterima");
+  });
+
+  it("mengembalikan apa adanya bila kode tak dikenal", () => {
+    expect(labelStatusRiwayat("SESUATU_BARU")).toBe("SESUATU_BARU");
+  });
+});
+
+describe("catatanRamah", () => {
+  it("mengganti timestamp mesin dengan tanggal lokal rapi", () => {
+    expect(
+      catatanRamah("Lewat batas check-in 2026-11-21T01:47:10.404307+00:00 tanpa kabar")
+    ).toBe("Lewat batas check-in 21 Nov 2026, 09.47 WITA tanpa kabar");
+  });
+
+  it("membiarkan catatan tanpa timestamp", () => {
+    expect(catatanRamah("Paket diterima lengkap")).toBe("Paket diterima lengkap");
+  });
+
+  it("meneruskan null", () => {
+    expect(catatanRamah(null)).toBe(null);
   });
 });
 

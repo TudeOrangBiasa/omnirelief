@@ -46,6 +46,9 @@ import {
 } from "@omnirelief/ui/components/table";
 import { cn } from "@omnirelief/ui/lib/utils";
 import { baris } from "@/lib/supabase/baris";
+import { sisaHariKalender } from "@/lib/tanggal";
+import { BantuanIstilah } from "@/components/bantuan-istilah";
+import { PetaAlur, PetaAlurRingkasan } from "@/components/peta-alur";
 
 type Posko = { id: number; nama: string; wilayah: string };
 
@@ -81,7 +84,7 @@ function labelKedaluwarsa(b: Batch): { teks: string; lewat: boolean; dekat: bool
     return { teks: "Tanpa tanggal kedaluwarsa", lewat: false, dekat: false };
   }
   const tgl = new Date(b.kedaluwarsa).toLocaleDateString("id-ID");
-  const hari = Math.ceil((new Date(b.kedaluwarsa).getTime() - Date.now()) / 86400000);
+  const hari = sisaHariKalender(b.kedaluwarsa);
   if (hari < 0) return { teks: `Kedaluwarsa ${tgl}. Jangan dipakai`, lewat: true, dekat: false };
   if (hari <= 7) return { teks: `Sisa ${hari} hari (${tgl}), FEFO`, lewat: false, dekat: true };
   return { teks: `Sisa ${hari} hari (${tgl})`, lewat: false, dekat: false };
@@ -238,6 +241,8 @@ export default function FormulirKirim() {
 
   return (
     <div className="flex flex-col gap-4">
+      <PetaAlur />
+      <PetaAlurRingkasan peran="BPBD" langkah="Pilih posko dan batch FEFO. Lalu kunci manifest." />
       {galat && (
         <Alert variant="destructive">
           <DangerTriangleIcon aria-hidden="true" />
@@ -253,6 +258,10 @@ export default function FormulirKirim() {
               TERKUNCI
             </Badge>
             <p className="font-bold">Manifest {hasil.kode} terkunci publik.</p>
+            <p className="text-muted-foreground text-xs">
+              Dikunci dengan <BantuanIstilah istilah="hash-pengunci" label="hash pengunci SHA-256" />.
+              Tidak bisa diubah atau dihapus.
+            </p>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={hasil.qr} alt={`QR manifest ${hasil.kode}`} width={256} height={256} />
             <a href={hasil.url_publik} className="inline-flex min-h-12 items-center gap-1 underline">
@@ -268,7 +277,8 @@ export default function FormulirKirim() {
             {draf.peringatan.length > 0 && (
               <p role="status" className="text-warning">
                 Peringatan FEFO: batch {draf.peringatan.join(", ")} kedaluwarsa lebih
-                dekat tapi tidak dipakai.
+                dekat tapi tidak dipakai. Pakai yang terdekat dulu agar tidak kedaluwarsa
+                di gudang.
               </p>
             )}
             <Button
@@ -350,7 +360,7 @@ export default function FormulirKirim() {
             />
           </div>
           <div className="flex flex-col gap-2">
-            <h2 className="text-base font-bold text-primary">Stok batch (FEFO)</h2>
+            <h2 className="text-base font-bold text-primary">Stok batch (<BantuanIstilah istilah="fefo" label="FEFO" />)</h2>
             <p className="text-sm text-muted-foreground">
               Urut kedaluwarsa terdekat di atas. Pilih dari sini agar batch yang cepat
               kedaluwarsa keluar duluan.
@@ -429,7 +439,8 @@ export default function FormulirKirim() {
           {terlewat.length > 0 && (
             <p role="status" className="rounded-xl bg-warning-bg p-3 text-sm text-warning">
               Peringatan FEFO: {terlewat.map((b) => b.kode_sumbangan).join(", ")} kedaluwarsa
-              lebih dekat tapi belum dipilih.
+              lebih dekat tapi belum dipilih. Pakai yang terdekat dulu agar tidak kedaluwarsa
+              di gudang.
             </p>
           )}
           {barisKirim.map((r, i) => (

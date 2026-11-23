@@ -47,7 +47,7 @@ export default async function MasukPage({
         aria-hidden
         className="pointer-events-none absolute inset-0 h-full w-full bg-[#030D14]"
       />
-      <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-md flex-col justify-center gap-6 p-6">
+      <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-md flex-col justify-center gap-6 p-6 pb-28 md:pb-6">
       <nav aria-label="Kembali" className="flex items-center justify-between">
         <a href="/" className="inline-flex min-h-12 items-center text-sm font-medium text-white hover:text-white/80">
           ← Kembali ke Beranda

@@ -28,6 +28,9 @@ import { BoxIcon, CheckIcon, WiFiOffIcon } from "@solar-icons/react/linear";
 import { Textarea } from "@omnirelief/ui/components/textarea";
 import { kirimAntrean, kirimSatuAntrean, tambahAntrean } from "@/lib/offline";
 import TombolSalin from "@/components/tombol-salin";
+import { formatTanggalLokal, labelStatusRiwayat } from "@/lib/tanggal";
+import { BantuanIstilah } from "@/components/bantuan-istilah";
+import { PetaAlur, PetaAlurRingkasan } from "@/components/peta-alur";
 
 type Tugas = {
   id: number;
@@ -153,6 +156,12 @@ export default function TugasTim() {
 
   return (
     <div className="flex flex-col gap-4">
+      <PetaAlur />
+      <PetaAlurRingkasan peran="TIM" langkah="Check-in tepat waktu. Antar sampai posko." />
+      <p className="text-muted-foreground text-sm">
+        <BantuanIstilah istilah="check-in" label="Check-in" /> tepat waktu agar tidak kena status{" "}
+        <BantuanIstilah istilah="perlu-dicek" label="Perlu Dicek" />.
+      </p>
       <BannerOffline />
       {antre > 0 && (
         <div
@@ -248,12 +257,12 @@ export default function TugasTim() {
                     )}
                   </p>
                   <p className="text-muted-foreground">
-                    Terakhir: {t.log_terakhir?.status ?? "-"}
-                    {t.eta ? ` · tiba ${new Date(t.eta).toLocaleString("id-ID")}` : ""}
+                    Terakhir: {t.log_terakhir ? labelStatusRiwayat(t.log_terakhir.status) : "-"}
+                    {t.eta ? ` · tiba ${formatTanggalLokal(t.eta)}` : ""}
                   </p>
                   <p className="text-muted-foreground">
                     {t.batas_checkin
-                      ? `Batas check-in: ${new Date(t.batas_checkin).toLocaleString("id-ID")}`
+                      ? `Batas check-in: ${formatTanggalLokal(t.batas_checkin)}`
                       : "Tanpa batas check-in"}
                   </p>
                 </CardContent>

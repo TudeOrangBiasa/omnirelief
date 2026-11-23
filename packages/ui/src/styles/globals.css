@@ -194,6 +194,16 @@
   .t-angka {
     font-variant-numeric: tabular-nums;
   }
+  .tabel-gulir {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-gutter: stable;
+  }
+  .tabel-gulir:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
   .garis-rambut {
     box-shadow:
       0 0 0 1px rgba(35, 46, 64, 0.08),

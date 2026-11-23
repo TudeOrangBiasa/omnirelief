@@ -37,6 +37,7 @@ import {
   type PrioritasRow,
   type TugasRow,
 } from "@/lib/supabase/baris";
+import { PetaAlur, PetaAlurRingkasan } from "@/components/peta-alur";
 
 type StatusMuat = "memuat" | "siap" | "gagal";
 
@@ -329,6 +330,8 @@ export default function IsiBeranda({
 
   return (
     <div className="flex flex-col gap-6">
+      <PetaAlur />
+      <PetaAlurRingkasan peran={peran} langkah={aksi.label} />
       <section aria-label="Ringkasan sejak kunjungan terakhir">
         <h1 className="text-lg font-bold text-primary">
           Halo, {nama}. Rangkuman kunjungan terakhir

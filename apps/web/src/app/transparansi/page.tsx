@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { MagnifierIcon } from "@solar-icons/react/linear";
+import { CloseCircleIcon, MagnifierIcon } from "@solar-icons/react/linear";
 import { Alert, AlertDescription, AlertTitle } from "@omnirelief/ui/components/alert";
 import { Badge } from "@omnirelief/ui/components/badge";
 import { Button } from "@omnirelief/ui/components/button";
@@ -17,6 +17,7 @@ import {
 import { Input } from "@omnirelief/ui/components/input";
 import { Skeleton } from "@omnirelief/ui/components/skeleton";
 import { baris, type DashboardRow } from "@/lib/supabase/baris";
+import TombolKeAtas from "@/components/tombol-ke-atas";
 import { ShaderBackground } from "@/components/motion/shader-background";
 import { normalisasiKode, ruteKode } from "@/lib/kode";
 
@@ -109,7 +110,7 @@ export default function TransparansiPage() {
         aria-hidden
         className="pointer-events-none absolute inset-0 h-full w-full bg-[#030D14]"
       />
-      <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-5 py-12 md:px-10 md:py-20">
+      <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-5 pt-12 pb-28 md:px-10 md:py-20">
       <div className="flex w-full items-center justify-between pt-6 pb-4">
         <Link href="/" className="flex items-center gap-2" aria-label="OmniRelief beranda">
           <span aria-hidden="true" className="flex size-8 items-center justify-center rounded-lg bg-white text-sm font-bold text-[#0B1F2E]">
@@ -142,14 +143,26 @@ export default function TransparansiPage() {
         </p>
       </div>
       <form action={ruteKode(normalisasiKode(kode))} className="flex gap-2">
-        <Input
-          value={kode}
-          onChange={(e) => setKode(e.target.value.toUpperCase())}
-          placeholder="Ketik kode MNF-... atau DNT-..."
-          aria-label="Cari kode manifest atau sumbangan"
-          required
-          className="min-h-12 flex-1 rounded-none border border-white/25 bg-white/10 text-white placeholder:text-white/50"
-        />
+        <div className="relative min-w-0 flex-1">
+          <Input
+            value={kode}
+            onChange={(e) => setKode(e.target.value.toUpperCase())}
+            placeholder="Ketik kode MNF-... atau DNT-..."
+            aria-label="Cari kode manifest atau sumbangan"
+            required
+            className="min-h-12 w-full rounded-none border border-white/25 bg-white/10 pr-12 text-white placeholder:text-white/50"
+          />
+          {kode !== "" && (
+            <button
+              type="button"
+              onClick={() => setKode("")}
+              aria-label="Hapus kode"
+              className="absolute top-1/2 right-1 inline-flex min-h-12 min-w-12 -translate-y-1/2 items-center justify-center text-white/70 hover:text-white"
+            >
+              <CloseCircleIcon aria-hidden="true" className="size-5" />
+            </button>
+          )}
+        </div>
         <button
           type="submit"
           className="inline-flex min-h-12 items-center gap-2 rounded-none bg-white px-6 font-semibold text-[#0B1F2E] hover:bg-white/90"
@@ -200,15 +213,25 @@ export default function TransparansiPage() {
       </section>
 
       <section aria-label="Cari dan saring posko" className="flex flex-col gap-3">
-        <div className="flex gap-2">
+        <div className="relative flex gap-2">
           <Input
             id="cari-posko"
             value={cari}
             onChange={(e) => setCari(e.target.value)}
             placeholder="Cari posko atau wilayah..."
             aria-label="Cari posko"
-            className="min-h-12 flex-1 rounded-none border-white/30 bg-white/10 text-white placeholder:text-white/50"
+            className="min-h-12 w-full flex-1 rounded-none border-white/30 bg-white/10 pr-12 text-white placeholder:text-white/50"
           />
+          {cari !== "" && (
+            <button
+              type="button"
+              onClick={() => setCari("")}
+              aria-label="Hapus pencarian posko"
+              className="absolute top-1/2 right-1 inline-flex min-h-12 min-w-12 -translate-y-1/2 items-center justify-center text-white/70 hover:text-white"
+            >
+              <CloseCircleIcon aria-hidden="true" className="size-5" />
+            </button>
+          )}
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-1 rounded-none border border-white/25 p-1" role="group" aria-label="Saring status selisih">
@@ -349,6 +372,7 @@ export default function TransparansiPage() {
         </section>
       )}
       </div>
+      <TombolKeAtas />
       </main>
     </div>
   );

@@ -11,6 +11,9 @@ import { Input } from "@omnirelief/ui/components/input";
 import { Label } from "@omnirelief/ui/components/label";
 import { kirimAntrean, kirimSatuAntrean, tambahAntrean } from "@/lib/offline";
 
+import { BantuanIstilah } from "@/components/bantuan-istilah";
+import { PetaAlur, PetaAlurRingkasan } from "@/components/peta-alur";
+
 type Laporan = {
   id: number;
   bayi: number;
@@ -122,6 +125,12 @@ export default function FormulirPosko() {
 
   return (
     <div id="lapor" className="flex scroll-mt-20 flex-col gap-6">
+      <PetaAlur />
+      <PetaAlurRingkasan peran="POSKO" langkah="Kirim angka penyintas. Lalu tunggu verifikasi BPBD." />
+      <p className="text-muted-foreground text-sm">
+        Cukup kirim angka <BantuanIstilah istilah="agregat" label="agregat tanpa NIK" />. Tanpa nama.
+        Tanpa NIK.
+      </p>
       <BannerOffline />
       {hasil && (
         <p role="status" className="rounded-xl bg-success-bg p-3 text-sm text-success">

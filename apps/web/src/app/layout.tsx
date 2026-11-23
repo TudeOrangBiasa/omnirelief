@@ -7,6 +7,7 @@ import Header from "@/components/header";
 import BilahNav from "@/components/bilah-nav";
 import PendaftaranSw from "@/components/pendaftaran-sw";
 import Providers from "@/components/providers";
+import PintasanKeyboard from "@/components/pintasan-keyboard";
 import { getProfil } from "@/lib/auth";
 import { LABEL_PERAN, peranDariString } from "@/lib/navigasi";
 
@@ -53,15 +54,17 @@ export default async function RootLayout({
           }}
         />
         <Providers>
-          <SidebarProvider>
-            <BilahNav peran={peran} nama={profil?.nama ?? null} />
-            <SidebarInset className="bg-slate-50">
-              <Header nama={profil?.nama ?? null} peranLabel={LABEL_PERAN[peran]} />
-              <div className="mx-auto w-full max-w-5xl min-w-0 flex-1 pb-28 md:pb-0">
-                {children}
-              </div>
-            </SidebarInset>
-          </SidebarProvider>
+          <PintasanKeyboard>
+            <SidebarProvider>
+              <BilahNav peran={peran} nama={profil?.nama ?? null} />
+              <SidebarInset className="bg-slate-50">
+                <Header nama={profil?.nama ?? null} peranLabel={LABEL_PERAN[peran]} />
+                <div className="mx-auto w-full max-w-5xl min-w-0 flex-1 pb-28 md:pb-0">
+                  {children}
+                </div>
+              </SidebarInset>
+            </SidebarProvider>
+          </PintasanKeyboard>
         </Providers>
         <PendaftaranSw />
       </body>

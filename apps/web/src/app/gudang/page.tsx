@@ -27,8 +27,11 @@ import {
   TableRow,
 } from "@omnirelief/ui/components/table";
 import { urutFEFO } from "@/lib/fefo";
+import { sisaHariKalender } from "@/lib/tanggal";
 import { baris, type GudangBatchRow, type ItemKatalogRow } from "@/lib/supabase/baris";
 import TombolSalin from "@/components/tombol-salin";
+import { BantuanIstilah } from "@/components/bantuan-istilah";
+import { PetaAlur, PetaAlurRingkasan } from "@/components/peta-alur";
 
 type GalatField = {
   item_id?: string;
@@ -40,6 +43,7 @@ type GalatField = {
 type IntakeHariIni = {
   kode: string;
   jumlah: number;
+  satuan: string;
   sumber: string;
   waktu: string;
 };
@@ -73,12 +77,6 @@ function validasiClient(formData: FormData): { nilai: { item_id: number; jumlah:
     },
     galat,
   };
-}
-
-function sisaHari(t: string) {
-  const kini = new Date();
-  kini.setHours(0, 0, 0, 0);
-  return Math.ceil((new Date(t).getTime() - kini.getTime()) / 86400000);
 }
 
 export default function GudangPage() {
@@ -201,6 +199,7 @@ export default function GudangPage() {
           {
             kode: data.kode_sumbangan as string,
             jumlah: nilai.jumlah,
+            satuan: katalog.find((k) => k.id === nilai.item_id)?.satuan ?? "",
             sumber: nilai.sumber,
             waktu: new Date().toLocaleString("id-ID"),
           },
@@ -228,6 +227,8 @@ export default function GudangPage() {
           Catat pangan masuk. Satu pencatatan sama dengan satu kode sumbangan.
         </p>
       </div>
+      <PetaAlur />
+      <PetaAlurRingkasan peran="GUDANG" langkah="Catat sumbangan. Satu pencatatan sama dengan satu kode sumbangan." />
 
       {hasil && (
         <Card className="border-transparent bg-success-bg">
@@ -331,6 +332,9 @@ export default function GudangPage() {
             aria-invalid={galatField.kedaluwarsa ? true : undefined}
             aria-describedby={galatField.kedaluwarsa ? "gudang-exp-galat" : undefined}
           />
+          <p className="text-xs text-muted-foreground">
+            Pilih lewat kalender, atau ketik lengkap tanggal-bulan-tahun.
+          </p>
           {galatField.kedaluwarsa && (
             <p id="gudang-exp-galat" role="alert" className="text-sm text-destructive">
               {galatField.kedaluwarsa}
@@ -365,7 +369,8 @@ export default function GudangPage() {
       <section aria-label="Stok batch" className="flex flex-col gap-3">
         <h2 className="text-lg font-bold text-primary">Stok batch</h2>
         <p className="text-muted-foreground text-sm">
-          Urutan FEFO: kedaluwarsa paling dekat keluar duluan.
+          Urutan <BantuanIstilah istilah="fefo" label="FEFO" />: kedaluwarsa paling dekat
+          keluar duluan.
         </p>
         <Input
           value={cariBatch}
@@ -458,7 +463,7 @@ export default function GudangPage() {
             </TableHeader>
             <TableBody>
               {tampilBatch.map((b) => {
-                const hari = b.kedaluwarsa ? sisaHari(b.kedaluwarsa) : null;
+                const hari = b.kedaluwarsa ? sisaHariKalender(b.kedaluwarsa) : null;
                 return (
                   <TableRow key={b.id}>
                     <TableCell className="font-mono text-xs break-all">{b.kode_sumbangan}</TableCell>
@@ -513,7 +518,7 @@ export default function GudangPage() {
               <CardContent className="flex flex-col gap-1 p-4 text-sm">
                 <p className="font-semibold">{r.kode}</p>
                 <p className="text-muted-foreground">
-                  {r.jumlah} paket · {r.sumber} · {r.waktu}
+                  {r.jumlah} {r.satuan} · {r.sumber} · {r.waktu}
                 </p>
               </CardContent>
             </Card>
