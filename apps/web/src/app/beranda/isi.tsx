@@ -12,19 +12,6 @@ import {
 } from "@omnirelief/ui/components/alert";
 import { Badge } from "@omnirelief/ui/components/badge";
 import { Button } from "@omnirelief/ui/components/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@omnirelief/ui/components/card";
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@omnirelief/ui/components/empty";
 import { Skeleton } from "@omnirelief/ui/components/skeleton";
 import type { Peran } from "@/lib/auth";
 import {
@@ -39,6 +26,12 @@ import {
 } from "@/lib/supabase/baris";
 import Onboarding from "@/components/onboarding";
 import { PetaAlur, PetaAlurRingkasan } from "@/components/peta-alur";
+import {
+  BannerAksi,
+  DaftarAktivitas,
+  KotakKosong,
+  StripKpi,
+} from "@/components/widget-laporan";
 import { AKSI_PERAN } from "@/lib/aksi";
 
 type StatusMuat = "memuat" | "siap" | "gagal";
@@ -316,7 +309,7 @@ export default function IsiBeranda({
   const langkahAksi = AKSI_PERAN[peran][0]?.label ?? "Tugas berikutnya";
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       <Onboarding peran={peran} />
       <PetaAlur />
       <PetaAlurRingkasan peran={peran} langkah={langkahAksi} />
@@ -385,17 +378,15 @@ export default function IsiBeranda({
           </div>
         )}
         {status === "siap" && aktivitas.length === 0 && (
-          <Empty className="mt-3">
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <HistoryIcon aria-hidden="true" />
-              </EmptyMedia>
-              <EmptyTitle>Belum ada aktivitas</EmptyTitle>
-              <EmptyDescription>
-                Aktivitas terbaru peran ini tampil di sini setelah ada data.
-              </EmptyDescription>
-            </EmptyHeader>
-          </Empty>
+          <div className="mt-3">
+            <KotakKosong
+              label="Kosong"
+              judul="Belum ada aktivitas"
+              deskripsi="Aktivitas terbaru peran ini tampil di sini setelah ada data masuk."
+              aksiLabel={langkahAksi}
+              href={AKSI_PERAN[peran][0]?.href ?? "/beranda"}
+            />
+          </div>
         )}
         {status === "siap" && aktivitas.length > 0 && (
           <ul className="mt-3 flex flex-col gap-2">

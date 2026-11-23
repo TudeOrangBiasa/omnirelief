@@ -1,0 +1,1 @@
+import type { AksiItem } from "@/lib/aksi";

@@ -13,11 +13,19 @@ export default async function BerandaPage() {
 
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-2xl flex-col gap-6 p-6">
-      <div>
-        <p className="text-muted-foreground text-sm">
-          Peran: <Badge variant="outline">{profil.peran}</Badge>
-        </p>
+    <main className="w-full max-w-[1400px] px-6 py-8 lg:px-10">
+      <KepalaHalaman
+        label="Beranda"
+        judul="Ringkasan operasional"
+        deskripsi="Pantau angka terbaru, langkah berikutnya, dan aktivitas terakhir peran kamu."
+      />
+      <div className="mt-6 grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
+        <div className="space-y-8 lg:col-span-8">
+          <IsiBeranda nama={profil.nama} peran={profil.peran} />
+        </div>
+        <aside className="space-y-6 lg:sticky lg:top-20 lg:col-span-4">
+          <GridAksiCepat label="Aksi cepat" aksi={daftarAksi(profil.peran)} />
+        </aside>
       </div>
       <IsiBeranda nama={profil.nama} peran={profil.peran} />
       <form action={signOut}>
