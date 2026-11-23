@@ -23,6 +23,7 @@ import { Input } from "@omnirelief/ui/components/input";
 import TombolKeAtas from "@/components/tombol-ke-atas";
 import { ShaderBackground } from "@/components/motion/shader-background";
 import { normalisasiKode, ruteKode } from "@/lib/kode";
+import Logo from "@/components/logo";
 
 type Baris = {
   butuh: number;
@@ -685,15 +686,7 @@ export default function Home() {
                     className="flex items-center gap-2"
                     aria-label="OmniRelief beranda"
                   >
-                    <span
-                      aria-hidden="true"
-                      className="flex size-8 items-center justify-center rounded-lg bg-white text-sm font-bold text-[#0B1F2E]"
-                    >
-                      O
-                    </span>
-                    <span className="font-semibold tracking-tight text-white">
-                      OmniRelief
-                    </span>
+                    <Logo varian="putih" tinggi={30} alt="" />
                   </a>
                   <p className="text-sm leading-relaxed text-white/70">
                     Sistem logistik bantuan pangan darurat. Tercatat dari

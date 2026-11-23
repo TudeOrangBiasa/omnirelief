@@ -51,6 +51,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@omnirelief/ui/components/sidebar";
+import Logo from "@/components/logo";
 import {
   grupSidebar,
   LABEL_SINGKAT,
@@ -282,10 +283,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
         <header className="fixed inset-x-0 top-0 z-40 w-full bg-transparent print:hidden">
           <div className="ml-[3vw] grid w-[97vw] grid-cols-12 items-center py-6 pr-5 md:ml-[7vw] md:w-[93vw] md:pr-10 lg:pr-14">
             <a href="/" className="col-span-6 flex items-center gap-2" aria-label="OmniRelief beranda">
-              <span aria-hidden="true" className="flex size-8 items-center justify-center rounded-lg bg-white text-sm font-bold text-[#0B1F2E]">
-                O
-              </span>
-              <span className="font-semibold tracking-tight text-white">OmniRelief</span>
+              <Logo varian="putih" tinggi={30} alt="" />
             </a>
             <span className="col-span-6 flex items-center justify-end md:hidden">
               <a
@@ -340,13 +338,17 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
                     <a href="/beranda" aria-label="OmniRelief work zone" />
                   }
                 >
-                  <span
-                    aria-hidden="true"
-                    className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-bold text-primary-foreground"
-                  >
-                    O
-                  </span>
-                  <span className="truncate text-sm font-bold">OmniRelief</span>
+                  <Logo
+                    tinggi={26}
+                    alt=""
+                    kelas="group-data-[collapsible=icon]:hidden"
+                  />
+                  <Logo
+                    simbol
+                    tinggi={26}
+                    alt=""
+                    kelas="hidden group-data-[collapsible=icon]:block"
+                  />
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

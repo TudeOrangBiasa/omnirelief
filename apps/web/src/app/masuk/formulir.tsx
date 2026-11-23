@@ -17,6 +17,7 @@ import {
 } from "@omnirelief/ui/components/card";
 import { Input } from "@omnirelief/ui/components/input";
 import { Label } from "@omnirelief/ui/components/label";
+import Logo from "@/components/logo";
 
 function TombolMasuk() {
   const { pending } = useFormStatus();
@@ -39,7 +40,8 @@ export default function FormulirMasuk({
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-bold text-white">Masuk OmniRelief</h1>
+        <Logo varian="putih" tinggi={34} />
+        <h1 className="mt-3 text-2xl font-bold text-white">Masuk</h1>
         <p className="mt-1 text-sm text-white/70">
           Masuk dengan akun peran yang dibagikan command center.
         </p>
