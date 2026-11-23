@@ -24,7 +24,7 @@ const CONTOH_KODE = "MNF-2026-0001";
 const CONTOH_DNT = "DNT-2026-001";
 
 // Padding kiri seragam tiap section agar tidak ada teks menempel sumbu border-l.
-const PAD = "pl-8 pr-6 md:pl-14 md:pr-12 lg:pl-16 lg:pr-14";
+const PAD = "pl-6 pr-5 md:pl-12 md:pr-10 lg:pl-14 lg:pr-12";
 
 const JANJI = [
   {

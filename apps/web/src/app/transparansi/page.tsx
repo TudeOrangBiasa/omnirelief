@@ -102,13 +102,37 @@ export default function TransparansiPage() {
   }
 
   return (
-    <main className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-8 px-5 py-12 md:px-10 md:py-20">
+    <div className="relative ml-[calc(50%-50vw)] min-h-screen w-screen overflow-x-hidden">
       <ShaderBackground
         variant="mesh-gradient"
         colors={["#030D14", "#082032", "#0F3B5F", "#1B7FBF"]}
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -bottom-28 h-auto w-full bg-[#030D14] md:bottom-0"
+        className="pointer-events-none absolute inset-0 h-full w-full bg-[#030D14]"
       />
+      <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-5 py-12 md:px-10 md:py-20">
+      <div className="flex w-full items-center justify-between pt-6 pb-4">
+        <Link href="/" className="flex items-center gap-2" aria-label="OmniRelief beranda">
+          <span aria-hidden="true" className="flex size-8 items-center justify-center rounded-lg bg-white text-sm font-bold text-[#0B1F2E]">
+            O
+          </span>
+          <span className="font-semibold tracking-tight text-white">OmniRelief</span>
+        </Link>
+        <span className="flex items-center gap-5">
+          <Link href="/" className="min-h-12 inline-flex items-center font-mono text-[11px] tracking-[0.15em] text-white/80 uppercase hover:text-white">
+            ← Beranda
+          </Link>
+          <Link
+            href="/masuk"
+            className="relative inline-flex min-h-10 items-center justify-center border border-white/40 bg-white/10 px-3.5 font-mono text-[11px] tracking-[0.15em] text-white uppercase backdrop-blur-sm hover:bg-white/20"
+          >
+            <span aria-hidden="true" className="absolute top-0 left-0 h-1.5 w-1.5 border-t border-l border-white" />
+            <span aria-hidden="true" className="absolute top-0 right-0 h-1.5 w-1.5 border-t border-r border-white" />
+            <span aria-hidden="true" className="absolute bottom-0 left-0 h-1.5 w-1.5 border-b border-l border-white" />
+            <span aria-hidden="true" className="absolute right-0 bottom-0 h-1.5 w-1.5 border-r border-b border-white" />
+            Masuk Portal
+          </Link>
+        </span>
+      </div>
       <div className="relative flex min-h-0 flex-col gap-8">
       <div>
         <p className="t-micro text-white/70">Tanpa login</p>
@@ -337,6 +361,7 @@ export default function TransparansiPage() {
         </section>
       )}
       </div>
-    </main>
+      </main>
+    </div>
   );
 }

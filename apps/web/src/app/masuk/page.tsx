@@ -40,19 +40,29 @@ export default async function MasukPage({
   }
 
   return (
-    <main className="relative mx-auto flex min-h-screen w-full max-w-md flex-col justify-center gap-6 p-6">
+    <div className="relative ml-[calc(50%-50vw)] min-h-screen w-screen overflow-x-hidden">
       <ShaderBackground
         variant="mesh-gradient"
         colors={["#030D14", "#082032", "#0F3B5F", "#1B7FBF"]}
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -bottom-28 h-auto w-full bg-[#030D14] md:bottom-0"
+        className="pointer-events-none absolute inset-0 h-full w-full bg-[#030D14]"
       />
+      <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-md flex-col justify-center gap-6 p-6">
+      <nav aria-label="Kembali" className="flex items-center justify-between">
+        <a href="/" className="inline-flex min-h-12 items-center text-sm font-medium text-white hover:text-white/80">
+          ← Kembali ke Beranda
+        </a>
+        <a href="/transparansi" className="inline-flex min-h-12 items-center text-sm font-medium text-white hover:text-white/80">
+          Lihat Transparansi
+        </a>
+      </nav>
       <div className="relative flex min-h-0 flex-col gap-6">
       <FormulirMasuk
         aksi={signIn}
         galat={gagal ? (PESAN_GAGAL[gagal] ?? PESAN_GAGAL.kredensial) : null}
       />
       </div>
-    </main>
+      </main>
+    </div>
   );
 }
