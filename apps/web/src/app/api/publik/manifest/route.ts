@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { normalisasiKode } from "@/lib/kode";
 import {
   baris,
   tunggal,
   type ManifestItemRow,
 } from "@/lib/supabase/baris";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 type ManifestRow = {
   kode: string;
@@ -27,7 +28,7 @@ type LogRow = {
 };
 
 export async function GET(request: Request) {
-  const kode = new URL(request.url).searchParams.get("kode")?.trim() ?? "";
+  const kode = normalisasiKode(new URL(request.url).searchParams.get("kode") ?? "");
   if (kode === "")
     return NextResponse.json({ ok: false, galat: "kode wajib diisi" }, { status: 400 });
   const admin = createAdminClient();

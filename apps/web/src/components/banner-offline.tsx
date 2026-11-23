@@ -3,20 +3,8 @@
 import { useEffect, useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@omnirelief/ui/components/alert";
 import { WiFiOffIcon } from "@solar-icons/react/linear";
-import { kirimAntrean, muatAntrean } from "@/lib/offline";
+import { kirimAntrean, kirimSatuAntrean, muatAntrean } from "@/lib/offline";
 
-async function kirimNyata(url: string, badan: Record<string, unknown>): Promise<boolean> {
-  try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(badan),
-    });
-    return res.ok;
-  } catch {
-    return false;
-  }
-}
 
 export function hitungAntrean(): number {
   if (typeof window === "undefined" || !window.localStorage) return 0;
@@ -31,7 +19,9 @@ export default function BannerOffline() {
     async function segarkan() {
       setDaring(window.navigator.onLine);
       if (window.navigator.onLine) {
-        const sisa = await kirimAntrean(window.localStorage, kirimNyata);
+        const sisa = await kirimAntrean(window.localStorage, (url, badan) =>
+          kirimSatuAntrean(url, badan)
+        );
         setAntre(sisa.length);
       } else {
         setAntre(hitungAntrean());

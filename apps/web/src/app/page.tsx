@@ -10,8 +10,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@omnirelief/ui/components/card";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@omnirelief/ui/components/dialog";
 import { Input } from "@omnirelief/ui/components/input";
 import { ShaderBackground } from "@/components/motion/shader-background";
+import { normalisasiKode, ruteKode } from "@/lib/kode";
 
 type Baris = {
   butuh: number;
@@ -257,7 +267,6 @@ function AkordeonTerang() {
 
 export default function Home() {
   const [kode, setKode] = useState("");
-  const [jenis, setJenis] = useState<"MNF" | "DNT">("MNF");
   const [totalPosko, setTotalPosko] = useState(0);
   const [totalDiterima, setTotalDiterima] = useState(0);
   const [totalSelisih, setTotalSelisih] = useState(0);
@@ -314,17 +323,12 @@ export default function Home() {
                 diam-diam.
               </p>
               <form
-                action={`/${jenis === "MNF" ? "m" : "s"}/${kodeKetik}`}
+                action={ruteKode(normalisasiKode(kodeKetik))}
                 className="flex max-w-xl gap-2"
               >
                 <Input
                   value={kode}
-                  onChange={(e) => {
-                    const v = e.target.value.toUpperCase();
-                    setKode(v);
-                    if (v.startsWith("DNT")) setJenis("DNT");
-                    else setJenis("MNF");
-                  }}
+                  onChange={(e) => setKode(e.target.value.toUpperCase())}
                   placeholder="Ketik kode MNF-... atau DNT-..."
                   aria-label="Kode manifest atau sumbangan"
                   required
@@ -768,35 +772,21 @@ export default function Home() {
         </div>
       </div>
 
-      {legalAktif && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={legalAktif.judul}
-          className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center"
-        >
-          <button
-            type="button"
-            aria-label="Tutup dialog"
-            onClick={() => setLegal(null)}
-            className="absolute inset-0 cursor-default bg-black/60"
-          />
-          <div className="relative w-full max-w-md border border-white/20 bg-[#0B1F2E] p-6 text-white">
-            <h2 className="font-semibold">{legalAktif.judul}</h2>
-            <p className="mt-3 text-sm leading-relaxed text-white/70">
-              {legalAktif.isi}
-            </p>
-            <button
-              type="button"
-              onClick={() => setLegal(null)}
-              autoFocus
-              className="mt-5 inline-flex min-h-12 items-center justify-center border border-white/40 bg-white/10 px-5 font-mono text-[11px] tracking-[0.15em] uppercase hover:bg-white/20"
-            >
+      <Dialog open={legalAktif !== null} onOpenChange={(buka) => !buka && setLegal(null)}>
+        <DialogContent className="border-white/20 bg-[#0B1F2E] text-white">
+          <DialogHeader>
+            <DialogTitle className="text-white">{legalAktif?.judul}</DialogTitle>
+            <DialogDescription className="text-sm leading-relaxed text-white/70">
+              {legalAktif?.isi}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose className="inline-flex min-h-12 items-center justify-center border border-white/40 bg-white/10 px-5 font-mono text-[11px] tracking-[0.15em] text-white uppercase hover:bg-white/20">
               Tutup
-            </button>
-          </div>
-        </div>
-      )}
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }

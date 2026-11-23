@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   hapusAntrean,
   kirimAntrean,
+  kirimSatuAntrean,
   muatAntrean,
   tambahAntrean,
   type Penyimpanan,
@@ -42,5 +43,30 @@ describe("antrean offline", () => {
     expect(sisa).toHaveLength(2);
     const sisa2 = await kirimAntrean(simpan, async () => true);
     expect(sisa2).toEqual([]);
+  });
+});
+
+describe("kirimSatuAntrean", () => {
+  it("2xx terkirim, 4xx tuntas dengan laporan, 5xx dan jaringan ulang lagi", async () => {
+    const asli = globalThis.fetch;
+    const lapor: string[] = [];
+    try {
+      globalThis.fetch = (async () => new Response("{}", { status: 200 })) as typeof fetch;
+      expect(await kirimSatuAntrean("/x", {}, (m) => void lapor.push(m))).toBe(true);
+      globalThis.fetch = (async () =>
+        new Response(JSON.stringify({ ok: false, galat: "pengiriman sudah selesai" }), {
+          status: 409,
+        })) as typeof fetch;
+      expect(await kirimSatuAntrean("/x", {}, (m) => void lapor.push(m))).toBe(true);
+      globalThis.fetch = (async () => new Response("salah", { status: 500 })) as typeof fetch;
+      expect(await kirimSatuAntrean("/x", {})).toBe(false);
+      globalThis.fetch = (async () => {
+        throw new Error("putus");
+      }) as typeof fetch;
+      expect(await kirimSatuAntrean("/x", {})).toBe(false);
+    } finally {
+      globalThis.fetch = asli;
+    }
+    expect(lapor).toEqual(["pengiriman sudah selesai"]);
   });
 });

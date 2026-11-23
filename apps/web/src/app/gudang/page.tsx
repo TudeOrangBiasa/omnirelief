@@ -28,6 +28,7 @@ import {
 } from "@omnirelief/ui/components/table";
 import { urutFEFO } from "@/lib/fefo";
 import { baris, type GudangBatchRow, type ItemKatalogRow } from "@/lib/supabase/baris";
+import TombolSalin from "@/components/tombol-salin";
 
 type GalatField = {
   item_id?: string;
@@ -218,15 +219,6 @@ export default function GudangPage() {
     }
   }
 
-  async function salinKode() {
-    if (!hasil) return;
-    try {
-      await navigator.clipboard.writeText(hasil);
-      toast.success("Kode sumbangan disalin.");
-    } catch {
-      toast.error("Gagal menyalin. Catat kode secara manual.");
-    }
-  }
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-6 p-6">
@@ -246,9 +238,21 @@ export default function GudangPage() {
             <p className="text-sm text-success">
               Kode sumbangan: <strong>{hasil}</strong>
             </p>
-            <Button onClick={() => void salinKode()} variant="outline" className="min-h-12">
-              Salin kode
-            </Button>
+            <TombolSalin
+              teks={hasil}
+              label="Salin kode"
+              pesanSukses="Kode sumbangan disalin."
+              variant="outline"
+            />
+            <Button
+              render={
+                <Link href={`/s/${hasil}`}>
+                  Lihat halaman publik ↗
+                </Link>
+              }
+              variant="outline"
+              className="min-h-12 w-full"
+            />
           </CardContent>
         </Card>
       )}

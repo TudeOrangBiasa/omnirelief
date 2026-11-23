@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { normalisasiKode } from "@/lib/kode";
 import { baris, tunggal } from "@/lib/supabase/baris";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 type BatchRow = {
   id: number;
@@ -16,7 +17,7 @@ type BatchRow = {
 };
 
 export async function GET(request: Request) {
-  const kode = new URL(request.url).searchParams.get("kode")?.trim() ?? "";
+  const kode = normalisasiKode(new URL(request.url).searchParams.get("kode") ?? "");
   if (kode === "")
     return NextResponse.json({ ok: false, galat: "kode wajib diisi" }, { status: 400 });
   const admin = createAdminClient();

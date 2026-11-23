@@ -9,7 +9,7 @@ import { Button } from "@omnirelief/ui/components/button";
 import { Card, CardContent } from "@omnirelief/ui/components/card";
 import { Input } from "@omnirelief/ui/components/input";
 import { Label } from "@omnirelief/ui/components/label";
-import { kirimAntrean, tambahAntrean } from "@/lib/offline";
+import { kirimAntrean, kirimSatuAntrean, tambahAntrean } from "@/lib/offline";
 
 type Laporan = {
   id: number;
@@ -59,18 +59,9 @@ export default function FormulirPosko() {
   useEffect(() => {
     void muat();
     if (window.navigator.onLine) {
-      void kirimAntrean(window.localStorage, async (url, badan) => {
-        try {
-          const res = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(badan),
-          });
-          return res.ok;
-        } catch {
-          return false;
-        }
-      }).then((sisa) => {
+      void kirimAntrean(window.localStorage, (url, badan) =>
+        kirimSatuAntrean(url, badan, (pesan) => toast.error(pesan))
+      ).then((sisa) => {
         if (sisa.length === 0) void muat();
       });
     }

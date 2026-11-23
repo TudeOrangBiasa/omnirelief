@@ -466,6 +466,14 @@ export default function DasborBpbd() {
                 </p>
                 <div className="flex flex-col gap-2 sm:flex-row">
                   <a
+                    href={`/m/${w.kode}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={cn(buttonVariants({ variant: "outline" }), "min-h-12 flex-1")}
+                  >
+                    Lihat halaman publik ↗
+                  </a>
+                  <a
                     href="tel:112"
                     className={cn(buttonVariants({ variant: "outline" }), "min-h-12 flex-1")}
                   >

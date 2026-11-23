@@ -18,6 +18,7 @@ import { Input } from "@omnirelief/ui/components/input";
 import { Skeleton } from "@omnirelief/ui/components/skeleton";
 import { baris, type DashboardRow } from "@/lib/supabase/baris";
 import { ShaderBackground } from "@/components/motion/shader-background";
+import { normalisasiKode, ruteKode } from "@/lib/kode";
 
 type StatusMuat = "memuat" | "siap" | "gagal";
 type FilterStatus = "semua" | "kurang" | "aman";
@@ -46,7 +47,6 @@ export default function TransparansiPage() {
   const [data, setData] = useState<DashboardRow[]>([]);
   const [status, setStatus] = useState<StatusMuat>("memuat");
   const [kode, setKode] = useState("");
-  const [jenis, setJenis] = useState<"MNF" | "DNT">("MNF");
   const [cari, setCari] = useState("");
   const [filterStatus, setFilterStatus] = useState<FilterStatus>("semua");
 
@@ -141,15 +141,10 @@ export default function TransparansiPage() {
           Jatah, pengiriman, penerimaan, dan selisih tiap daerah. Angka tidak digabung antar posko.
         </p>
       </div>
-      <form action={`/${jenis}/${kode.trim()}`} className="flex gap-2">
+      <form action={ruteKode(normalisasiKode(kode))} className="flex gap-2">
         <Input
           value={kode}
-          onChange={(e) => {
-            const v = e.target.value.toUpperCase();
-            setKode(v);
-            if (v.startsWith("DNT")) setJenis("DNT");
-            else setJenis("MNF");
-          }}
+          onChange={(e) => setKode(e.target.value.toUpperCase())}
           placeholder="Ketik kode MNF-... atau DNT-..."
           aria-label="Cari kode manifest atau sumbangan"
           required

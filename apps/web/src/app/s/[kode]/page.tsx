@@ -3,12 +3,11 @@
 import { use, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import QRCode from "qrcode";
-import { toast } from "sonner";
 import {
   ArrowLeftIcon,
-  CopyIcon,
   MagnifierIcon,
 } from "@solar-icons/react/linear";
+import TombolSalin from "@/components/tombol-salin";
 import {
   Alert,
   AlertDescription,
@@ -127,15 +126,7 @@ export default function SumbanganPage({
     };
   }, [status, sumbangan]);
 
-  async function salinTautan() {
-    const url = window.location.href;
-    try {
-      await navigator.clipboard.writeText(url);
-      toast.success("Tautan disalin");
-    } catch {
-      toast.error("Gagal menyalin tautan");
-    }
-  }
+  const urlHalaman = typeof window === "undefined" ? "" : window.location.href;
 
   const dipakai = sumbangan ? baris<PakaiRow>(sumbangan.dipakai) : [];
   const persen =
@@ -314,10 +305,7 @@ export default function SumbanganPage({
                     <p className="text-xs text-muted-foreground">
                       Sumber: {sumbangan.sumber}
                     </p>
-                    <Button onClick={salinTautan} className="min-h-12 w-full">
-                      <CopyIcon aria-hidden="true" />
-                      Salin Tautan
-                    </Button>
+                    <TombolSalin teks={urlHalaman} />
                   </CardContent>
                 </Card>
               </div>

@@ -3,10 +3,8 @@
 import { use, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import QRCode from "qrcode";
-import { toast } from "sonner";
 import {
   ArrowLeftIcon,
-  CopyIcon,
   MagnifierIcon,
 } from "@solar-icons/react/linear";
 import {
@@ -41,6 +39,7 @@ import {
 } from "@omnirelief/ui/components/table";
 import { baris, tunggal } from "@/lib/supabase/baris";
 import { formatHariLokal, formatTanggalLokal } from "@/lib/tanggal";
+import TombolSalin from "@/components/tombol-salin";
 import { ShaderBackground } from "@/components/motion/shader-background";
 
 type StatusMuat = "memuat" | "siap" | "kosong" | "gagal";
@@ -152,15 +151,7 @@ export default function ManifestPage({
     };
   }, [status, manifest]);
 
-  async function salinTautan() {
-    const url = window.location.href;
-    try {
-      await navigator.clipboard.writeText(url);
-      toast.success("Tautan disalin");
-    } catch {
-      toast.error("Gagal menyalin tautan");
-    }
-  }
+  const urlHalaman = typeof window === "undefined" ? "" : window.location.href;
 
   const barang = manifest ? baris<BarangRow>(manifest.items) : [];
   const riwayat = manifest ? baris<RiwayatRow>(manifest.riwayat) : [];
@@ -169,17 +160,17 @@ export default function ManifestPage({
   const dibatalkan = manifest?.status === "DIBATALKAN";
 
   return (
-    <main className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 p-6">
+    <main className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 p-6 print:min-h-0 print:bg-white">
       <ShaderBackground
         variant="mesh-gradient"
         colors={["#030D14", "#082032", "#0F3B5F", "#1B7FBF"]}
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -bottom-28 h-auto w-full bg-[#030D14] md:bottom-0"
+        className="pointer-events-none absolute inset-x-0 top-0 -bottom-28 h-auto w-full bg-[#030D14] print:hidden md:bottom-0"
       />
       <div className="relative flex min-h-0 flex-col gap-6">
       <Link
         href="/transparansi"
-        className="inline-flex min-h-12 items-center gap-2 text-sm text-white underline underline-offset-4"
+        className="inline-flex min-h-12 items-center gap-2 text-sm text-white underline underline-offset-4 print:hidden"
       >
         <ArrowLeftIcon aria-hidden="true" />
         Kembali ke Transparansi
@@ -241,10 +232,10 @@ export default function ManifestPage({
                 <Badge variant="destructive" className="rounded-full">DIBATALKAN</Badge>
               )}
             </div>
-            <h1 className="mt-2 font-mono text-2xl font-bold break-all text-white">
+            <h1 className="mt-2 font-mono text-2xl font-bold break-all text-white print:text-black">
               {manifest.kode}
             </h1>
-            <p className="mt-1 text-sm text-white/70">
+            <p className="mt-1 text-sm text-white/70 print:text-black">
               {manifest.posko_nama} · {manifest.wilayah} · Tim {manifest.tim} · {tanggal(manifest.dipublikasikan_pada)}
             </p>
           </div>
@@ -409,10 +400,16 @@ export default function ManifestPage({
                     <p className="font-mono text-xs break-all text-muted-foreground">
                       hash {manifest.hash.slice(0, 16)}…
                     </p>
-                    <Button onClick={salinTautan} className="min-h-12 w-full">
-                      <CopyIcon aria-hidden="true" />
-                      Salin Tautan
-                    </Button>
+                    <div className="flex w-full flex-col gap-2 print:hidden">
+                      <TombolSalin teks={urlHalaman} />
+                      <Button
+                        variant="outline"
+                        onClick={() => window.print()}
+                        className="min-h-12 w-full"
+                      >
+                        Cetak Lembar Manifest
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               </div>

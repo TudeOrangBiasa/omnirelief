@@ -74,7 +74,10 @@ export async function POST(request: Request) {
       );
   }
 
-  const daftarSisa: BatchSisa[] = [...petaBatch.values()].map((b) => ({
+  const { data: mentahSemua } = await admin
+    .from("stok_batch")
+    .select("id,jumlah,kode_sumbangan,kedaluwarsa");
+  const daftarSisa: BatchSisa[] = baris<BatchRow>(mentahSemua).map((b) => ({
     kode: b.kode_sumbangan,
     kedaluwarsa: b.kedaluwarsa,
     tersedia: b.jumlah,

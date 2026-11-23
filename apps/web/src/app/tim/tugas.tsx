@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import BannerOffline, { hitungAntrean } from "@/components/banner-offline";
+import Link from "next/link";
 import { Alert, AlertDescription, AlertTitle } from "@omnirelief/ui/components/alert";
 import { Badge } from "@omnirelief/ui/components/badge";
 import { Button } from "@omnirelief/ui/components/button";
@@ -25,7 +26,8 @@ import {
 import { Skeleton } from "@omnirelief/ui/components/skeleton";
 import { BoxIcon, CheckIcon, WiFiOffIcon } from "@solar-icons/react/linear";
 import { Textarea } from "@omnirelief/ui/components/textarea";
-import { kirimAntrean, tambahAntrean } from "@/lib/offline";
+import { kirimAntrean, kirimSatuAntrean, tambahAntrean } from "@/lib/offline";
+import TombolSalin from "@/components/tombol-salin";
 
 type Tugas = {
   id: number;
@@ -50,16 +52,7 @@ function lewatBatas(t: Tugas): boolean {
   return t.batas_checkin !== null && new Date(t.batas_checkin) < new Date();
 }
 async function kirimNyata(url: string, badan: Record<string, unknown>): Promise<boolean> {
-  try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(badan),
-    });
-    return res.ok;
-  } catch {
-    return false;
-  }
+  return kirimSatuAntrean(url, badan, (pesan) => toast.error(pesan));
 }
 
 export default function TugasTim() {
@@ -291,11 +284,24 @@ export default function TugasTim() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col gap-3 text-sm">
-                <p className="text-muted-foreground">
-                  {aktif.batas_checkin
-                    ? `Batas check-in: ${new Date(aktif.batas_checkin).toLocaleString("id-ID")}`
-                    : "Tanpa batas check-in"}
-                </p>
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <TombolSalin
+                    teks={aktif.kode}
+                    label="Salin kode"
+                    pesanSukses="Kode manifest disalin."
+                    variant="outline"
+                    className="flex-1"
+                  />
+                  <Button
+                    render={
+                      <Link href={`/m/${aktif.kode}`} target="_blank" rel="noreferrer">
+                        Lihat halaman publik ↗
+                      </Link>
+                    }
+                    variant="outline"
+                    className="min-h-12 flex-1"
+                  />
+                </div>
                 <div className="flex flex-col gap-2">
                   <p role="status" className="font-semibold">
                     Tahap {kini + 1} dari {AKSI.length}: {AKSI[kini].label}

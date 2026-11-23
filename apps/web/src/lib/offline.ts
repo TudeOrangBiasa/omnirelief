@@ -59,6 +59,40 @@ export function hapusAntrean(simpan: Penyimpanan, id: string): AntreanItem[] {
 
 export type Pengirim = (url: string, badan: Record<string, unknown>) => Promise<boolean>;
 
+/**
+ * Pengirim antrean untuk pemakaian nyata. true = item selesai (terkirim
+ * ATAU ditolak final oleh server 4xx, jadi hapus dari antrean agar tidak
+ * macet). Hanya galat jaringan dan 5xx yang false (coba lagi nanti).
+ * Penolakan 4xx dilaporkan lewat `lapor` supaya pengguna tahu alasannya.
+ */
+export async function kirimSatuAntrean(
+  url: string,
+  badan: Record<string, unknown>,
+  lapor?: (pesan: string) => void
+): Promise<boolean> {
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(badan),
+    });
+  } catch {
+    return false;
+  }
+  if (res.ok) return true;
+  if (res.status >= 500) return false;
+  let galat = "Data ditolak server sehingga tidak dikirim ulang.";
+  try {
+    const data = (await res.json()) as { galat?: string };
+    if (typeof data.galat === "string" && data.galat) galat = data.galat;
+  } catch {
+    /* abaikan badan tak terbaca, pakai pesan baku */
+  }
+  lapor?.(galat);
+  return true;
+}
+
 export async function kirimAntrean(
   simpan: Penyimpanan,
   kirim: Pengirim

@@ -13,6 +13,14 @@ import { Badge } from "@omnirelief/ui/components/badge";
 import { Button } from "@omnirelief/ui/components/button";
 import { Card, CardContent } from "@omnirelief/ui/components/card";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@omnirelief/ui/components/dialog";
+import {
   Empty,
   EmptyDescription,
   EmptyHeader,
@@ -91,6 +99,7 @@ export default function FormulirKirim() {
   const [galat, setGalat] = useState<string | null>(null);
   const [memuat, setMemuat] = useState(true);
   const [sibuk, setSibuk] = useState(false);
+  const [tanyaKunci, setTanyaKunci] = useState(false);
 
   useEffect(() => {
     void (async () => {
@@ -165,7 +174,10 @@ export default function FormulirKirim() {
       const id = ok && "id" in data && typeof data.id === "number" ? data.id : null;
       const kode = ok && "kode" in data && typeof data.kode === "string" ? data.kode : null;
       if (ok && id !== null && kode !== null) {
-        const peringatan = "peringatan" in data ? baris<string>(data.peringatan) : [];
+        const mentahPeringatan = "peringatan" in data ? data.peringatan : [];
+        const peringatan = Array.isArray(mentahPeringatan)
+          ? mentahPeringatan.filter((p): p is string => typeof p === "string")
+          : [];
         setDraf({ id, kode, peringatan });
         toast.success(`Draf ${kode} tersimpan.`);
       } else {
@@ -260,12 +272,44 @@ export default function FormulirKirim() {
               </p>
             )}
             <Button
-              onClick={() => void publikasikan()}
+              onClick={() => setTanyaKunci(true)}
               disabled={sibuk}
               className="min-h-12 w-full"
             >
-              {sibuk ? "Mengunci..." : "Publikasikan dan kunci"}
+              Publikasikan dan kunci
             </Button>
+            <Dialog open={tanyaKunci} onOpenChange={(buka) => !buka && setTanyaKunci(false)}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Kunci manifest {draf.kode}?</DialogTitle>
+                  <DialogDescription>
+                    Manifest terkunci permanen dan tidak bisa diubah atau dihapus.
+                    Alokasi batch langsung mengurangi sisa stok untuk manifest lain.
+                    Pastikan posko, tim, dan jumlah sudah benar.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => setTanyaKunci(false)}
+                    disabled={sibuk}
+                    className="min-h-12 flex-1"
+                  >
+                    Periksa lagi
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setTanyaKunci(false);
+                      void publikasikan();
+                    }}
+                    disabled={sibuk}
+                    className="min-h-12 flex-1"
+                  >
+                    {sibuk ? "Mengunci..." : "Ya, kunci"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </CardContent>
         </Card>
       ) : batch.length === 0 ? (
