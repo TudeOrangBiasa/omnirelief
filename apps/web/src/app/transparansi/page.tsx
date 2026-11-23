@@ -24,7 +24,7 @@ type FilterStatus = "semua" | "kurang" | "aman";
 
 function KartuMuat() {
   return (
-    <Card aria-hidden="true" className="bg-white rounded-xl border border-slate-200 shadow-xs">
+    <Card aria-hidden="true" className="rounded-none border border-slate-200 bg-white shadow-xs">
       <CardHeader>
         <Skeleton className="h-5 w-2/3" />
         <Skeleton className="h-4 w-1/3" />
@@ -45,8 +45,8 @@ function persenTerima(butuh: number, diterima: number) {
 export default function TransparansiPage() {
   const [data, setData] = useState<DashboardRow[]>([]);
   const [status, setStatus] = useState<StatusMuat>("memuat");
-  const [kodeManifest, setKodeManifest] = useState("");
-  const [kodeSumbangan, setKodeSumbangan] = useState("");
+  const [kode, setKode] = useState("");
+  const [jenis, setJenis] = useState<"MNF" | "DNT">("MNF");
   const [cari, setCari] = useState("");
   const [filterStatus, setFilterStatus] = useState<FilterStatus>("semua");
 
@@ -141,70 +141,63 @@ export default function TransparansiPage() {
           Jatah, pengiriman, penerimaan, dan selisih tiap daerah. Angka tidak digabung antar posko.
         </p>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <form action={`/m/${kodeManifest.trim()}`} className="flex gap-2">
-          <Input
-            value={kodeManifest}
-            onChange={(e) => setKodeManifest(e.target.value)}
-            placeholder="Cari kode manifest (MNF-...)"
-            aria-label="Cari kode manifest"
-            required
-            className="min-h-12 flex-1 rounded-xl border-white/30 bg-white/10 text-white placeholder:text-white/50"
-          />
-          <Button type="submit" className="min-h-12 rounded-xl" aria-label="Cek kode manifest">
-            <MagnifierIcon aria-hidden="true" /> Cek
-          </Button>
-        </form>
-        <form action={`/s/${kodeSumbangan.trim()}`} className="flex gap-2">
-          <Input
-            value={kodeSumbangan}
-            onChange={(e) => setKodeSumbangan(e.target.value)}
-            placeholder="Cari kode sumbangan (DNT-...)"
-            aria-label="Cari kode sumbangan"
-            required
-            className="min-h-12 flex-1 rounded-xl border-white/30 bg-white/10 text-white placeholder:text-white/50"
-          />
-          <Button type="submit" className="min-h-12 rounded-xl" aria-label="Cek kode sumbangan">
-            <MagnifierIcon aria-hidden="true" /> Cek
-          </Button>
-        </form>
-      </div>
+      <form action={`/${jenis}/${kode.trim()}`} className="flex gap-2">
+        <Input
+          value={kode}
+          onChange={(e) => {
+            const v = e.target.value.toUpperCase();
+            setKode(v);
+            if (v.startsWith("DNT")) setJenis("DNT");
+            else setJenis("MNF");
+          }}
+          placeholder="Ketik kode MNF-... atau DNT-..."
+          aria-label="Cari kode manifest atau sumbangan"
+          required
+          className="min-h-12 flex-1 rounded-none border border-white/25 bg-white/10 text-white placeholder:text-white/50"
+        />
+        <button
+          type="submit"
+          className="inline-flex min-h-12 items-center gap-2 rounded-none bg-white px-6 font-semibold text-[#0B1F2E] hover:bg-white/90"
+        >
+          <MagnifierIcon aria-hidden="true" /> Cek
+        </button>
+      </form>
 
-      <section aria-label="Ringkasan angka" className="grid grid-cols-2 gap-6 rounded-2xl bg-[#DCE8EE] p-6 text-[#0B1F2E] md:p-8 lg:grid-cols-4">
-        <div className="flex flex-col gap-1 pr-4 md:pr-8">
+      <section aria-label="Ringkasan angka" className="grid grid-cols-2 gap-px overflow-hidden rounded-none border border-[#0B1F2E]/20 bg-[#0B1F2E]/20 text-[#0B1F2E] lg:grid-cols-4">
+        <div className="flex flex-col gap-1 bg-[#DCE8EE] p-6 md:p-8">
           <span className="t-h2 t-angka text-primary tabular-nums">{data.length}</span>
           <span className="text-xs text-muted-foreground md:text-sm">Posko terpantau</span>
           {ringkas.kurang > 0 ? (
-            <Badge variant="destructive" className="mt-1 w-fit rounded-full">{ringkas.kurang} kurang</Badge>
+            <Badge variant="destructive" className="mt-1 w-fit rounded-none">{ringkas.kurang} kurang</Badge>
           ) : (
-            <Badge variant="outline" className="mt-1 w-fit rounded-full border-transparent bg-success-bg text-success-badge-fg">
+            <Badge variant="outline" className="mt-1 w-fit rounded-none border-transparent bg-success-bg text-success-badge-fg">
               Semua aman
             </Badge>
           )}
         </div>
-        <div className="flex flex-col gap-1 pr-4 md:pr-8 lg:border-l lg:border-[#0B1F2E]/20 lg:pl-8">
+        <div className="flex flex-col gap-1 bg-[#DCE8EE] p-6 md:p-8">
           <span className="t-h2 t-angka text-primary tabular-nums">{ringkas.totalButuh}</span>
           <span className="text-xs text-muted-foreground md:text-sm">Total butuh</span>
-          <Badge variant="outline" className="mt-1 w-fit rounded-full">Jatah disetujui</Badge>
+          <Badge variant="outline" className="mt-1 w-fit rounded-none">Jatah disetujui</Badge>
         </div>
-        <div className="flex flex-col gap-1 pr-4 md:pr-8 lg:border-l lg:border-[#0B1F2E]/20 lg:pl-8">
+        <div className="flex flex-col gap-1 bg-[#DCE8EE] p-6 md:p-8">
           <span className="t-h2 t-angka text-primary tabular-nums">{ringkas.totalDiterima}</span>
           <span className="text-xs text-muted-foreground md:text-sm">Total diterima</span>
           {ringkas.totalDiterima > 0 ? (
-            <Badge variant="outline" className="mt-1 w-fit rounded-full border-transparent bg-success-bg text-success-badge-fg">
+            <Badge variant="outline" className="mt-1 w-fit rounded-none border-transparent bg-success-bg text-success-badge-fg">
               Konfirmasi terima
             </Badge>
           ) : (
-            <Badge variant="outline" className="mt-1 w-fit rounded-full">Belum ada terima</Badge>
+            <Badge variant="outline" className="mt-1 w-fit rounded-none">Belum ada terima</Badge>
           )}
         </div>
-        <div className="flex flex-col gap-1 lg:border-l lg:border-[#0B1F2E]/20 lg:pl-8">
+        <div className="flex flex-col gap-1 bg-[#DCE8EE] p-6 md:p-8">
           <span className="t-h2 t-angka text-destructive tabular-nums">{ringkas.selisihTerbuka}</span>
           <span className="text-xs text-muted-foreground md:text-sm">Selisih terbuka</span>
           {ringkas.selisihTerbuka > 0 ? (
-            <Badge variant="destructive" className="mt-1 w-fit rounded-full">Perlu kirim</Badge>
+            <Badge variant="destructive" className="mt-1 w-fit rounded-none">Perlu kirim</Badge>
           ) : (
-            <Badge variant="outline" className="mt-1 w-fit rounded-full border-transparent bg-success-bg text-success-badge-fg">
+            <Badge variant="outline" className="mt-1 w-fit rounded-none border-transparent bg-success-bg text-success-badge-fg">
               Nol, semua cukup
             </Badge>
           )}
@@ -219,11 +212,11 @@ export default function TransparansiPage() {
             onChange={(e) => setCari(e.target.value)}
             placeholder="Cari posko atau wilayah..."
             aria-label="Cari posko"
-            className="min-h-12 flex-1 rounded-xl border-white/30 bg-white/10 text-white placeholder:text-white/50"
+            className="min-h-12 flex-1 rounded-none border-white/30 bg-white/10 text-white placeholder:text-white/50"
           />
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-1 rounded-full border border-white/25 p-1" role="group" aria-label="Saring status selisih">
+          <div className="flex items-center gap-1 rounded-none border border-white/25 p-1" role="group" aria-label="Saring status selisih">
             {(
               [
                 { nilai: "semua", label: "Semua" },
@@ -238,8 +231,8 @@ export default function TransparansiPage() {
                 aria-pressed={filterStatus === o.nilai}
                 className={
                   filterStatus === o.nilai
-                    ? "min-h-10 rounded-full bg-white px-4 text-sm font-semibold text-[#0B1F2E]"
-                    : "min-h-10 rounded-full px-4 text-sm text-white/70 hover:text-white"
+                    ? "min-h-10 rounded-none bg-white px-4 text-sm font-semibold text-[#0B1F2E]"
+                    : "min-h-10 rounded-none px-4 text-sm text-white/70 hover:text-white"
                 }
               >
                 {o.label}
@@ -278,7 +271,7 @@ export default function TransparansiPage() {
         </Alert>
       )}
       {status === "siap" && data.length === 0 && (
-        <Empty className="rounded-2xl bg-white text-foreground">
+        <Empty className="rounded-none bg-white text-foreground">
           <EmptyHeader>
             <EmptyMedia variant="icon">
               <MagnifierIcon aria-hidden="true" />
@@ -294,7 +287,7 @@ export default function TransparansiPage() {
         </Empty>
       )}
       {status === "siap" && data.length > 0 && tampil.length === 0 && (
-        <Empty className="rounded-2xl bg-white text-foreground">
+        <Empty className="rounded-none bg-white text-foreground">
           <EmptyHeader>
             <EmptyMedia variant="icon">
               <MagnifierIcon aria-hidden="true" />
@@ -320,7 +313,7 @@ export default function TransparansiPage() {
               return (
                 <li
                   key={p.posko_id}
-                  className="flex flex-col gap-3 rounded-2xl bg-white p-5 text-foreground md:p-6"
+                  className="flex flex-col gap-3 rounded-none border border-white/20 bg-white/95 p-5 text-foreground md:p-6"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -328,11 +321,11 @@ export default function TransparansiPage() {
                       <p className="mt-1 text-lg font-semibold break-words">{p.posko_nama}</p>
                     </div>
                     {kurang ? (
-                      <Badge variant="destructive" className="shrink-0 rounded-full">Kurang {p.selisih}</Badge>
+                      <Badge variant="destructive" className="shrink-0 rounded-none">Kurang {p.selisih}</Badge>
                     ) : (
                       <Badge
                         variant="outline"
-                        className="shrink-0 rounded-full border-transparent bg-success-bg text-success-badge-fg"
+                        className="shrink-0 rounded-none border-transparent bg-success-bg text-success-badge-fg"
                       >
                         Aman
                       </Badge>
@@ -344,10 +337,10 @@ export default function TransparansiPage() {
                     aria-valuemin={0}
                     aria-valuemax={100}
                     aria-label={`Penerimaan ${p.posko_nama}`}
-                    className="h-2 w-full overflow-hidden rounded-full bg-muted"
+                    className="h-2 w-full overflow-hidden rounded-none bg-muted"
                   >
                     <div
-                      className={kurang ? "h-full rounded-full bg-destructive" : "h-full rounded-full bg-success"}
+                      className={kurang ? "h-full rounded-none bg-destructive" : "h-full rounded-none bg-success"}
                       style={{ width: `${persen}%` }}
                     />
                   </div>
