@@ -41,6 +41,9 @@
   --info: #236292;
   --info-foreground: #ffffff;
   --info-bg: #dbeefe;
+  --tinta: #0b1f2e;
+  --es: #dce8ee;
+  --aksen: #0f79b8;
   --border: #d7dde7;
   --input: #d7dde7;
   --ring: #3a538d;
@@ -103,6 +106,9 @@
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
   --color-info-bg: var(--info-bg);
+  --color-tinta: var(--tinta);
+  --color-es: var(--es);
+  --color-aksen: var(--aksen);
   --color-primary-bg: var(--primary-bg);
   --color-primary-badge-fg: var(--primary-badge-fg);
   --color-primary-badge-bg: var(--primary-badge-bg);

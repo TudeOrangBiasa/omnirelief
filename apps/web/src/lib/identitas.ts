@@ -1,4 +1,4 @@
-export type WarnaAvatar = "#0F3B5F" | "#1B7FBF" | "#0B1F2E";
+export type WarnaAvatar = "#0F3B5F" | "#0f79b8" | "#0B1F2E";
 
 export type Identitas = {
   nama: string;
@@ -11,7 +11,7 @@ export const KUNCI_IDENTITAS = "omnirelief-identitas";
 
 export const WARNA_AVATAR: { nilai: WarnaAvatar; label: string }[] = [
   { nilai: "#0F3B5F", label: "Biru otoritas" },
-  { nilai: "#1B7FBF", label: "Biru cerah" },
+  { nilai: "#0f79b8", label: "Biru cerah" },
   { nilai: "#0B1F2E", label: "Tinta" },
 ];
 
@@ -23,7 +23,8 @@ function potong(nilai: unknown, batas: number): string {
 }
 
 function warnaSah(nilai: unknown): WarnaAvatar {
-  if (nilai === "#0F3B5F" || nilai === "#1B7FBF" || nilai === "#0B1F2E") return nilai;
+  if (nilai === "#0F3B5F" || nilai === "#0B1F2E") return nilai;
+  if (nilai === "#1B7FBF" || nilai === "#0f79b8") return "#0f79b8";
   return "#0B1F2E";
 }
 

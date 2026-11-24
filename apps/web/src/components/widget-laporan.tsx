@@ -31,7 +31,7 @@ export function StripKpi({ label, item }: { label: string; item: KpiItem[] }) {
           <span className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
             {r.label}
           </span>
-          <span className="text-xs text-[#0B1F2E]/60">{r.konteks}</span>
+          <span className="text-xs text-[#0B1F2E]/70">{r.konteks}</span>
         </div>
       ))}
     </div>
@@ -74,7 +74,7 @@ export function GridAksiCepat({ label, aksi }: { label: string; aksi: AksiItem[]
   const router = useRouter();
   return (
     <section aria-label={label}>
-      <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">{label}</p>
+      <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">{label}</p>
       <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
         {aksi.map((a, i) => (
           <Button
@@ -162,7 +162,7 @@ export function KotakKosong({
   const router = useRouter();
   return (
     <div className="rounded-none border border-dashed border-[#0B1F2E]/25 bg-white/60 p-8">
-      <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">{label}</p>
+      <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">{label}</p>
       <p className="mt-1 text-lg font-bold text-[#0B1F2E]">{judul}</p>
       <p className="mt-1 text-sm text-muted-foreground">{deskripsi}</p>
       <Button

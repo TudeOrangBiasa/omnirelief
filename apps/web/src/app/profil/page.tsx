@@ -13,7 +13,7 @@ import { KepalaHalaman } from "@/components/kepala-halaman";
 export const dynamic = "force-dynamic";
 
 const KARTU = "rounded-none border border-[#0B1F2E]/15 bg-white";
-const LABEL = "font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[#1B7FBF]";
+const LABEL = "font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[#0f79b8]";
 
 export default async function ProfilPage({
   searchParams,

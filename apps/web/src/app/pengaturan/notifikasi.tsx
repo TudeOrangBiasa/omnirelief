@@ -201,7 +201,7 @@ export default function NotifikasiForm() {
       <div role="radiogroup" aria-label="Frekuensi pemberitahuan" className="flex flex-col gap-2">
         <label
           htmlFor="notif-frek-seketika"
-          className="flex min-h-12 cursor-pointer items-center gap-3 border border-[#0B1F2E]/15 bg-white px-4 py-2 has-checked:border-[#1B7FBF] has-checked:bg-[#DCE8EE]/40 has-disabled:cursor-not-allowed has-disabled:opacity-50"
+          className="flex min-h-12 cursor-pointer items-center gap-3 border border-[#0B1F2E]/15 bg-white px-4 py-2 has-checked:border-[#0f79b8] has-checked:bg-[#DCE8EE]/40 has-disabled:cursor-not-allowed has-disabled:opacity-50"
         >
           <input
             id="notif-frek-seketika"
@@ -211,7 +211,7 @@ export default function NotifikasiForm() {
             checked={pilihan.frekuensi === "seketika"}
             disabled={nonaktif}
             onChange={() => ubah("frekuensi", "seketika")}
-            className="size-4 accent-[#1B7FBF]"
+            className="size-4 accent-[#0f79b8]"
           />
           <span className="flex flex-col">
             <span className="text-sm font-semibold">Real-time Seketika</span>
@@ -220,7 +220,7 @@ export default function NotifikasiForm() {
         </label>
         <label
           htmlFor="notif-frek-perjam"
-          className="flex min-h-12 cursor-pointer items-center gap-3 border border-[#0B1F2E]/15 bg-white px-4 py-2 has-checked:border-[#1B7FBF] has-checked:bg-[#DCE8EE]/40 has-disabled:cursor-not-allowed has-disabled:opacity-50"
+          className="flex min-h-12 cursor-pointer items-center gap-3 border border-[#0B1F2E]/15 bg-white px-4 py-2 has-checked:border-[#0f79b8] has-checked:bg-[#DCE8EE]/40 has-disabled:cursor-not-allowed has-disabled:opacity-50"
         >
           <input
             id="notif-frek-perjam"
@@ -230,7 +230,7 @@ export default function NotifikasiForm() {
             checked={pilihan.frekuensi === "perjam"}
             disabled={nonaktif}
             onChange={() => ubah("frekuensi", "perjam")}
-            className="size-4 accent-[#1B7FBF]"
+            className="size-4 accent-[#0f79b8]"
           />
           <span className="flex flex-col">
             <span className="text-sm font-semibold">Ringkasan Per Jam</span>

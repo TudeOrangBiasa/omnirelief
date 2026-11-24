@@ -136,7 +136,7 @@ function kelasStatus(status: string): string {
   const dasar =
     "inline-flex min-h-12 items-center rounded-none border px-2 font-mono text-[11px] uppercase tracking-widest tabular-nums";
   if (status === "DITERIMA") return `${dasar} border-green-700/40 bg-green-50 text-green-800`;
-  if (status === "DIPUBLIKASIKAN") return `${dasar} border-[#1B7FBF]/40 bg-[#DCE8EE] text-[#0B1F2E]`;
+  if (status === "DIPUBLIKASIKAN") return `${dasar} border-[#0f79b8]/40 bg-[#DCE8EE] text-[#0B1F2E]`;
   if (status === "PERLU_DICEK" || status === "DARURAT")
     return `${dasar} border-red-700/40 bg-red-50 text-red-800`;
   if (status === "DIBATALKAN") return `${dasar} border-slate-500/40 bg-slate-100 text-slate-700`;
@@ -145,7 +145,7 @@ function kelasStatus(status: string): string {
   if (status === "KRITIS") return `${dasar} border-amber-600/40 bg-amber-50 text-amber-800`;
   if (status === "HABIS") return `${dasar} border-slate-500/40 bg-slate-100 text-slate-700`;
   if (status === "DIALOKASIKAN" || status === "DIKIRIM")
-    return `${dasar} border-[#1B7FBF]/40 bg-[#DCE8EE] text-[#0B1F2E]`;
+    return `${dasar} border-[#0f79b8]/40 bg-[#DCE8EE] text-[#0B1F2E]`;
   return `${dasar} border-[#0B1F2E]/30 bg-white text-[#0B1F2E]`;
 }
 
@@ -309,7 +309,7 @@ export default async function AuditPage({
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card className="rounded-none border border-slate-200 bg-white shadow-xs">
           <CardHeader>
-            <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">
+            <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
               Total Log Tercatat
             </p>
             <CardTitle className="text-3xl font-bold tabular-nums text-[#0B1F2E]">
@@ -322,7 +322,7 @@ export default async function AuditPage({
         </Card>
         <Card className="rounded-none border border-slate-200 bg-white shadow-xs">
           <CardHeader>
-            <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">
+              <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
               Log Manifest
             </p>
             <CardTitle className="text-3xl font-bold tabular-nums text-[#0B1F2E]">
@@ -335,7 +335,7 @@ export default async function AuditPage({
         </Card>
         <Card className="rounded-none border border-slate-200 bg-white shadow-xs">
           <CardHeader>
-            <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">
+              <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
               Log Sumbangan
             </p>
             <CardTitle className="text-3xl font-bold tabular-nums text-[#0B1F2E]">
@@ -348,7 +348,7 @@ export default async function AuditPage({
         </Card>
         <Card className="rounded-none border border-slate-200 bg-white shadow-xs">
           <CardHeader>
-            <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">
+              <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
               Status Integritas Hash
             </p>
             <CardTitle
@@ -371,7 +371,7 @@ export default async function AuditPage({
 
       {galatMuat ? (
         <div className="mt-6 rounded-none border border-dashed border-[#0B1F2E]/30 bg-white p-8 text-center">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">Gagal</p>
+          <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Gagal</p>
           <p className="mt-2 font-semibold text-[#0B1F2E]">{galatMuat}</p>
           <a href="/audit" className={cn(buttonVariants(), "mt-4 min-h-12 rounded-none")}>
             Coba lagi
@@ -395,7 +395,7 @@ export default async function AuditPage({
                   type="search"
                   defaultValue={q}
                   placeholder="Cari kode atau catatan"
-                  className="min-h-12 w-full rounded-none border border-[#0B1F2E]/25 bg-white pr-12 text-[#0B1F2E] placeholder:text-[#0B1F2E]/50"
+                  className="min-h-12 w-full rounded-none border border-[#0B1F2E]/25 bg-white pr-12 text-[#0B1F2E] placeholder:text-[#0B1F2E]/70"
                 />
                 {q !== "" && (
                   <a
@@ -412,7 +412,7 @@ export default async function AuditPage({
               </Button>
             </div>
             <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Jenis log">
-              <span className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">
+                <span className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
                 Jenis:
               </span>
               {PILIHAN_JENIS.map((p) => (
@@ -431,7 +431,7 @@ export default async function AuditPage({
               ))}
             </div>
             <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Rentang waktu">
-              <span className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">
+                <span className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
                 Rentang:
               </span>
               {PILIHAN_RENTANG.map((p) => (
@@ -452,7 +452,7 @@ export default async function AuditPage({
             <div className="flex flex-wrap items-center gap-2">
               <label
                 htmlFor="per-halaman"
-                className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60"
+                className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70"
               >
                 Baris per halaman:
               </label>
@@ -483,12 +483,12 @@ export default async function AuditPage({
           </form>
 
           <section aria-label="Log manifest" className="mt-6">
-            <h2 className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">
+            <h2 className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
               Log Manifest
             </h2>
             {logTampil.length === 0 ? (
               <div className="mt-2 rounded-none border border-dashed border-[#0B1F2E]/30 bg-white p-8 text-center">
-                <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">
+                <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
                   Kosong
                 </p>
                 <p className="mt-2 font-semibold text-[#0B1F2E]">Tidak ada log manifest yang cocok.</p>
@@ -532,7 +532,7 @@ export default async function AuditPage({
                         <TableCell>
                           <Link
                             href={`/m/${l.kode}`}
-                            className="font-mono text-[13px] text-[#1B7FBF] underline underline-offset-2"
+                        className="font-mono text-[13px] text-[#0f79b8] underline underline-offset-2"
                           >
                             {l.kode}
                           </Link>
@@ -555,7 +555,7 @@ export default async function AuditPage({
                 </Table>
               </div>
             )}
-            <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
+            <div className="mt-2 flex flex-col gap-2 pl-2 sm:flex-row sm:items-center">
               <p className="flex-1 text-sm tabular-nums text-muted-foreground" role="status">
                 Menampilkan {awalLog}–{akhirLog} dari {totalLog}
               </p>
@@ -581,12 +581,12 @@ export default async function AuditPage({
           </section>
 
           <section aria-label="Log sumbangan" className="mt-8">
-            <h2 className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">
+            <h2 className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
               Log Sumbangan
             </h2>
             {batchTampil.length === 0 ? (
               <div className="mt-2 rounded-none border border-dashed border-[#0B1F2E]/30 bg-white p-8 text-center">
-                <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">
+                <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
                   Kosong
                 </p>
                 <p className="mt-2 font-semibold text-[#0B1F2E]">Tidak ada log sumbangan yang cocok.</p>
@@ -624,7 +624,7 @@ export default async function AuditPage({
                         <TableCell>
                           <Link
                             href={`/s/${b.kode}`}
-                            className="font-mono text-[13px] text-[#1B7FBF] underline underline-offset-2"
+                        className="font-mono text-[13px] text-[#0f79b8] underline underline-offset-2"
                           >
                             {b.kode}
                           </Link>
@@ -643,7 +643,7 @@ export default async function AuditPage({
                 </Table>
               </div>
             )}
-            <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
+            <div className="mt-2 flex flex-col gap-2 pl-2 sm:flex-row sm:items-center">
               <p className="flex-1 text-sm tabular-nums text-muted-foreground" role="status">
                 Menampilkan {awalBatch}–{akhirBatch} dari {totalBatch}
               </p>

@@ -153,7 +153,7 @@ export default function Onboarding({ peran }: { peran: Peran }) {
       >
         <div className="flex flex-wrap items-center justify-between gap-3 p-4">
           <div>
-            <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">
+            <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
               Panduan singkat
             </p>
             <p className="mt-1 text-sm font-bold text-[#0B1F2E]">
@@ -180,7 +180,7 @@ export default function Onboarding({ peran }: { peran: Peran }) {
       className="border border-[#0B1F2E]/15 bg-white"
     >
       <div className="border-b border-[#0B1F2E]/10 bg-[#DCE8EE] p-4">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">
+        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
           Panduan singkat
         </p>
         <div className="mt-1 flex flex-wrap items-center justify-between gap-3">
@@ -200,7 +200,7 @@ export default function Onboarding({ peran }: { peran: Peran }) {
           className="mt-3 h-2 w-full bg-white"
         >
           <div
-            className="h-2 bg-[#1B7FBF]"
+            className="h-2 bg-[#0f79b8]"
             style={{ width: `${(jumlah / langkah.length) * 100}%` }}
           />
         </div>
@@ -218,7 +218,7 @@ export default function Onboarding({ peran }: { peran: Peran }) {
                   aria-hidden="true"
                   className={
                     done
-                      ? "mt-1 inline-block h-4 w-4 shrink-0 bg-[#1B7FBF]"
+                      ? "mt-1 inline-block h-4 w-4 shrink-0 bg-[#0f79b8]"
                       : "mt-1 inline-block h-4 w-4 shrink-0 border-2 border-[#0B1F2E]/40 bg-white"
                   }
                 />
@@ -226,7 +226,7 @@ export default function Onboarding({ peran }: { peran: Peran }) {
                   <p className="text-sm font-bold text-[#0B1F2E]">{l.judul}</p>
                   <p className="mt-1">
                     {done ? (
-                      <Badge className="rounded-none bg-[#1B7FBF] text-white">
+                      <Badge className="rounded-none bg-[#0f79b8] text-white">
                         Selesai
                       </Badge>
                     ) : (

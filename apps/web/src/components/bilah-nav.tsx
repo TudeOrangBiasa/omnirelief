@@ -195,7 +195,7 @@ function ItemMenu({
         isActive={aktif}
         className={cn(
           "rounded-none",
-          aktif && "border-l-4 border-[#1B7FBF] bg-[#0B1F2E] font-medium text-white hover:bg-[#0B1F2E] hover:text-white",
+        aktif && "border-l-4 border-[#0f79b8] bg-[#0B1F2E] font-medium text-white hover:bg-[#0B1F2E] hover:text-white",
         )}
         render={
           <a
@@ -465,7 +465,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
                   </span>
                   <span className="min-w-0 flex-1 leading-tight group-data-[collapsible=icon]:hidden">
                     <span className="block truncate text-xs font-medium">{namaTampil}</span>
-                    <span className="block truncate font-mono text-[10px] uppercase tracking-wider text-[#0B1F2E]/60">
+                    <span className="block truncate font-mono text-[10px] uppercase tracking-wider text-[#0B1F2E]/70">
                       {LABEL_PERAN[peran]}
                     </span>
                   </span>

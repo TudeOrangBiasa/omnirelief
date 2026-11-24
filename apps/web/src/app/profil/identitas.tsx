@@ -91,7 +91,7 @@ export default function IdentitasForm() {
         />
       </div>
       <fieldset>
-        <legend className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[#1B7FBF]">
+        <legend className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[#0f79b8]">
           Warna lencana avatar
         </legend>
         <div className="mt-2 flex gap-2">

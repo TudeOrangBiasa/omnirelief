@@ -89,7 +89,7 @@ export function PetaAlurRingkasan({
     <div className="rounded-none border border-[#0B1F2E]/15 bg-white px-4 py-3">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
             Peta alur bantuan
           </p>
           <p className="mt-0.5 truncate text-sm text-[#0B1F2E]">
@@ -124,7 +124,7 @@ export function PetaAlurRingkasan({
                     ? "flex size-7 shrink-0 items-center justify-center rounded-full bg-[#0B1F2E] font-mono text-[11px] font-bold text-white"
                     : selesai
                       ? "flex size-7 shrink-0 items-center justify-center rounded-full bg-[#DCE8EE] font-mono text-[11px] font-bold text-[#0B1F2E]"
-                      : "flex size-7 shrink-0 items-center justify-center rounded-full border border-[#0B1F2E]/25 font-mono text-[11px] text-[#0B1F2E]/55"
+                      : "flex size-7 shrink-0 items-center justify-center rounded-full border border-[#0B1F2E]/25 font-mono text-[11px] text-[#0B1F2E]/70"
                 }
               >
                 {i + 1}
@@ -133,7 +133,7 @@ export function PetaAlurRingkasan({
                 className={
                   aktif
                     ? "text-[11px] leading-tight font-semibold text-[#0B1F2E]"
-                    : "text-[11px] leading-tight text-[#0B1F2E]/60"
+                    : "text-[11px] leading-tight text-[#0B1F2E]/70"
                 }
               >
                 {t.judul}

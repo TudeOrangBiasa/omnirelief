@@ -76,7 +76,7 @@ export default function DuaFaktorForm({
         PIN 6 digit dipakai sebagai kode otorisasi saat masuk.
       </p>
       {pesan && (
-        <p role="status" className="rounded-none border border-[#1B7FBF]/40 bg-[#DCE8EE] p-3 text-sm text-[#0B1F2E]">
+        <p role="status" className="rounded-none border border-[#0f79b8]/40 bg-[#DCE8EE] p-3 text-sm text-[#0B1F2E]">
           {pesan}
         </p>
       )}

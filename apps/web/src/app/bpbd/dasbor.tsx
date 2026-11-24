@@ -460,7 +460,7 @@ export default function DasborBpbd() {
 
 
       <section aria-label="Antrean verifikasi" className="flex flex-col gap-2">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">Verifikasi</p>
+        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Verifikasi</p>
         <h2 className="text-xl font-bold text-[#0B1F2E]">Antrean verifikasi ({antrean.length})</h2>
         <p className="text-sm text-muted-foreground">
           <BantuanIstilah istilah="verifikasi" label="Verifikasi" />: setujui, minta revisi, atau
@@ -615,7 +615,7 @@ export default function DasborBpbd() {
       </section>
 
       <section aria-label="Prioritas kebutuhan" className="flex flex-col gap-2">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">Kebutuhan</p>
+        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Kebutuhan</p>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <h2 className="flex-1 text-xl font-bold text-[#0B1F2E]">Prioritas kebutuhan</h2>
           {prioritas.length > 0 && (
@@ -652,7 +652,7 @@ export default function DasborBpbd() {
           </div>
         ) : prioritas.length === 0 ? (
           <div className="rounded-none border border-dashed border-[#0B1F2E]/25 bg-white/60 p-8">
-            <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">Kosong</p>
+            <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Kosong</p>
             <p className="mt-1 text-lg font-bold text-[#0B1F2E]">Belum ada data selisih</p>
             <p className="mt-1 text-sm text-muted-foreground">
               Tabel selisih tampil setelah ada snapshot yang disetujui dan manifest yang berjalan.
@@ -782,7 +782,7 @@ export default function DasborBpbd() {
         </div>
         <aside className="space-y-6 lg:sticky lg:top-20 lg:col-span-4">
           <div className="flex flex-col gap-2 rounded-none border border-[#0B1F2E]/15 bg-white p-4">
-            <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">Langkah berikut</p>
+            <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Langkah berikut</p>
             <p className="text-sm text-muted-foreground">
               Prioritas tertinggi ada di tabel kebutuhan. Buat manifest untuk posko yang kurang.
             </p>
@@ -791,7 +791,7 @@ export default function DasborBpbd() {
             </a>
           </div>
       <section aria-label="Perlu dicek" className="flex flex-col gap-2">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">Pantau</p>
+        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Pantau</p>
         <div className="flex items-center gap-2">
           <h2 className="text-xl font-bold text-destructive">Perlu Dicek ({pantau.length})</h2>
           {pantau.length > 0 && <Badge variant="destructive">Perlu Dicek</Badge>}

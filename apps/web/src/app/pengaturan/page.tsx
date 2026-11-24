@@ -21,7 +21,7 @@ const VERSI = process.env.NEXT_PUBLIC_APP_VERSION ?? "dev";
 const HASH = (process.env.VERCEL_GIT_COMMIT_SHA ?? "").slice(0, 7) || "lokal";
 
 const KARTU = "rounded-none border border-[#0B1F2E]/15 bg-white";
-const LABEL = "font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[#1B7FBF]";
+const LABEL = "font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[#0f79b8]";
 
 export default async function PengaturanPage() {
   const profil = await getProfil();

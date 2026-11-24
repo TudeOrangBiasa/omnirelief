@@ -34,7 +34,7 @@ export function BilahSaring({
             value={cari}
             onChange={(e) => onCari(e.target.value)}
             placeholder={placeholder}
-            className="min-h-12 w-full rounded-none border border-[#0B1F2E]/25 bg-white px-3 pr-12 text-sm text-[#0B1F2E] placeholder:text-[#0B1F2E]/50 [&::-webkit-search-cancel-button]:hidden"
+        className="min-h-12 w-full rounded-none border border-[#0B1F2E]/25 bg-white px-3 pr-12 text-sm text-[#0B1F2E] placeholder:text-[#0B1F2E]/70 [&::-webkit-search-cancel-button]:hidden"
           />
           {cari.length > 0 && (
             <button
@@ -127,7 +127,7 @@ export function BilahHalaman({
         Menampilkan {awal}–{akhir} dari {total} data
       </p>
       <div className="flex items-center gap-2">
-        <label htmlFor={idPilih} className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">Per halaman</label>
+        <label htmlFor={idPilih} className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Per halaman</label>
         <select
           id={idPilih}
           value={perHalaman}
@@ -190,7 +190,7 @@ export function BilahMassal({
         <Button
           onClick={onSetuju}
           disabled={sibuk}
-          className="min-h-12 rounded-none bg-[#1B7FBF] text-white hover:bg-[#1B7FBF]/80"
+        className="min-h-12 rounded-none bg-[#0f79b8] text-white hover:bg-[#0B1F2E]"
         >
           {sibuk ? "Menyetujui..." : `Setujui ${jumlah} terpilih`}
         </Button>

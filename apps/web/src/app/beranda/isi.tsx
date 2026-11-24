@@ -348,7 +348,7 @@ export default function IsiBeranda({
         )}
       </section>
       <section aria-label="Aktivitas terakhir">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">Aktivitas</p>
+        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Aktivitas</p>
         <div className="flex flex-wrap items-center gap-2">
           <h2 className="text-xl font-bold text-[#0B1F2E]">Aktivitas terakhir</h2>
           {baru > 0 && <Badge variant="destructive">{baru} baru</Badge>}

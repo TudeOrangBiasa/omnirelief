@@ -5,7 +5,7 @@ export const metadata = { title: "Tidak ketemu | OmniRelief" };
 export default function TidakKetemu() {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-[1400px] flex-col justify-center px-6 py-8 lg:px-10">
-      <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/60">
+      <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
         Galat 404
       </p>
       <h1 className="mt-1 text-4xl font-bold text-[#0B1F2E]">Halaman tidak ketemu</h1>

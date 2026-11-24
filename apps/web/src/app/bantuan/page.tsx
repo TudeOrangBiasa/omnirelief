@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 const LABEL =
-  "font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[#1B7FBF]";
+  "font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[#0f79b8]";
 const KARTU = "rounded-none border border-[#0B1F2E]/15 bg-white";
 const TOMBOL_AKTIF =
   "min-h-12 rounded-none bg-[#0B1F2E] px-4 text-sm font-semibold text-white";
@@ -77,7 +77,7 @@ export default function BantuanPage() {
           type="search"
           placeholder="Contoh: manifest, kedaluwarsa, check-in, hash"
           autoComplete="off"
-          className="min-h-12 w-full rounded-none border border-[#0B1F2E]/25 bg-white px-4 text-sm text-[#0B1F2E] placeholder:text-[#0B1F2E]/40"
+          className="min-h-12 w-full rounded-none border border-[#0B1F2E]/25 bg-white px-4 text-sm text-[#0B1F2E] placeholder:text-[#0B1F2E]/70"
         />
         <div role="group" aria-label="Filter kategori" className="flex flex-wrap gap-2">
           {KATEGORI.map((k) => (

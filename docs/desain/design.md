@@ -159,3 +159,61 @@ log audit, danger ketik.
 - Contoh pemakaian komposit per page: `arsitektur-komponen.md` §1.
 - Tabel page→checklist→temuan (65 item): `pemetaan-checklist.md` §11.
 - Skenario penuh 41: `uji-tekan.md`. IA + tiket: `arsitektur-pages.md`, `tiket.md`.
+
+## Bentuk & garis (pelajaran sesi 2026-11-24, sudah dikunci user via `write all`)
+
+- **Semua permukaan kotak pakai `rounded-none`; yang boleh bulat hanya dot status, avatar, switch, bar progres, badge angka, dan FAB Ke-atas.**
+  Why: bulat vs kotak yang campur terbaca sebagai dua sistem; yang bulat tersisa hanya yang bentuknya adalah fungsinya.
+  <!-- 2026-11-24: /whips "sudut tajam rounded-none … tidak ada lagi tombol bulat" -->
+- **Kontrol header `h-9`, baris profil `h-11`, tombol ikon `w-7 h-7`, semua `rounded-none`, dengan area sentuh 48px via `after:-inset-*`.**
+  Why: bar ramping 36px terlihat sejajar dan tegas; area sentuh tak terlihat menjaga aturan 48px AGENTS.md butir 8.
+  <!-- 2026-11-24: /whips "klaster kanan h-9 … kartu profil h-11 … kebab w-7 h-7" -->
+- **Semua anak dalam satu baris header tingginya sama persis, diverifikasi di 1440 dan 390.**
+  Why: bar tidak rata 1–2px langsung terlihat murahan di layar yang tiap hari dibuka.
+  <!-- 2026-11-24: "height ga merata" -->
+- **Menu aktif: tinta penuh + teks putih + garis aksen kiri 4px, tanpa kecuali.**
+  Why: satu sorotan tegas = petugas tahu posisi dalam sekali lirik.
+  <!-- 2026-11-24: /whips "highlight aktif bg-[#0B1F2E] text-white border-l-4" -->
+- **Kartu profil selalu punya menu ⋮ vertikal: Profil saya, Kembali ke beranda, Keluar akun.**
+  Why: aksi akun tidak boleh menempel di badan kartu — mudah ketuk tidak sengaja.
+  <!-- 2026-11-24: "disini harusnya ada kebab icons … logout, back ke beranda" -->
+- **Setiap tombol muat-ulang/segarkan memakai ikon refresh yang berputar saat memuat.**
+  Why: tanpa ikon, tombol teks terlihat mati saat loading; putaran = bukti kerja.
+  <!-- 2026-11-24: "ini seharusnya ada icons untuk refresh" -->
+- **Aksi keluar/hapus selalu `variant="destructive"`, tidak pernah outline netral.**
+  Why: warna bahaya mencegah klik autopilot pada aksi yang tidak bisa dibatalkan.
+  <!-- 2026-11-24: "harusnya kalo tombol seperti ini warna danger" -->
+- **Stepper = lingkaran bernomor + label lengkap tanpa truncate, tahap aktif terisi tinta.**
+  Why: truncate menyembunyikan justru kata yang menjelaskan tahap; stepper buta = widget mati.
+  <!-- 2026-11-24: "apa fungsinya jika ... ... ... gabisa keliatan" -->
+- **Satu alur = satu pintu masuk; tidak ada tombol duplikat ke tujuan yang sama di satu layar.**
+  Why: dua tombol ke tempat sama membuat petugas ragu mana yang benar.
+  <!-- 2026-11-24: "Hapus pengulangan tombol Lihat Peta Alur" -->
+- **Identitas peran tampil sekali per layar, di kartu akun, tidak diulang di badge/header/blok.**
+  Why: memperkuat butir 7 (satu kebenaran per layar).
+  <!-- 2026-11-24: "ini delete aja" + "untuk apa kata bpbd command center?" -->
+- **Tidak ada tooltip di sidebar; satu-satunya bantuan hover adalah tombol `?` di header.**
+  Why: tooltip ganda mengajari dua jalan untuk satu hal.
+  <!-- 2026-11-24: "yes delete tool tip di sidebar … tooltip harusnya datang dari tombol header di tombol ?" -->
+- **Empty state = boks dashed + judul manusiawi + kapan-terisi + satu CTA corner-bracket; skeleton hanya saat memuat.**
+  Why: skeleton di atas data nol terbaca sebagai bug loading, bukan keadaan kosong.
+  <!-- 2026-11-24: brief awal §3 -->
+- **Semua halaman operasional `max-w-[1400px]`, tanpa lebar ad-hoc per rute.**
+  Why: lebar yang beda-beda tiap halaman terasa seperti aplikasi yang berbeda.
+  <!-- 2026-11-24: brief awal §2 "kontainer lega max-w-[1400px]" -->
+- **Sidebar operasional bernomor menu, status ledger SHA-256 terlihat, tanpa dekorasi.**
+  Why: nomor urut + status rantai membuat panel terasa seperti instrumen, bukan menu.
+  <!-- 2026-11-24: brief awal §1 -->
+- **Kata status koneksi adalah "Daring" (pasangan "Luring"), bukan "Online".**
+  Why: keputusan eksplisit user, menggantikan "Online" 2026-11-23.
+  <!-- 2026-11-24: /whips "ganti teks Online menjadi Daring"; write all -->
+- **Keputusan konflik 2026-11-24 (final sampai diubah user): (a) operasional tetap `rounded-none` — radius 12–16 design.md hanya untuk halaman publik; (b) `#0B1F2E`/`#DCE8EE`/`#1B7FBF` tetap literal di komponen operasional — token `--tinta`/`--es`/`--aksen` di `globals.css` bernilai sama untuk pemakaian baru; (c) trik area sentuh `after:-inset-*` sah untuk kontrol h-9/w-7.**
+
+## Garis tepi (gridlines 2026-11-24, diukur probe + mata)
+
+- Teks halaman di garis wadah (`px-6` mobile, `lg:px-10`, `max-w-[1400px]`); isi tabel di garis sel (`p-2`); label seksi/group header di tepi wadah (punya grup, bukan isi).
+- Teks baris paginasi ikut garis teks tabel (`pl-2`); tombol Berikutnya menempel garis trailing boks tabel.
+- Pola ikon-kolom + label + header-di-tepi-ikon dipakai di onboarding dan nav (bukan miss).
+- Teks rata tengah (tombol penuh, empty state) dan teks wrap multi-baris tidak dinilai leading/trailing.
+- Kolom tabel rata kiri; beda panjang tinta header vs isi bukan miss.
+- Bukti: `docs/bukti-ui/gridlines-audit-sebelum.png` vs `gridlines-audit-sesudah.png`; mentah + guide di `.gridlines/` (gitignored).
