@@ -163,7 +163,7 @@ export default function TugasTim() {
         </div>
         <div className="border bg-card p-3">
           <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Perlu check-in</p>
-          <p className="text-4xl font-light tabular-nums text-primary">{perluDicek}</p>
+          <p className={`text-4xl font-light tabular-nums ${perluDicek > 0 ? "text-destructive" : "text-primary"}`}>{perluDicek}</p>
         </div>
         <div className="border bg-card p-3">
           <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Sudah tiba</p>
@@ -279,6 +279,21 @@ export default function TugasTim() {
                       ? `Batas check-in: ${formatTanggalLokal(t.batas_checkin)}`
                       : "Tanpa batas check-in"}
                   </p>
+                  <div className="mt-1 flex">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPilih(t.id);
+                        document.getElementById("check-in")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      }}
+                      onKeyDown={(e) => e.stopPropagation()}
+                      className="min-h-12 flex-1 rounded-none sm:flex-none sm:px-6"
+                    >
+                      Check-in sekarang
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             );
@@ -334,6 +349,18 @@ export default function TugasTim() {
                     variant="outline"
                     className="min-h-12 flex-1"
                   />
+                </div>
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <Button
+                    render={<a href="tel:112">Hubungi darurat 112</a>}
+                    variant="outline"
+                    className="min-h-12 flex-1"
+                  />
+                  <p className="flex min-h-12 flex-1 items-center text-xs text-muted-foreground">
+                    {lewatBatas(aktif)
+                      ? "Lewat batas check-in. Kabari command center sekarang."
+                      : "Gunakan bila armada butuh bantuan segera."}
+                  </p>
                 </div>
                 <div className="flex flex-col gap-2">
                   <p role="status" className="font-semibold">
@@ -395,6 +422,19 @@ export default function TugasTim() {
                       );
                     })}
                   </ol>
+                </div>
+                <div className="flex flex-wrap gap-2" role="group" aria-label="Template kendala cepat">
+                  {["Macet", "Ban bocor", "Akses putus"].map((t) => (
+                    <Button
+                      key={t}
+                      type="button"
+                      variant="outline"
+                      onClick={() => setKendala((s) => (s === "" ? t : `${s}, ${t.toLowerCase()}`))}
+                      className="min-h-12 rounded-none text-xs"
+                    >
+                      {t}
+                    </Button>
+                  ))}
                 </div>
                 <Textarea
                   value={kendala}

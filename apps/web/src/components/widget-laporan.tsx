@@ -3,6 +3,7 @@ import type { AksiItem } from "@/lib/aksi";
 import type { Route } from "next";
 
 import { useRouter } from "next/navigation";
+import { RefreshIcon } from "@solar-icons/react/linear";
 import {
   Alert,
   AlertDescription,
@@ -17,7 +18,70 @@ import {
   CardTitle,
 } from "@omnirelief/ui/components/card";
 
-export type KpiItem = { angka: string; label: string; konteks: string };
+export type KpiItem = { angka: string; label: string; konteks: string; lencana?: string };
+
+export type AksiPerintah = {
+  label: string;
+  href?: Route;
+  onAksi?: () => void;
+  varian?: "default" | "destructive" | "outline";
+};
+
+/**
+ * Command bar compact: satu aksi primer + status segar + segarkan.
+ * Tinggi satu baris di desktop agar konten kerja naik ke atas.
+ */
+export function BilahPerintah({
+  label,
+  aksi,
+  diperbarui,
+  memuat,
+  onMuat,
+  basi,
+  antre,
+}: {
+  label: string;
+  aksi: AksiPerintah;
+  diperbarui: string;
+  memuat: boolean;
+  onMuat: () => void;
+  basi?: boolean;
+  antre?: number;
+}) {
+  const router = useRouter();
+  return (
+    <section
+      aria-label={label}
+      className="flex flex-col gap-2 rounded-none border border-[#0B1F2E]/15 bg-white p-3 sm:flex-row sm:items-center"
+    >
+      <Button
+        variant={aksi.varian ?? "default"}
+        onClick={() => {
+          if (aksi.onAksi) aksi.onAksi();
+          else if (aksi.href) router.push(aksi.href);
+        }}
+        className="min-h-12 flex-1 rounded-none sm:flex-none sm:px-8"
+      >
+        {aksi.label}
+      </Button>
+      <p role="status" className="flex-1 text-sm text-muted-foreground">
+        {diperbarui ? `Diperbarui ${diperbarui}` : "Belum dimuat"}
+        {basi && !memuat ? " · data mungkin basi" : ""}
+        {antre !== undefined && antre > 0 ? ` · ${antre} menunggu sinkronisasi` : ""}
+      </p>
+      <Button
+        type="button"
+        variant="outline"
+        onClick={onMuat}
+        disabled={memuat}
+        className="min-h-12 gap-2 rounded-none sm:w-auto"
+      >
+        <RefreshIcon aria-hidden="true" className={memuat ? "animate-spin" : undefined} />
+        {memuat ? "Memuat..." : "Segarkan"}
+      </Button>
+    </section>
+  );
+}
 
 export function StripKpi({ label, item }: { label: string; item: KpiItem[] }) {
   return (
@@ -32,6 +96,11 @@ export function StripKpi({ label, item }: { label: string; item: KpiItem[] }) {
             {r.label}
           </span>
           <span className="text-xs text-[#0B1F2E]/70">{r.konteks}</span>
+          {r.lencana ? (
+            <span className="mt-1 w-fit rounded-none bg-[#0B1F2E] px-2 py-0.5 font-mono text-[11px] uppercase tracking-widest text-white">
+              {r.lencana}
+            </span>
+          ) : null}
         </div>
       ))}
     </div>

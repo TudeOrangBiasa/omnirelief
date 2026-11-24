@@ -43,7 +43,6 @@ import { cn } from "@omnirelief/ui/lib/utils";
 import { baris } from "@/lib/supabase/baris";
 import { sisaHariKalender } from "@/lib/tanggal";
 import { BantuanIstilah } from "@/components/bantuan-istilah";
-import { PetaAlur, bukaPanduan } from "@/components/peta-alur";
 import { BarisSegarkan } from "@/components/kepala-halaman";
 
 type Posko = { id: number; nama: string; wilayah: string };
@@ -58,6 +57,8 @@ type Batch = {
 };
 
 type Baris = { batch_id: number; jumlah: number };
+
+type Kebutuhan = { posko_id: number; butuh: number; diterima: number; selisih: number };
 
 function urutFefo(daftar: Batch[]): Batch[] {
   return [...daftar].sort((a, b) => {
@@ -94,6 +95,7 @@ function IsiFormulirKirim() {
   const [tim, setTim] = useState("");
   const [cariBatch, setCariBatch] = useState("");
   const [barisKirim, setBarisKirim] = useState<Baris[]>([{ batch_id: 0, jumlah: 0 }]);
+  const [kebutuhan, setKebutuhan] = useState<Kebutuhan[]>([]);
   const [draf, setDraf] = useState<{ id: number; kode: string; peringatan: string[] } | null>(null);
   const [hasil, setHasil] = useState<{ kode: string; url_publik: string; qr: string } | null>(null);
   const [galat, setGalat] = useState<string | null>(null);
@@ -107,17 +109,22 @@ function IsiFormulirKirim() {
     void (async () => {
       setMemuat(true);
       try {
-        const [rp, rb] = await Promise.all([
+        const [rp, rb, rk] = await Promise.all([
           fetch("/api/bpbd/posko").then((r) => r.json()),
           fetch("/api/gudang/batch").then((r) => r.json()),
+          fetch("/api/bpbd/prioritas").then((r) => r.json()),
         ]);
         const dp: unknown = rp;
         const db: unknown = rb;
+        const dk: unknown = rk;
         if (typeof dp === "object" && dp !== null && "ok" in dp && dp.ok === true && "posko" in dp) {
           setPosko(baris<Posko>(dp.posko));
         }
         if (typeof db === "object" && db !== null && "ok" in db && db.ok === true && "batch" in db) {
           setBatch(urutFefo(baris<Batch>(db.batch).filter((x) => x.sisa > 0)));
+        }
+        if (typeof dk === "object" && dk !== null && "ok" in dk && dk.ok === true && "prioritas" in dk) {
+          setKebutuhan(baris<Kebutuhan>(dk.prioritas));
         }
       } catch {
         setGalat("Gagal memuat posko dan batch. Coba muat ulang halaman.");
@@ -151,6 +158,26 @@ function IsiFormulirKirim() {
     return expDipilih.some((e) => exp < e);
   });
   const poskoTujuan = posko.find((p) => String(p.id) === poskoId) ?? null;
+  const butuhTujuan = kebutuhan.find((k) => String(k.posko_id) === poskoId) ?? null;
+
+  function isiOtomatisFefo() {
+    const layak = batch.filter(
+      (b) =>
+        b.sisa > 0 &&
+        (b.kedaluwarsa === null || sisaHariKalender(b.kedaluwarsa) >= 0) &&
+        !barisKirim.some((r) => r.batch_id === b.id),
+    );
+    if (layak.length === 0) return;
+    const ganti = [...barisKirim];
+    const sisa: Baris[] = [];
+    for (const b of layak) {
+      const barisBaru = { batch_id: b.id, jumlah: b.sisa };
+      const idx = ganti.findIndex((r) => r.batch_id === 0);
+      if (idx >= 0) ganti[idx] = barisBaru;
+      else sisa.push(barisBaru);
+    }
+    setBarisKirim([...ganti, ...sisa]);
+  }
   const ringkasKirim = barisKirim
     .filter((r) => r.batch_id > 0 && r.jumlah > 0)
     .map((r) => {
@@ -300,28 +327,6 @@ function IsiFormulirKirim() {
           <p className="text-4xl font-light tabular-nums text-primary">{posko.length}</p>
         </div>
       </section>
-      <ol aria-label="Alur bantuan" className="flex flex-wrap items-center gap-2 font-mono text-[11px] uppercase tracking-widest">
-        <li className="border px-2 py-1">Gudang</li>
-        <li aria-hidden="true">→</li>
-        <li className="border bg-[#0B1F2E] px-2 py-1 text-white">BPBD</li>
-        <li aria-hidden="true">→</li>
-        <li className="border px-2 py-1">Tim</li>
-        <li aria-hidden="true">→</li>
-        <li className="border px-2 py-1">Posko</li>
-        <li aria-hidden="true">→</li>
-        <li className="border px-2 py-1">Publik</li>
-        <li>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => bukaPanduan("BPBD", "Pilih posko dan batch FEFO. Lalu kunci manifest.")}
-            className="min-h-12 rounded-none font-mono text-[11px] uppercase tracking-widest"
-          >
-            Lihat peta alur
-          </Button>
-        </li>
-      </ol>
-      <PetaAlur />
       {galat && (
         <Alert variant="destructive">
           <DangerTriangleIcon aria-hidden="true" />
@@ -394,9 +399,9 @@ function IsiFormulirKirim() {
                   <Table>
                     <TableHeader className="bg-[#0B1F2E]">
                       <TableRow className="hover:bg-[#0B1F2E]">
-                        <TableHead className="font-mono text-[11px] uppercase text-white">Barang</TableHead>
-                        <TableHead className="font-mono text-[11px] uppercase text-white">Kode batch</TableHead>
-                        <TableHead className="font-mono text-[11px] uppercase text-white">Jumlah</TableHead>
+                        <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Barang</TableHead>
+                        <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Kode batch</TableHead>
+                        <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Jumlah</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -486,6 +491,24 @@ function IsiFormulirKirim() {
               className="min-h-12"
             />
           </div>
+          {poskoId !== "" && (
+            <div
+              role="status"
+              aria-label="Kalkulator alokasi"
+              className="flex flex-col gap-1 rounded-none border border-[#0B1F2E]/15 bg-white p-3 text-sm"
+            >
+              <p className="font-semibold">
+                {poskoTujuan?.nama ?? "Posko"} butuh {butuhTujuan?.butuh ?? 0} jiwa
+                {butuhTujuan ? ` · sudah diterima ${butuhTujuan.diterima}` : ""}
+              </p>
+              <p className="text-muted-foreground tabular-nums">
+                Alokasi draf: {totalKirim} paket dari {ringkasKirim.length} batch.
+                {butuhTujuan && butuhTujuan.selisih > 0
+                  ? ` Kurang ${butuhTujuan.selisih} jiwa, tambah batch agar cukup.`
+                  : " Cukup untuk tutup selisih."}
+              </p>
+            </div>
+          )}
           <div className="flex flex-col gap-2">
             <h2 className="text-base font-bold text-primary">Stok batch (<BantuanIstilah istilah="fefo" label="FEFO" />)</h2>
             <p className="text-sm text-muted-foreground">
@@ -511,11 +534,11 @@ function IsiFormulirKirim() {
               <Table>
                 <TableHeader className="bg-[#0B1F2E]">
                   <TableRow className="hover:bg-[#0B1F2E]">
-                    <TableHead className="font-mono text-xs uppercase tracking-widest text-white">Kode</TableHead>
-                    <TableHead className="font-mono text-xs uppercase tracking-widest text-white">Barang</TableHead>
-                    <TableHead className="font-mono text-xs uppercase tracking-widest text-white">Sisa</TableHead>
-                    <TableHead className="font-mono text-xs uppercase tracking-widest text-white">Kedaluwarsa</TableHead>
-                    <TableHead className="font-mono text-xs uppercase tracking-widest text-white">Aksi</TableHead>
+                    <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Kode</TableHead>
+                    <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Barang</TableHead>
+                    <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Sisa</TableHead>
+                    <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Kedaluwarsa</TableHead>
+                    <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Aksi</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -526,7 +549,7 @@ function IsiFormulirKirim() {
                       <TableRow key={b.id}>
                         <TableCell className="font-mono text-xs break-all">{b.kode_sumbangan}</TableCell>
                         <TableCell>{b.item_nama}</TableCell>
-                        <TableCell>
+                        <TableCell className="tabular-nums">
                           {b.sisa} {b.satuan}
                         </TableCell>
                         <TableCell
@@ -616,20 +639,35 @@ function IsiFormulirKirim() {
               )}
             </div>
           ))}
-          <Button
-            variant="outline"
-            onClick={() => setBarisKirim([...barisKirim, { batch_id: 0, jumlah: 0 }])}
-            className="min-h-12"
-          >
-            Tambah batch
-          </Button>
-          <Button
-            onClick={() => void buatDraf()}
-            disabled={sibuk || poskoId === "" || tim.trim() === ""}
-            className="min-h-12"
-          >
-            {sibuk ? "Menyimpan..." : "Simpan draf"}
-          </Button>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button
+              variant="outline"
+              onClick={() => setBarisKirim([...barisKirim, { batch_id: 0, jumlah: 0 }])}
+              className="min-h-12 flex-1 rounded-none"
+            >
+              Tambah batch
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => isiOtomatisFefo()}
+              className="min-h-12 flex-1 rounded-none"
+            >
+              Isi otomatis FEFO
+            </Button>
+          </div>
+          <div className="sticky bottom-4 z-10 flex flex-col gap-2 rounded-none border border-[#0B1F2E] bg-[#0B1F2E] p-3 text-white shadow-lg sm:flex-row sm:items-center">
+            <p role="status" className="flex-1 text-sm font-semibold tabular-nums">
+              {totalKirim} paket dari {ringkasKirim.length} batch
+              {butuhTujuan ? ` · butuh ${butuhTujuan.butuh} jiwa` : ""}
+            </p>
+            <Button
+              onClick={() => void buatDraf()}
+              disabled={sibuk || poskoId === "" || tim.trim() === ""}
+              className="min-h-12 flex-1 rounded-none bg-[#1B7FBF] text-white hover:bg-[#0B1F2E] sm:flex-none sm:px-8"
+            >
+              {sibuk ? "Menyimpan..." : "Simpan draf"}
+            </Button>
+          </div>
         </>
       )}
     </div>

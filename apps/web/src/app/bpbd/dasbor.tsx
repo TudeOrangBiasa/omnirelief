@@ -3,8 +3,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
-  ArrowDownIcon,
-  ArrowUpIcon,
   DangerTriangleIcon,
   DownloadMinimalisticIcon,
   InfoCircleIcon,
@@ -14,7 +12,6 @@ import { Alert, AlertDescription, AlertTitle } from "@omnirelief/ui/components/a
 import { Card, CardContent, CardHeader } from "@omnirelief/ui/components/card";
 import { Badge } from "@omnirelief/ui/components/badge";
 import { Button, buttonVariants } from "@omnirelief/ui/components/button";
-import { Checkbox } from "@omnirelief/ui/components/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -36,25 +33,14 @@ import {
 import { Textarea } from "@omnirelief/ui/components/textarea";
 import { cn } from "@omnirelief/ui/lib/utils";
 import { baris } from "@/lib/supabase/baris";
+import { persenPemenuhan } from "@/lib/tanggal";
 import { BantuanIstilah } from "@/components/bantuan-istilah";
-import { PetaAlur, PetaAlurRingkasan } from "@/components/peta-alur";
 import { BilahHalaman, BilahMassal, BilahSaring, TombolUrut } from "@/components/kontrol-tabel";
 import { BarisSegarkan } from "@/components/kepala-halaman";
 
 import { KotakKosong, StripKpi } from "@/components/widget-laporan";
+import { TabelAntrean, type Antrean, type PutusanTarget } from "@/components/tabel-antrean";
 type StatusMuat = "memuat" | "siap" | "gagal";
-
-type Antrean = {
-  id: number;
-  bayi: number;
-  balita: number;
-  ibu_hamil: number;
-  lansia: number;
-  disabilitas: number;
-  umum: number;
-  dibuat_pada: string;
-  posko: { nama: string } | null;
-};
 
 type Prioritas = {
   posko_id: number;
@@ -74,36 +60,14 @@ type Pantau = {
   log_terakhir: string | null;
   ditandai: boolean;
 };
-type PutusanTarget = {
-  id: number;
-  nama: string;
-  keputusan: "MINTA_REVISI" | "DITOLAK";
-};
 
 type BatalTarget = { id: number; kode: string; posko_nama: string };
-
-type KunciSortir = "umur" | "total";
 
 function galatDari(data: unknown, bawaan: string): string {
   if (typeof data === "object" && data !== null && "galat" in data) {
     return String(data.galat);
   }
   return bawaan;
-}
-
-function totalJiwa(a: Antrean): number {
-  return a.bayi + a.balita + a.ibu_hamil + a.lansia + a.disabilitas + a.umum;
-}
-
-function umurDari(iso: string): string {
-  const beda = Date.now() - new Date(iso).getTime();
-  if (Number.isNaN(beda)) return "-";
-  const menit = Math.max(0, Math.floor(beda / 60000));
-  if (menit < 1) return "baru saja";
-  if (menit < 60) return `${menit} mnt lalu`;
-  const jam = Math.floor(menit / 60);
-  if (jam < 24) return `${jam} jam lalu`;
-  return `${Math.floor(jam / 24)} hari lalu`;
 }
 
 function selCsv(nilai: string | number): string {
@@ -142,8 +106,7 @@ export default function DasborBpbd() {
   const [prioritas, setPrioritas] = useState<Prioritas[]>([]);
   const [pantau, setPantau] = useState<Pantau[]>([]);
   const [diperbarui, setDiperbarui] = useState<string | null>(null);
-  const [kunciSortir, setKunciSortir] = useState<KunciSortir>("umur");
-  const [arahSortir, setArahSortir] = useState<"naik" | "turun">("naik");
+  const [waktuMuat, setWaktuMuat] = useState<number | null>(null);
   const [terpilih, setTerpilih] = useState<number[]>([]);
   const [sibukMassal, setSibukMassal] = useState(false);
   const [putusan, setPutusan] = useState<PutusanTarget | null>(null);
@@ -184,6 +147,7 @@ export default function DasborBpbd() {
         setDiperbarui(
           new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }),
         );
+        setWaktuMuat(Date.now());
       }
     } catch {
       setStatus("gagal");
@@ -238,15 +202,6 @@ export default function DasborBpbd() {
     await muat();
   }
 
-  function alihSortir(kunci: KunciSortir) {
-    if (kunci === kunciSortir) {
-      setArahSortir((arah) => (arah === "naik" ? "turun" : "naik"));
-    } else {
-      setKunciSortir(kunci);
-      setArahSortir(kunci === "umur" ? "naik" : "turun");
-    }
-  }
-
   function alihPilih(id: number, pilih: boolean) {
     setTerpilih((sebelum) =>
       pilih ? (sebelum.includes(id) ? sebelum : [...sebelum, id]) : sebelum.filter((x) => x !== id),
@@ -254,7 +209,7 @@ export default function DasborBpbd() {
   }
 
   function alihPilihSemua(pilih: boolean) {
-    setTerpilih(pilih ? antreanUrut.map((a) => a.id) : []);
+    setTerpilih(pilih ? antrean.map((a) => a.id) : []);
   }
 
   function bukaPutusan(target: PutusanTarget) {
@@ -340,29 +295,11 @@ export default function DasborBpbd() {
     toast.success("Berkas CSV prioritas diunduh.");
   }
 
-  const antreanUrut = [...antrean].sort((a, b) => {
-    const beda =
-      kunciSortir === "umur"
-        ? new Date(a.dibuat_pada).getTime() - new Date(b.dibuat_pada).getTime()
-        : totalJiwa(a) - totalJiwa(b);
-    return arahSortir === "naik" ? beda : -beda;
-  });
-
   const prioritasUrut = [...prioritas].sort((a, b) => b.selisih - a.selisih);
   const selisihTerbuka = prioritasUrut.reduce((jumlah, p) => jumlah + Math.max(0, p.selisih), 0);
   const poskoKritis = prioritasUrut.filter((p) => p.selisih > 0).length;
   const selisihMaks = prioritasUrut.length > 0 ? Math.max(0, ...prioritasUrut.map((p) => p.selisih)) : 0;
-  const semuaTerpilih = antreanUrut.length > 0 && terpilih.length === antreanUrut.length;
   const memuatAwal = status === "memuat" && antrean.length === 0 && prioritas.length === 0;
-
-  function ikonSortir(kunci: KunciSortir) {
-    if (kunci !== kunciSortir) return null;
-    return arahSortir === "naik" ? (
-      <ArrowUpIcon aria-hidden="true" className="size-4" />
-    ) : (
-      <ArrowDownIcon aria-hidden="true" className="size-4" />
-    );
-  }
 
   function alihSortirPrioritas(kunci: typeof kunciPrioritas) {
     if (kunci === kunciPrioritas) {
@@ -420,8 +357,6 @@ export default function DasborBpbd() {
 
   return (
     <div className="flex flex-col gap-8">
-      <PetaAlur />
-      <PetaAlurRingkasan peran="BPBD" langkah="Verifikasi snapshot posko. Lalu buat manifest untuk posko yang kurang." />
       {status === "gagal" && (
         <Alert variant="destructive" role="status">
           <DangerTriangleIcon aria-hidden="true" />
@@ -439,15 +374,16 @@ export default function DasborBpbd() {
         <StripKpi
           label="Angka kunci"
           item={[
-            { angka: String(antrean.length), label: "Menunggu verifikasi", konteks: `Dari ${prioritas.length} posko aktif` },
-            { angka: String(selisihTerbuka), label: "Jiwa kurang", konteks: selisihTerbuka > 0 ? `Prioritas kirim hari ini · ${poskoKritis} posko` : "Semua posko aman" },
-            { angka: String(pantau.length), label: "Perlu dicek", konteks: `Dari ${prioritas.length} posko dipantau` },
+            { angka: String(antrean.length), label: "Menunggu verifikasi", konteks: `Snapshot masuk dari posko, ${poskoKritis} posko kurang`, lencana: antrean.length > 0 ? "Putuskan hari ini" : "Antrean habis" },
+            { angka: String(selisihTerbuka), label: "Jiwa kurang", konteks: selisihTerbuka > 0 ? `${poskoKritis} posko perlu kirim` : "Semua posko aman", lencana: selisihTerbuka > 0 ? "Buat manifest" : undefined },
+            { angka: String(pantau.length), label: "Perlu dicek", konteks: pantau.length > 0 ? "Lewat batas check-in, hubungi jalur darurat" : `Dari ${prioritas.length} posko dipantau`, lencana: pantau.length > 0 ? "Hubungi sekarang" : undefined },
           ]}
         />
         <BarisSegarkan
           diperbarui={diperbarui ?? ""}
           memuat={status === "memuat"}
           onMuat={() => void muat()}
+          basi={waktuMuat !== null && Date.now() - waktuMuat > 5 * 60 * 1000}
         />
         <p className="text-sm text-muted-foreground">
           Angka posko berupa <BantuanIstilah istilah="agregat" label="data agregat tanpa NIK" />.
@@ -455,8 +391,69 @@ export default function DasborBpbd() {
         </p>
       </section>
 
-      <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
-        <div className="space-y-8 lg:col-span-8">
+      <section aria-label="Perlu dicek" className="flex flex-col gap-2">
+        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Pantau</p>
+        <div className="flex items-center gap-2">
+          <h2 className="text-xl font-bold text-destructive">Perlu Dicek ({pantau.length})</h2>
+          {pantau.length > 0 && <Badge variant="destructive">Perlu Dicek</Badge>}
+        </div>
+        {status === "memuat" && pantau.length === 0 ? (
+          <KartuMuat />
+        ) : pantau.length === 0 ? (
+          <KotakKosong
+            label="Aman"
+            judul="Semua kiriman terpantau"
+            deskripsi="Kartu peringatan muncul di sini setiap ada manifest lewat batas check-in."
+            aksiLabel="Muat ulang pantauan"
+            onAksi={() => void muat()}
+          />
+        ) : (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {pantau.map((w) => (
+              <Card key={w.id} className="rounded-none border-destructive">
+                <CardContent className="flex flex-col gap-2 p-4 text-sm">
+                  <p className="font-semibold">
+                    {w.kode} · {w.posko_nama}
+                  </p>
+                  <p className="text-muted-foreground">
+                    Batas check-in {new Date(w.batas_checkin).toLocaleString("id-ID")} · kabar
+                    terakhir {w.log_terakhir ?? "-"}
+                    {w.ditandai ? " · sudah ditandai otomatis" : ""}
+                  </p>
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <a
+                      href={`/m/${w.kode}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={cn(buttonVariants({ variant: "outline" }), "min-h-12 flex-1 rounded-none")}
+                    >
+                      Lihat halaman publik ↗
+                    </a>
+                    <a
+                      href="tel:112"
+                      className={cn(buttonVariants({ variant: "outline" }), "min-h-12 flex-1 rounded-none")}
+                    >
+                      <PhoneCallingRoundedIcon aria-hidden="true" />
+                      Hubungi jalur darurat
+                    </a>
+                    <Button
+                      variant="destructive"
+                      onClick={() =>
+                        bukaBatal({ id: w.id, kode: w.kode, posko_nama: w.posko_nama })
+                      }
+                      className="min-h-12 flex-1 rounded-none"
+                    >
+                      Batalkan manifest ini
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <div className="flex flex-col gap-8">
 
 
       <section aria-label="Antrean verifikasi" className="flex flex-col gap-2">
@@ -479,12 +476,12 @@ export default function DasborBpbd() {
           <Table>
             <TableHeader>
               <TableRow className="bg-[#0B1F2E] hover:bg-[#0B1F2E]">
-                <TableHead aria-label="Pilih" className="font-mono text-[11px] uppercase text-white">Pilih</TableHead>
-                <TableHead className="font-mono text-[11px] uppercase text-white">Posko</TableHead>
-                <TableHead className="font-mono text-[11px] uppercase text-white">Kategori rentan</TableHead>
-                <TableHead className="font-mono text-[11px] uppercase text-white">Total</TableHead>
-                <TableHead className="font-mono text-[11px] uppercase text-white">Umur antrean</TableHead>
-                <TableHead className="font-mono text-[11px] uppercase text-white">Putusan</TableHead>
+                <TableHead aria-label="Pilih" className="font-mono text-[11px] uppercase tracking-widest text-white">Pilih</TableHead>
+                <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Posko</TableHead>
+                <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Kategori rentan</TableHead>
+                <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Total</TableHead>
+                <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Umur antrean</TableHead>
+                <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Putusan</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -503,114 +500,15 @@ export default function DasborBpbd() {
             onAksi={() => void muat()}
           />
         ) : (
-          <div className="overflow-x-auto rounded-none border border-[#0B1F2E]/15">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-[#0B1F2E] hover:bg-[#0B1F2E]">
-                <TableHead>
-                  <Checkbox
-                    checked={semuaTerpilih}
-                    onCheckedChange={(nilai) => alihPilihSemua(nilai === true)}
-                    aria-label="Pilih semua antrean"
-                    disabled={sibukMassal}
-                  />
-                </TableHead>
-                <TableHead className="font-mono text-[11px] uppercase text-white">Posko</TableHead>
-                <TableHead className="font-mono text-[11px] uppercase text-white">Kategori rentan</TableHead>
-                <TableHead aria-sort={kunciSortir === "total" ? (arahSortir === "naik" ? "ascending" : "descending") : "none"} className="font-mono text-[11px] uppercase text-white">
-                  <button
-                    type="button"
-                    onClick={() => alihSortir("total")}
-                    className="inline-flex min-h-12 items-center gap-1 font-semibold text-white"
-                    aria-label={`Urutkan total jiwa, saat ini ${kunciSortir === "total" ? arahSortir : "tidak diurutkan"}`}
-                  >
-                    Total {ikonSortir("total")}
-                  </button>
-                </TableHead>
-                <TableHead aria-sort={kunciSortir === "umur" ? (arahSortir === "naik" ? "ascending" : "descending") : "none"} className="font-mono text-[11px] uppercase text-white">
-                  <button
-                    type="button"
-                    onClick={() => alihSortir("umur")}
-                    className="inline-flex min-h-12 items-center gap-1 font-semibold text-white"
-                    aria-label={`Urutkan umur antrean, saat ini ${kunciSortir === "umur" ? arahSortir : "tidak diurutkan"}`}
-                  >
-                    Umur antrean {ikonSortir("umur")}
-                  </button>
-                </TableHead>
-                <TableHead className="font-mono text-[11px] uppercase text-white">Putusan</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {antreanUrut.map((a) => (
-                <TableRow key={a.id} data-state={terpilih.includes(a.id) ? "selected" : undefined}>
-                  <TableCell>
-                    <Checkbox
-                      checked={terpilih.includes(a.id)}
-                      onCheckedChange={(nilai) => alihPilih(a.id, nilai === true)}
-                      aria-label={`Pilih snapshot ${a.posko?.nama ?? "posko?"}`}
-                      disabled={sibukMassal}
-                    />
-                  </TableCell>
-                  <TableCell className="font-semibold">{a.posko?.nama ?? "Posko?"}</TableCell>
-                  <TableCell>
-                    <dl className="grid grid-cols-2 gap-x-3 text-xs">
-                      <div>Bayi: <strong>{a.bayi}</strong></div>
-                      <div>Balita: <strong>{a.balita}</strong></div>
-                      <div>Ibu hamil: <strong>{a.ibu_hamil}</strong></div>
-                      <div>Lansia: <strong>{a.lansia}</strong></div>
-                      <div>Disabilitas: <strong>{a.disabilitas}</strong></div>
-                      <div>Umum: <strong>{a.umum}</strong></div>
-                    </dl>
-                  </TableCell>
-                  <TableCell>
-                    <strong>{totalJiwa(a)}</strong> jiwa
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap text-muted-foreground">
-                    {umurDari(a.dibuat_pada)}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex min-w-32 flex-col gap-1">
-                      <Button
-                        onClick={() => void setujui(a.id)}
-                        disabled={sibukMassal}
-                        className="min-h-12 w-full bg-success text-white hover:bg-success/80"
-                      >
-                        Setujui
-                      </Button>
-                      <Button
-                        onClick={() =>
-                          bukaPutusan({
-                            id: a.id,
-                            nama: a.posko?.nama ?? "Posko?",
-                            keputusan: "MINTA_REVISI",
-                          })
-                        }
-                        disabled={sibukMassal}
-                        className="min-h-12 w-full bg-warning-bg text-warning hover:bg-warning-bg"
-                      >
-                        Minta revisi
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        onClick={() =>
-                          bukaPutusan({
-                            id: a.id,
-                            nama: a.posko?.nama ?? "Posko?",
-                            keputusan: "DITOLAK",
-                          })
-                        }
-                        disabled={sibukMassal}
-                        className="min-h-12 w-full"
-                      >
-                        Tolak
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          </div>
+          <TabelAntrean
+            antrean={antrean}
+            terpilih={terpilih}
+            sibuk={sibukMassal}
+            onPilih={(id, pilih) => alihPilih(id, pilih)}
+            onPilihSemua={(pilih) => alihPilihSemua(pilih)}
+            onSetujui={(id) => void setujui(id)}
+            onPutusan={(target) => bukaPutusan(target)}
+          />
         )}
       </section>
 
@@ -731,7 +629,7 @@ export default function DasborBpbd() {
                         <div
                           className="h-2 w-full rounded-full bg-muted"
                           role="img"
-                          aria-label={`Kurang ${p.selisih} dari ${selisihMaks} tertinggi`}
+                          aria-label={`Kurang ${p.selisih} dari ${selisihMaks} tertinggi, terpenuhi ${persenPemenuhan(p.butuh, p.diterima)} persen`}
                         >
                           <div
                             className="h-2 rounded-full bg-destructive"
@@ -741,11 +639,13 @@ export default function DasborBpbd() {
                           />
                         </div>
                         <Badge variant="destructive" className="w-fit">
-                          Kurang {p.selisih}
+                          Kurang {p.selisih} · {persenPemenuhan(p.butuh, p.diterima)}% terpenuhi
                         </Badge>
                       </div>
                     ) : (
-                      <Badge className="border-transparent bg-success-bg text-success">Aman</Badge>
+                      <div className="flex min-w-40 flex-col gap-1">
+                        <Badge className="border-transparent bg-success-bg text-success">Aman · {persenPemenuhan(p.butuh, p.diterima)}%</Badge>
+                      </div>
                     )}
                   </TableCell>
                   <TableCell>
@@ -779,77 +679,6 @@ export default function DasborBpbd() {
           </div>
         )}
       </section>
-        </div>
-        <aside className="space-y-6 lg:sticky lg:top-20 lg:col-span-4">
-          <div className="flex flex-col gap-2 rounded-none border border-[#0B1F2E]/15 bg-white p-4">
-            <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Langkah berikut</p>
-            <p className="text-sm text-muted-foreground">
-              Prioritas tertinggi ada di tabel kebutuhan. Buat manifest untuk posko yang kurang.
-            </p>
-            <a href="/bpbd/kirim" className={cn(buttonVariants(), "min-h-12 w-full rounded-none")}>
-              Buat manifest
-            </a>
-          </div>
-      <section aria-label="Perlu dicek" className="flex flex-col gap-2">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Pantau</p>
-        <div className="flex items-center gap-2">
-          <h2 className="text-xl font-bold text-destructive">Perlu Dicek ({pantau.length})</h2>
-          {pantau.length > 0 && <Badge variant="destructive">Perlu Dicek</Badge>}
-        </div>
-        {status === "memuat" && pantau.length === 0 ? (
-          <KartuMuat />
-        ) : pantau.length === 0 ? (
-          <KotakKosong
-            label="Aman"
-            judul="Semua kiriman terpantau"
-            deskripsi="Kartu peringatan muncul di sini setiap ada manifest lewat batas check-in."
-            aksiLabel="Buat manifest"
-            href="/bpbd/kirim"
-          />
-        ) : (
-          pantau.map((w) => (
-            <Card key={w.id} className="rounded-none border-destructive">
-              <CardContent className="flex flex-col gap-2 p-4 text-sm">
-                <p className="font-semibold">
-                  {w.kode} · {w.posko_nama}
-                </p>
-                <p className="text-muted-foreground">
-                  Batas check-in {new Date(w.batas_checkin).toLocaleString("id-ID")} · kabar
-                  terakhir {w.log_terakhir ?? "-"}
-                  {w.ditandai ? " · sudah ditandai otomatis" : ""}
-                </p>
-                <div className="flex flex-col gap-2 sm:flex-row lg:flex-col xl:flex-row">
-                  <a
-                    href={`/m/${w.kode}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={cn(buttonVariants({ variant: "outline" }), "min-h-12 flex-1 rounded-none")}
-                  >
-                    Lihat halaman publik ↗
-                  </a>
-                  <a
-                    href="tel:112"
-                    className={cn(buttonVariants({ variant: "outline" }), "min-h-12 flex-1 rounded-none")}
-                  >
-                    <PhoneCallingRoundedIcon aria-hidden="true" />
-                    Hubungi jalur darurat
-                  </a>
-                  <Button
-                    variant="destructive"
-                    onClick={() =>
-                      bukaBatal({ id: w.id, kode: w.kode, posko_nama: w.posko_nama })
-                    }
-                    className="min-h-12 flex-1 rounded-none"
-                  >
-                    Batalkan manifest ini
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
-      </section>
-        </aside>
       </div>
 
       <Dialog open={putusan !== null} onOpenChange={(buka) => !buka && setPutusan(null)}>

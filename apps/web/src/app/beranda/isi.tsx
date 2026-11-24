@@ -3,7 +3,7 @@
 import type { Route } from "next";
 
 import { useCallback, useEffect, useState } from "react";
-import { BarisSegarkan } from "@/components/kepala-halaman";
+import { hitungAntrean } from "@/components/banner-offline";
 import {
   Alert,
   AlertDescription,
@@ -23,10 +23,9 @@ import {
   type PrioritasRow,
   type TugasRow,
 } from "@/lib/supabase/baris";
-import Onboarding from "@/components/onboarding";
-import { PetaAlur, PetaAlurRingkasan } from "@/components/peta-alur";
 import {
   BannerAksi,
+  BilahPerintah,
   DaftarAktivitas,
   KotakKosong,
   StripKpi,
@@ -44,7 +43,7 @@ type Aktivitas = {
   waktu: string;
 };
 
-type Ringkasan = { angka: string; label: string; konteks: string }[];
+type Ringkasan = { angka: string; label: string; konteks: string; lencana?: string }[];
 
 const KUNCI_KUNJUNGAN = "omnirelief-kunjungan-terakhir";
 
@@ -72,6 +71,8 @@ export default function IsiBeranda({
   const [aktivitas, setAktivitas] = useState<Aktivitas[]>([]);
   const [baru, setBaru] = useState(0);
   const [diperbarui, setDiperbarui] = useState("");
+  const [waktuMuat, setWaktuMuat] = useState<number | null>(null);
+  const [antre, setAntre] = useState(0);
   const hitungBaru = useCallback((waktu: string[]) => {
     let terakhir: string | null = null;
     try {
@@ -113,9 +114,9 @@ export default function IsiBeranda({
         const pantau = baris<PantauRow>(w.perlu_dicek);
         const kritis = prioritas.filter((x) => x.selisih > 0);
         setRingkasan([
-          { angka: String(pantau.length), label: "Perlu dicek", konteks: `Dari ${antrean.length} antrean aktif` },
-          { angka: String(antrean.length), label: "Menunggu verifikasi", konteks: "Prioritas kirim hari ini" },
-          { angka: String(kritis.length), label: "Posko kurang", konteks: `Dari ${prioritas.length} posko dipantau` },
+          { angka: String(pantau.length), label: "Perlu dicek", konteks: `Lewat batas check-in dari ${antrean.length} antrean aktif`, lencana: pantau.length > 0 ? "Hubungi jalur darurat" : undefined },
+          { angka: String(antrean.length), label: "Menunggu verifikasi", konteks: `Snapshot posko masuk, ${kritis.length} posko kurang`, lencana: antrean.length > 0 ? "Putuskan hari ini" : undefined },
+          { angka: String(kritis.length), label: "Posko kurang", konteks: `Dari ${prioritas.length} posko dipantau`, lencana: kritis.length > 0 ? "Buat manifest" : "Semua cukup" },
         ]);
         const daftar: Aktivitas[] = [
           ...pantau.map((x) => ({
@@ -163,9 +164,9 @@ export default function IsiBeranda({
         );
         const totalSisa = batch.reduce((s, b) => s + Math.max(0, b.sisa), 0);
         setRingkasan([
-          { angka: String(batch.length), label: "Batch tercatat", konteks: `Dari ${batch.length} batch aktif` },
-          { angka: String(totalSisa), label: "Paket siap kirim", konteks: "Prioritas kirim hari ini" },
-          { angka: String(hampir.length), label: "Kedaluwarsa < 30 hari", konteks: `Dari ${batch.length} batch aktif` },
+          { angka: String(batch.length), label: "Batch tercatat", konteks: `Stok aktif di gudang, sisa ${totalSisa} paket` },
+          { angka: String(totalSisa), label: "Paket siap kirim", konteks: "Keluar duluan yang kedaluwarsa dekat (FEFO)", lencana: totalSisa === 0 ? "Stok habis" : undefined },
+          { angka: String(hampir.length), label: "Kedaluwarsa < 30 hari", konteks: `Dari ${batch.length} batch aktif`, lencana: hampir.length > 0 ? "Dahulukan keluar" : "Aman" },
         ]);
         const daftar = [...batch]
           .sort((x, y) => x.id - y.id)
@@ -203,9 +204,9 @@ export default function IsiBeranda({
         );
         const menunggu = laporan.filter((x) => x.status !== "DISETUJUI").length;
         setRingkasan([
-          { angka: String(berjalan.length), label: "Kiriman berjalan", konteks: `Dari ${bantuan.length} kiriman aktif` },
-          { angka: String(menunggu), label: "Menunggu verifikasi", konteks: "Prioritas kirim hari ini" },
-          { angka: String(laporan.length), label: "Laporan terkirim", konteks: `Dari ${laporan.length} laporan aktif` },
+          { angka: String(berjalan.length), label: "Kiriman berjalan", konteks: `Dari ${bantuan.length} kiriman ke posko ini`, lencana: berjalan.length > 0 ? "Pantau sampai tiba" : "Semua tiba" },
+          { angka: String(menunggu), label: "Menunggu verifikasi", konteks: `BPBD memeriksa ${laporan.length} laporan penyintas`, lencana: menunggu > 0 ? "Tunggu putusan" : "Semua disetujui" },
+          { angka: String(laporan.length), label: "Laporan terkirim", konteks: "Angka agregat tanpa nama penyintas" },
         ]);
         const daftar: Aktivitas[] = [
           ...bantuan.slice(0, 5).map((x) => ({
@@ -251,14 +252,14 @@ export default function IsiBeranda({
           (t) => t.batas_checkin !== null && t.batas_checkin < sekarang,
         );
         setRingkasan([
-          { angka: String(tugas.length), label: "Tugas aktif", konteks: `Dari ${tugas.length} tugas aktif` },
-          { angka: String(dicek.length), label: "Perlu check-in", konteks: "Prioritas kirim hari ini" },
+          { angka: String(tugas.length), label: "Tugas aktif", konteks: "Manifest yang wajib dibawa sampai tiba" },
+          { angka: String(dicek.length), label: "Perlu check-in", konteks: dicek.length > 0 ? "Lewat batas, segera kabari command center" : "Semua terpantau aman", lencana: dicek.length > 0 ? "Perlu Dicek" : undefined },
           {
             angka: String(
               tugas.filter((t) => t.log_terakhir?.status === "TIBA").length,
             ),
             label: "Sudah tiba",
-            konteks: `Dari ${tugas.length} tugas aktif`,
+            konteks: `Dari ${tugas.length} tugas tim ini`,
           },
         ]);
         const daftar = tugas.slice(0, 5).map((t) => ({
@@ -284,6 +285,12 @@ export default function IsiBeranda({
       setDiperbarui(
         new Intl.DateTimeFormat("id-ID", { hour: "2-digit", minute: "2-digit" }).format(new Date()),
       );
+      setWaktuMuat(Date.now());
+      try {
+        setAntre(hitungAntrean());
+      } catch {
+        /* abaikan */
+      }
       setStatus("siap");
     } catch {
       setStatus("gagal");
@@ -294,21 +301,27 @@ export default function IsiBeranda({
     void muat();
   }, [muat]);
 
-  const langkahAksi = AKSI_PERAN[peran][0]?.label ?? "Tugas berikutnya";
+  useEffect(() => {
+    try {
+      setAntre(hitungAntrean());
+    } catch {
+      /* abaikan */
+    }
+  }, [muat]);
+
   const penting = aktivitas.filter((a) => a.badge.varian === "destructive");
+
+  const aksiUtama = AKSI_PERAN[peran][0];
 
   return (
     <div className="flex flex-col gap-8">
-      <Onboarding peran={peran} />
-      <PetaAlur />
-      <PetaAlurRingkasan peran={peran} langkah={langkahAksi} />
       {status === "siap" &&
         penting.slice(0, 1).map((p) => (
           <BannerAksi
             key={p.id}
             nada="prioritas"
             judul={`${penting.length} hal perlu perhatian sekarang`}
-            deskripsi={`${p.judul} — ${p.sub}`}
+            deskripsi={`${p.judul}: ${p.sub}`}
             aksiLabel="Tindak lanjuti"
             href={p.href}
           />
@@ -318,11 +331,6 @@ export default function IsiBeranda({
           Halo, {nama}. Rangkuman kunjungan terakhir
           {baru > 0 ? `: ${baru} pembaruan baru` : ""}
         </h2>
-        <BarisSegarkan
-          diperbarui={diperbarui}
-          memuat={status === "memuat"}
-          onMuat={() => void muat()}
-        />
         {status === "memuat" && (
           <div role="status" aria-label="Memuat ringkasan" className="mt-3 grid grid-cols-1 gap-0 sm:grid-cols-3">
             {[0, 1, 2].map((i) => (
@@ -346,6 +354,17 @@ export default function IsiBeranda({
             <StripKpi label="Angka kunci" item={ringkasan} />
           </div>
         )}
+        <div className="mt-3">
+          <BilahPerintah
+            label="Aksi primer"
+            aksi={{ label: aksiUtama?.label ?? "Tugas berikutnya", href: aksiUtama?.href ?? "/beranda" }}
+            diperbarui={diperbarui}
+            memuat={status === "memuat"}
+            onMuat={() => void muat()}
+            basi={waktuMuat !== null && Date.now() - waktuMuat > 5 * 60 * 1000}
+            antre={antre}
+          />
+        </div>
       </section>
       <section aria-label="Aktivitas terakhir">
         <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Aktivitas</p>
@@ -366,8 +385,8 @@ export default function IsiBeranda({
               label="Kosong"
               judul="Belum ada aktivitas"
               deskripsi="Aktivitas terbaru peran ini tampil di sini setelah ada data masuk."
-              aksiLabel={langkahAksi}
-              href={AKSI_PERAN[peran][0]?.href ?? "/beranda"}
+              aksiLabel="Muat ulang"
+              onAksi={() => void muat()}
             />
           </div>
         )}

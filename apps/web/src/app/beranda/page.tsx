@@ -1,7 +1,5 @@
 import { redirect } from "next/navigation";
 import { getProfil } from "@/lib/auth";
-import { GridAksiCepat } from "@/components/widget-laporan";
-import { daftarAksi } from "@/lib/aksi";
 import IsiBeranda from "./isi";
 import { KepalaHalaman } from "@/components/kepala-halaman";
 
@@ -19,13 +17,8 @@ export default async function BerandaPage() {
         judul="Ringkasan operasional"
         deskripsi="Pantau angka terbaru, langkah berikutnya, dan aktivitas terakhir peran kamu."
       />
-      <div className="mt-6 grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
-        <div className="space-y-8 lg:col-span-8">
-          <IsiBeranda nama={profil.nama} peran={profil.peran} />
-        </div>
-        <aside className="space-y-6 lg:sticky lg:top-20 lg:col-span-4">
-          <GridAksiCepat label="Aksi cepat" aksi={daftarAksi(profil.peran)} />
-        </aside>
+      <div className="mt-6">
+        <IsiBeranda nama={profil.nama} peran={profil.peran} />
       </div>
     </main>
   );

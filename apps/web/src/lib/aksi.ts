@@ -4,15 +4,9 @@ import type { Peran } from "@/lib/auth";
 export type AksiItem = { label: string; href: Route; utama?: boolean };
 
 export const AKSI_PERAN: Record<Peran, { label: string; href: Route }[]> = {
-  BPBD: [
-    { label: "Buat manifest", href: "/bpbd/kirim" },
-    { label: "Buka command center", href: "/bpbd" },
-  ],
+  BPBD: [{ label: "Buat manifest", href: "/bpbd/kirim" }],
   GUDANG: [{ label: "Catat batch masuk", href: "/gudang" }],
-  POSKO: [
-    { label: "Lapor penyintas", href: "/posko" },
-    { label: "Lihat kiriman posko", href: "/posko#bantuan" },
-  ],
+  POSKO: [{ label: "Lapor penyintas", href: "/posko" }],
   TIM: [{ label: "Buka tugas distribusi", href: "/tim" }],
 };
 

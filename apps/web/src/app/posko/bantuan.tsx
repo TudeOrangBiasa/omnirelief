@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
+import BannerOffline, { hitungAntrean } from "@/components/banner-offline";
 import { Alert, AlertDescription, AlertTitle } from "@omnirelief/ui/components/alert";
 import { Badge } from "@omnirelief/ui/components/badge";
 import { Button } from "@omnirelief/ui/components/button";
@@ -17,10 +18,10 @@ import {
 } from "@omnirelief/ui/components/select";
 import { Skeleton } from "@omnirelief/ui/components/skeleton";
 import { Textarea } from "@omnirelief/ui/components/textarea";
+import { WiFiOffIcon } from "@solar-icons/react/linear";
+import { kirimAntrean, kirimSatuAntrean, tambahAntrean } from "@/lib/offline";
 import { BantuanIstilah } from "@/components/bantuan-istilah";
-import { PetaAlurRingkasan } from "@/components/peta-alur";
 import { BarisSegarkan } from "@/components/kepala-halaman";
-
 type Bantuan = {
   id: number;
   kode: string;
@@ -50,6 +51,22 @@ export default function BantuanPosko() {
   const [sibukKonfirmasi, setSibukKonfirmasi] = useState<number | null>(null);
   const [sibukLapor, setSibukLapor] = useState(false);
   const [diperbarui, setDiperbarui] = useState("");
+  const [antre, setAntre] = useState(0);
+
+  async function kirimNyata(url: string, badan: Record<string, unknown>): Promise<boolean> {
+    return kirimSatuAntrean(url, badan, (pesan) => toast.error(pesan));
+  }
+
+  async function kirimSekarang(): Promise<void> {
+    const sisa = await kirimAntrean(window.localStorage, kirimNyata);
+    setAntre(sisa.length);
+    if (sisa.length === 0) {
+      toast.success("Antrean terkirim.");
+      await muat();
+    } else {
+      toast.error(`${sisa.length} data masih menunggu. Periksa koneksi lalu coba lagi.`);
+    }
+  }
 
   async function muat() {
     setStatus("memuat");
@@ -73,6 +90,25 @@ export default function BantuanPosko() {
 
   useEffect(() => {
     void muat();
+    setAntre(hitungAntrean());
+    if (window.navigator.onLine) {
+      void kirimAntrean(window.localStorage, kirimNyata).then((sisa) => {
+        setAntre(sisa.length);
+        if (sisa.length === 0) void muat();
+        else toast.info(`${sisa.length} data Menunggu Sinkronisasi.`);
+      });
+    }
+    function saatOnline() {
+      void kirimAntrean(window.localStorage, kirimNyata).then((sisa) => {
+        setAntre(sisa.length);
+        if (sisa.length === 0) {
+          toast.success("Antrean terkirim otomatis.");
+          void muat();
+        }
+      });
+    }
+    window.addEventListener("online", saatOnline);
+    return () => window.removeEventListener("online", saatOnline);
   }, []);
 
   async function konfirmasi(manifest_id: number) {
@@ -93,7 +129,9 @@ export default function BantuanPosko() {
         await muat();
       }
     } catch {
-      setGalat("Jaringan bermasalah. Coba lagi.");
+      tambahAntrean(window.localStorage, "status", "/api/posko/konfirmasi", { manifest_id });
+      setAntre(hitungAntrean());
+      toast.info("Koneksi lemah, konfirmasi tersimpan dan terkirim otomatis.");
     } finally {
       setSibukKonfirmasi(null);
     }
@@ -124,7 +162,11 @@ export default function BantuanPosko() {
         await muat();
       }
     } catch {
-      setGalat("Jaringan bermasalah. Coba lagi.");
+      tambahAntrean(window.localStorage, "kendala", "/api/posko/ketidaksesuaian", { manifest_id, jenis, keterangan: keterangan.trim() });
+      setAntre(hitungAntrean());
+      setLaporId(null);
+      setKeterangan("");
+      toast.info("Koneksi lemah, laporan tersimpan dan terkirim otomatis.");
     } finally {
       setSibukLapor(false);
     }
@@ -142,10 +184,29 @@ export default function BantuanPosko() {
           sebaris
         />
       </div>
-      <PetaAlurRingkasan peran="POSKO" langkah="Konfirmasi terima kiriman. Lapor masalah bila ada." />
-      <Link href="/transparansi" className="inline-flex min-h-12 w-fit items-center gap-1 text-sm text-primary underline">
-        Lihat di halaman publik
-      </Link>
+      <BannerOffline />
+      {antre > 0 && (
+        <div
+          role="status"
+          className="flex flex-col gap-2 rounded-none bg-warning-bg p-3 text-sm font-semibold text-warning-badge-fg"
+        >
+          <p className="flex min-h-12 items-center gap-2">
+            <WiFiOffIcon aria-hidden="true" className="size-5" />
+            {antre} Menunggu Sinkronisasi. Terkirim otomatis saat daring.
+          </p>
+          <Button onClick={() => void kirimSekarang()} variant="outline" className="min-h-12 w-full">
+            Kirim sekarang
+          </Button>
+        </div>
+      )}
+      <div className="flex flex-wrap items-center gap-2">
+        <Link href="/transparansi" className="inline-flex min-h-12 w-fit items-center gap-1 text-sm text-primary underline">
+          Lihat di halaman publik
+        </Link>
+        <a href="tel:112" className="inline-flex min-h-12 items-center rounded-none border border-border px-4 text-sm font-semibold">
+          Hubungi darurat 112
+        </a>
+      </div>
       {pesan && (
         <p role="status" className="rounded-none bg-success-bg p-3 text-sm text-success">
           {pesan}
@@ -240,6 +301,22 @@ export default function BantuanPosko() {
                     </div>
                     <div className="flex flex-col gap-1">
                       <Label htmlFor={`lapor-keterangan-${b.id}`}>Keterangan</Label>
+                      <div className="flex flex-wrap gap-2" role="group" aria-label="Template keterangan cepat">
+                        {["Kemasan rusak", "Jumlah kurang", "Basah kena air"].map((t) => (
+                          <Button
+                            key={t}
+                            type="button"
+                            variant="outline"
+                            disabled={sibuk}
+                            onClick={() =>
+                              setKeterangan((s) => (s === "" ? t : `${s}, ${t.toLowerCase()}`))
+                            }
+                            className="min-h-12 rounded-none text-xs"
+                          >
+                            {t}
+                          </Button>
+                        ))}
+                      </div>
                       <Textarea
                         id={`lapor-keterangan-${b.id}`}
                         value={keterangan}

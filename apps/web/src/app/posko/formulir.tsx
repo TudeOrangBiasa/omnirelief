@@ -13,7 +13,6 @@ import { Label } from "@omnirelief/ui/components/label";
 import { kirimAntrean, kirimSatuAntrean, tambahAntrean } from "@/lib/offline";
 
 import { BantuanIstilah } from "@/components/bantuan-istilah";
-import { PetaAlur, bukaPanduan } from "@/components/peta-alur";
 
 type Laporan = {
   id: number;
@@ -140,49 +139,30 @@ export default function FormulirPosko() {
           sebaris
         />
       </div>
-      <section aria-label="Ringkasan laporan" className="grid grid-cols-3 gap-3 rounded-none border bg-[#DCE8EE] p-4">
-        <div className="border bg-card p-3">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Laporan terkirim</p>
-          <p className="text-4xl font-light tabular-nums text-primary">{laporan.length}</p>
-        </div>
-        <div className="border bg-card p-3">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Menunggu verifikasi</p>
-          <p className="text-4xl font-light tabular-nums text-primary">{laporan.filter((l) => l.status !== "DISETUJUI").length}</p>
-        </div>
-        <div className="border bg-card p-3">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Jiwa laporan terakhir</p>
-          <p className="text-4xl font-light tabular-nums text-primary">{terbaru ? terbaru.bayi + terbaru.balita + terbaru.ibu_hamil + terbaru.lansia + terbaru.disabilitas + terbaru.umum : 0}</p>
-        </div>
+      <section aria-label="Snapshot terakhir per kategori" className="grid grid-cols-2 gap-3 rounded-none border bg-[#DCE8EE] p-4 sm:grid-cols-3">
+        {(
+          [
+            ["Bayi", terbaru?.bayi ?? 0],
+            ["Balita", terbaru?.balita ?? 0],
+            ["Ibu hamil", terbaru?.ibu_hamil ?? 0],
+            ["Lansia", terbaru?.lansia ?? 0],
+            ["Disabilitas", terbaru?.disabilitas ?? 0],
+            ["Umum", terbaru?.umum ?? 0],
+          ] as const
+        ).map(([label, nilai]) => (
+          <div key={label} className="border bg-card p-3">
+            <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">{label}</p>
+            <p className="text-2xl font-light tabular-nums text-primary">{nilai}</p>
+          </div>
+        ))}
       </section>
-      <ol aria-label="Alur bantuan" className="flex flex-wrap items-center gap-2 font-mono text-[11px] uppercase tracking-widest">
-        <li className="border px-2 py-1">Gudang</li>
-        <li aria-hidden="true">→</li>
-        <li className="border px-2 py-1">BPBD</li>
-        <li aria-hidden="true">→</li>
-        <li className="border px-2 py-1">Tim</li>
-        <li aria-hidden="true">→</li>
-        <li className="border bg-[#0B1F2E] px-2 py-1 text-white">Posko</li>
-        <li aria-hidden="true">→</li>
-        <li className="border px-2 py-1">Publik</li>
-        <li>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => bukaPanduan("POSKO", "Kirim angka penyintas. Lalu tunggu verifikasi BPBD.")}
-            className="min-h-12 rounded-none font-mono text-[11px] uppercase tracking-widest"
-          >
-            Lihat peta alur
-          </Button>
-        </li>
-      </ol>
-      <PetaAlur />
       <p className="text-muted-foreground text-sm">
         Cukup kirim angka <BantuanIstilah istilah="agregat" label="agregat tanpa NIK" />. Tanpa nama.
         Tanpa NIK.
       </p>
       <BannerOffline />
       {hasil && (
-        <p role="status" className="rounded-xl bg-success-bg p-3 text-sm text-success">
+        <p role="status" className="rounded-none bg-success-bg p-3 text-sm text-success">
           {hasil}
         </p>
       )}
@@ -192,6 +172,79 @@ export default function FormulirPosko() {
           <AlertDescription>{galat}</AlertDescription>
         </Alert>
       )}
+      {terbaru && terbaru.status !== "DRAFT" && (
+        <div
+          role="status"
+          className={
+            terbaru.status === "DISETUJUI"
+              ? "rounded-none bg-success-bg p-3 text-sm font-semibold text-success"
+              : terbaru.status === "MINTA_REVISI"
+                ? "rounded-none bg-warning-bg p-3 text-sm font-semibold text-warning"
+                : terbaru.status === "DITOLAK"
+                  ? "rounded-none bg-destructive/10 p-3 text-sm font-semibold text-destructive"
+                  : "rounded-none bg-muted p-3 text-sm font-semibold text-muted-foreground"
+          }
+        >
+          {terbaru.status === "MENUNGGU_VERIFIKASI" &&
+            "Laporan terakhir: Menunggu verifikasi BPBD."}
+          {terbaru.status === "DISETUJUI" && "Laporan terakhir: Disetujui BPBD."}
+          {terbaru.status === "MINTA_REVISI" && (
+            <span className="flex flex-col gap-2">
+              <span>
+                BPBD minta revisi laporan{" "}
+                {new Date(terbaru.dibuat_pada).toLocaleString("id-ID")} (
+                {terbaru.bayi + terbaru.balita + terbaru.ibu_hamil + terbaru.lansia +
+                  terbaru.disabilitas + terbaru.umum}{" "}
+                jiwa). Periksa keenam angka lalu kirim ulang.
+              </span>
+              {terbaru.alasan && (
+                <span className="rounded-none bg-background/60 p-2 font-normal">
+                  Alasan BPBD: {terbaru.alasan}
+                </span>
+              )}
+              <Button
+                type="button"
+                onClick={fokusFormulir}
+                variant="outline"
+                className="min-h-12 w-full border-warning text-warning"
+              >
+                Perbaiki sekarang
+              </Button>
+            </span>
+          )}
+          {terbaru.status === "DITOLAK" && (
+            <span className="flex flex-col gap-2">
+              <span>Laporan terakhir: Ditolak BPBD. Kirim data baru yang benar.</span>
+              {terbaru.alasan && (
+                <span className="rounded-none bg-background/60 p-2 font-normal">
+                  Alasan BPBD: {terbaru.alasan}
+                </span>
+              )}
+              <Button
+                type="button"
+                onClick={fokusFormulir}
+                variant="outline"
+                className="min-h-12 w-full"
+              >
+                Isi data baru
+              </Button>
+            </span>
+          )}
+        </div>
+      )}
+      <div
+        role="status"
+        aria-label="Status jatah"
+        className={
+          jatah
+            ? "rounded-none bg-success-bg p-3 text-sm font-semibold text-success"
+            : "rounded-none bg-muted p-3 text-sm font-semibold text-muted-foreground"
+        }
+      >
+        {jatah
+          ? `Jatah disetujui: ${jatah.bayi + jatah.balita + jatah.ibu_hamil + jatah.lansia + jatah.disabilitas + jatah.umum} jiwa dari snapshot ${new Date(jatah.dibuat_pada).toLocaleString("id-ID")}.`
+          : "Belum ada snapshot disetujui. Jatah dihitung setelah BPBD menyetujui laporan."}
+      </div>
       <form
         action={(fd) => void kirim(fd, false)}
         className="flex flex-col gap-4"
@@ -217,8 +270,8 @@ export default function FormulirPosko() {
             )}
           </div>
         ))}
-        <div className="flex gap-3">
-          <Button type="submit" disabled={sibuk} className="min-h-12 flex-1">
+        <div className="sticky bottom-20 z-10 flex gap-3 rounded-none border border-[#0B1F2E] bg-[#0B1F2E] p-3 shadow-lg md:bottom-4">
+          <Button type="submit" disabled={sibuk} className="min-h-12 flex-1 rounded-none">
             {modeSibuk === "kirim" ? "Mengirim..." : "Kirim data"}
           </Button>
           <Button
@@ -229,87 +282,14 @@ export default function FormulirPosko() {
               const form = (e.target as HTMLButtonElement).closest("form");
               if (form) void kirim(new FormData(form), true);
             }}
-            className="min-h-12 flex-1"
+            className="min-h-12 flex-1 rounded-none"
           >
             {modeSibuk === "draf" ? "Menyimpan..." : "Simpan draf"}
           </Button>
         </div>
       </form>
-      <section className="flex flex-col gap-2" aria-label="Status verifikasi laporan">
-        <h2 className="text-lg font-bold text-primary">Status laporan</h2>
-        {terbaru && terbaru.status !== "DRAFT" && (
-          <div
-            role="status"
-            className={
-              terbaru.status === "DISETUJUI"
-                ? "rounded-none bg-success-bg p-3 text-sm font-semibold text-success"
-                : terbaru.status === "MINTA_REVISI"
-                  ? "rounded-none bg-warning-bg p-3 text-sm font-semibold text-warning"
-                  : terbaru.status === "DITOLAK"
-                    ? "rounded-none bg-destructive/10 p-3 text-sm font-semibold text-destructive"
-                    : "rounded-none bg-muted p-3 text-sm font-semibold text-muted-foreground"
-            }
-          >
-            {terbaru.status === "MENUNGGU_VERIFIKASI" &&
-              "Laporan terakhir: Menunggu verifikasi BPBD."}
-            {terbaru.status === "DISETUJUI" && "Laporan terakhir: Disetujui BPBD."}
-            {terbaru.status === "MINTA_REVISI" && (
-              <span className="flex flex-col gap-2">
-                <span>
-                  BPBD minta revisi laporan{" "}
-                  {new Date(terbaru.dibuat_pada).toLocaleString("id-ID")} (
-                  {terbaru.bayi + terbaru.balita + terbaru.ibu_hamil + terbaru.lansia +
-                    terbaru.disabilitas + terbaru.umum}{" "}
-                  jiwa). Periksa keenam angka lalu kirim ulang.
-                </span>
-                {terbaru.alasan && (
-                  <span className="rounded-none bg-background/60 p-2 font-normal">
-                    Alasan BPBD: {terbaru.alasan}
-                  </span>
-                )}
-                <Button
-                  type="button"
-                  onClick={fokusFormulir}
-                  variant="outline"
-                  className="min-h-12 w-full border-warning text-warning"
-                >
-                  Perbaiki sekarang
-                </Button>
-              </span>
-            )}
-            {terbaru.status === "DITOLAK" && (
-              <span className="flex flex-col gap-2">
-                <span>Laporan terakhir: Ditolak BPBD. Kirim data baru yang benar.</span>
-                {terbaru.alasan && (
-                  <span className="rounded-none bg-background/60 p-2 font-normal">
-                    Alasan BPBD: {terbaru.alasan}
-                  </span>
-                )}
-                <Button
-                  type="button"
-                  onClick={fokusFormulir}
-                  variant="outline"
-                  className="min-h-12 w-full"
-                >
-                  Isi data baru
-                </Button>
-              </span>
-            )}
-          </div>
-        )}
-        <div
-          role="status"
-          aria-label="Status jatah"
-          className={
-            jatah
-              ? "rounded-none bg-success-bg p-3 text-sm font-semibold text-success"
-              : "rounded-none bg-muted p-3 text-sm font-semibold text-muted-foreground"
-          }
-        >
-          {jatah
-            ? `Jatah disetujui: ${jatah.bayi + jatah.balita + jatah.ibu_hamil + jatah.lansia + jatah.disabilitas + jatah.umum} jiwa dari snapshot ${new Date(jatah.dibuat_pada).toLocaleString("id-ID")}.`
-            : "Belum ada snapshot disetujui. Jatah dihitung setelah BPBD menyetujui laporan."}
-        </div>
+      <section className="flex flex-col gap-2" aria-label="Riwayat laporan">
+        <h2 className="text-lg font-bold text-primary">Riwayat laporan</h2>
         {laporan.length === 0 && (
           <div role="status" className="flex flex-col gap-2 rounded-none border border-dashed p-4">
             <p className="text-base font-semibold">Belum ada laporan terkirim</p>

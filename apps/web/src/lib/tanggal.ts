@@ -57,6 +57,19 @@ export function sisaHariKalender(t: string, kini = new Date()): number {
   return Math.round((target - hariIni) / 86400000);
 }
 
+/** Jam sejak ISO sampai kini, dibulatkan ke bawah. Negatif bila waktu depan. Murni. */
+export function jamSejak(iso: string, kini = new Date()): number {
+  const t = new Date(iso).getTime();
+  if (Number.isNaN(t)) return Number.NaN;
+  return Math.floor((kini.getTime() - t) / 3600000);
+}
+
+/** Persen pemenuhan 0-100, aman bagi nol. Murni. */
+export function persenPemenuhan(butuh: number, diterima: number): number {
+  if (!Number.isFinite(butuh) || !Number.isFinite(diterima) || butuh <= 0) return 0;
+  return Math.max(0, Math.min(100, Math.round((diterima / butuh) * 100)));
+}
+
 const LABEL_STATUS: Record<string, string> = {
   DIPUBLIKASIKAN: "Dipublikasikan",
   DITERIMA: "Diterima",

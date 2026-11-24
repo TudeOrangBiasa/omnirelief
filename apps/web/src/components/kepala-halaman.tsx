@@ -36,11 +36,13 @@ export function BarisSegarkan({
   memuat,
   onMuat,
   sebaris,
+  basi,
 }: {
   diperbarui: string;
   memuat: boolean;
   onMuat: () => void;
   sebaris?: boolean;
+  basi?: boolean;
 }) {
   const tombol = (
     <Button
@@ -55,10 +57,12 @@ export function BarisSegarkan({
     </Button>
   );
   const teks = diperbarui ? `Pembaruan terakhir ${diperbarui}` : "Belum pernah dimuat";
+  const peringatan =
+    basi && !memuat ? " · data mungkin basi, segarkan untuk angka terbaru" : "";
   if (sebaris) {
     return (
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        <span role="status">{diperbarui ? `Diperbarui ${diperbarui}` : "Memuat…"}</span>
+        <span role="status">{diperbarui ? `Diperbarui ${diperbarui}${peringatan}` : "Memuat…"}</span>
         {tombol}
       </div>
     );
@@ -67,6 +71,7 @@ export function BarisSegarkan({
     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
       <p className="flex-1 text-sm text-muted-foreground" role="status">
         {teks}
+        {peringatan}
       </p>
       {tombol}
     </div>

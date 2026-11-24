@@ -122,8 +122,8 @@ export function BilahHalaman({
   }
 
   return (
-    <div className="flex flex-col gap-2 rounded-none border border-[#0B1F2E]/15 bg-white p-3 sm:flex-row sm:items-center">
-      <p className="flex-1 text-sm tabular-nums text-[#0B1F2E]" role="status">
+    <div className="mt-2 flex flex-col gap-2 pl-2 sm:flex-row sm:items-center">
+      <p className="flex-1 text-sm tabular-nums text-muted-foreground" role="status">
         Menampilkan {awal}–{akhir} dari {total} data
       </p>
       <div className="flex items-center gap-2">
@@ -174,7 +174,7 @@ export function BilahMassal({
 }) {
   return (
     <div
-      className="sticky bottom-4 z-10 flex flex-col gap-2 rounded-none border border-[#0B1F2E] bg-[#0B1F2E] p-3 text-white shadow-lg sm:flex-row sm:items-center"
+      className="sticky bottom-20 z-10 flex flex-col gap-2 rounded-none border border-[#0B1F2E] bg-[#0B1F2E] p-3 text-white shadow-lg md:bottom-4 md:flex-row md:items-center"
       role="status"
     >
       <p className="flex-1 text-sm font-semibold">{jumlah} snapshot dipilih</p>
@@ -183,7 +183,7 @@ export function BilahMassal({
           variant="outline"
           onClick={onBatal}
           disabled={sibuk}
-          className="min-h-12 rounded-none"
+          className="min-h-12 rounded-none border-white/60 bg-transparent text-white hover:bg-white/10 hover:text-white"
         >
           Batalkan pilihan
         </Button>

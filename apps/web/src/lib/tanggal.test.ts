@@ -3,7 +3,9 @@ import {
   catatanRamah,
   formatHariLokal,
   formatTanggalLokal,
+  jamSejak,
   labelStatusRiwayat,
+  persenPemenuhan,
   sisaHariKalender,
 } from "./tanggal";
 
@@ -68,5 +70,29 @@ describe("catatanRamah", () => {
 describe("formatHariLokal", () => {
   it("memformat tanggal kedaluwarsa tanpa jam", () => {
     expect(formatHariLokal("2026-12-31")).toBe("31 Des 2026");
+  });
+});
+
+describe("jamSejak", () => {
+  it("menghitung jam lewat sejak timestamp", () => {
+    expect(jamSejak("2026-11-23T10:00:00+08:00", new Date("2026-11-24T12:00:00+08:00"))).toBe(26);
+  });
+
+  it("negatif untuk waktu depan", () => {
+    expect(jamSejak("2026-11-25T10:00:00+08:00", new Date("2026-11-24T10:00:00+08:00"))).toBe(-24);
+  });
+});
+
+describe("persenPemenuhan", () => {
+  it("menghitung persen biasa", () => {
+    expect(persenPemenuhan(100, 75)).toBe(75);
+  });
+
+  it("nol bila butuh nol", () => {
+    expect(persenPemenuhan(0, 10)).toBe(0);
+  });
+
+  it("mentok di 100", () => {
+    expect(persenPemenuhan(100, 150)).toBe(100);
   });
 });
