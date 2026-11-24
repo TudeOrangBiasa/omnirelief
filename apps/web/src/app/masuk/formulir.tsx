@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { EyeClosedIcon, EyeIcon } from "@solar-icons/react/linear";
 import {
@@ -8,12 +8,6 @@ import {
   AlertTitle,
 } from "@omnirelief/ui/components/alert";
 import { Button } from "@omnirelief/ui/components/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@omnirelief/ui/components/card";
 import {
   Dialog,
   DialogContent,
@@ -55,7 +49,13 @@ export default function FormulirMasuk({
   const [password, setPassword] = useState("");
   const [pin, setPin] = useState("");
   const [galatPin, setGalatPin] = useState<string | null>(null);
+  const contekanRef = useRef<HTMLDetailsElement>(null);
 
+  function pilihAkunDemo(emailDemo: string) {
+    setEmail(emailDemo);
+    if (contekanRef.current) contekanRef.current.open = false;
+    document.getElementById("masuk-email")?.focus({ preventScroll: true });
+  }
   async function buatTiketReset(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const emailTiket = emailReset.trim().toLowerCase();
@@ -101,11 +101,11 @@ export default function FormulirMasuk({
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div>
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col items-center gap-2 py-4 text-center">
         <Logo varian="putih" tinggi={30} />
-        <h1 className="mt-3 text-2xl font-bold text-white">Masuk</h1>
-        <p className="mt-1 text-sm text-white/70">
+        <h1 className="text-2xl font-bold text-white">Masuk</h1>
+        <p className="max-w-xs text-sm text-white/70">
           Masuk dengan akun peran yang dibagikan command center.
         </p>
       </div>
@@ -135,7 +135,20 @@ export default function FormulirMasuk({
             />
           </div>
           <div className="flex flex-col gap-1">
-            <Label htmlFor="masuk-password" className="text-white">Password</Label>
+            <div className="flex items-end justify-between gap-3">
+              <Label htmlFor="masuk-password" className="pb-3.5 text-white">Password</Label>
+              <Button
+                type="button"
+                variant="link"
+                onClick={() => {
+                  setTiket(null);
+                  setLupaBuka(true);
+                }}
+                className="h-12 px-1 text-sm text-white/80 underline"
+              >
+                Lupa password?
+              </Button>
+            </div>
             <div className="relative">
               <Input
                 id="masuk-password"
@@ -178,7 +191,9 @@ export default function FormulirMasuk({
             />
             Ingat saya di perangkat ini
           </label>
-          <TombolMasuk label="Masuk" />
+          <div className="pt-2">
+            <TombolMasuk label="Masuk" />
+          </div>
         </form>
       ) : (
         <form onSubmit={(e) => void kirimPin(e)} className="flex flex-col gap-4">
@@ -208,34 +223,23 @@ export default function FormulirMasuk({
               className="min-h-12 border-white/30 bg-white/10 text-white tabular-nums placeholder:text-white/50"
             />
           </div>
-          <TombolMasuk label="Verifikasi dan Masuk" />
+          <div className="pt-2">
+            <TombolMasuk label="Verifikasi dan Masuk" />
+          </div>
           <Button
             type="button"
-            variant="ghost"
+            variant="link"
             onClick={() => {
               setTahap("kredensial");
               setPin("");
               setGalatPin(null);
             }}
-            className="min-h-12 w-full text-white underline"
+            className="mx-auto min-h-12 w-auto px-4 text-sm text-white/70 underline"
           >
             Kembali ubah email
           </Button>
         </form>
       )}
-      <div className="flex justify-end">
-        <Button
-          type="button"
-          variant="link"
-          onClick={() => {
-            setTiket(null);
-            setLupaBuka(true);
-          }}
-          className="min-h-12 text-white underline"
-        >
-          Lupa password?
-        </Button>
-      </div>
       <Dialog open={lupaBuka} onOpenChange={setLupaBuka}>
         <DialogContent className="max-h-[85vh] overflow-y-auto rounded-none sm:max-w-md">
           <DialogHeader>
@@ -277,7 +281,7 @@ export default function FormulirMasuk({
           </form>
           {tiket && (
             <div className="flex flex-col gap-3 rounded-none border border-[#0B1F2E]/15 bg-[#DCE8EE] p-4">
-              <p className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[#1B7FBF]">
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[#0f79b8]">
                 Kode tiket reset
               </p>
               <p aria-live="polite" className="font-mono text-2xl font-bold tracking-widest text-[#0B1F2E] tabular-nums">
@@ -293,21 +297,42 @@ export default function FormulirMasuk({
           )}
         </DialogContent>
       </Dialog>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Akun demo untuk juri</CardTitle>
-        </CardHeader>
-        <CardContent className="text-muted-foreground flex flex-col gap-1 text-sm">
-          <p>Pilih salah satu akun berikut. Password sama untuk semua: JuriDemo2026!</p>
-          <ul className="list-disc pl-5">
-            <li><span className="font-mono">bpbd@demo</span>: command center</li>
-            <li><span className="font-mono">gudang@demo</span>: pencatat batch</li>
-            <li><span className="font-mono">posko-a@demo</span>: relawan posko</li>
-            <li><span className="font-mono">tim@demo</span>: tim distribusi</li>
+      <details ref={contekanRef} className="group border border-white/20 bg-white/5">
+        <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 text-sm font-medium text-white/80 hover:text-white [&::-webkit-details-marker]:hidden">
+          Akun demo untuk juri
+          <span aria-hidden="true" className="font-mono text-lg leading-none transition-transform group-open:rotate-45">+</span>
+        </summary>
+        <div className="flex flex-col gap-1 border-t border-white/10 px-4 py-3 text-sm">
+          <div className="flex items-center justify-between gap-3">
+            <p className="flex min-w-0 flex-col">
+              <span className="text-xs text-white/50">Password semua akun</span>
+              <span className="font-mono text-white">JuriDemo2026!</span>
+            </p>
+            <TombolSalin teks="JuriDemo2026!" label="Salin" pesanSukses="Password disalin" variant="link" className="h-12 w-auto shrink-0 px-2 text-white/80 underline" />
+          </div>
+          <ul className="flex flex-col">
+            {[
+              ["bpbd@demo", "command center"],
+              ["gudang@demo", "pencatat batch"],
+              ["posko-a@demo", "relawan posko"],
+              ["tim@demo", "tim distribusi"],
+            ].map(([emailDemo, peran]) => (
+              <li key={emailDemo} className="flex items-center justify-between gap-3 border-t border-white/10 py-1">
+                <button
+                  type="button"
+                  onClick={() => pilihAkunDemo(emailDemo)}
+                  aria-label={`Isi ${emailDemo} ke form email`}
+                  className="flex min-h-12 min-w-0 flex-1 cursor-pointer flex-col items-start justify-center text-left"
+                >
+                  <span className="truncate font-mono text-white">{emailDemo}</span>
+                  <span className="text-xs text-white/50">{peran}</span>
+                </button>
+                <TombolSalin teks={emailDemo} label="Salin" pesanSukses="Email disalin" variant="link" className="h-12 w-auto shrink-0 px-2 text-white/80 underline" />
+              </li>
+            ))}
           </ul>
-          <p>Akun demo hanya untuk penilaian. Ganti password setelah kompetisi selesai.</p>
-        </CardContent>
-      </Card>
+        </div>
+      </details>
     </div>
   );
 }

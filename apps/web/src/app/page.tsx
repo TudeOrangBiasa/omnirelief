@@ -295,9 +295,9 @@ export default function Home() {
     <main className="relative w-full pb-28 md:pb-0">
       <ShaderBackground
         variant="mesh-gradient"
-        colors={["#030D14", "#082032", "#0F3B5F", "#1B7FBF"]}
+        colors={["#030D14", "#082032", "#0F3B5F", "#0f79b8"]}
         aria-hidden
-        className="pointer-events-none fixed inset-0 h-auto w-full bg-[#030D14]"
+        className="pointer-events-none fixed inset-0 h-screen w-screen bg-[#030D14]"
       />
 
       <div className="relative ml-[calc(50%-50vw)] w-screen">

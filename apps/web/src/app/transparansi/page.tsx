@@ -178,9 +178,9 @@ export default function TransparansiPage() {
     <div className="relative ml-[calc(50%-50vw)] min-h-screen w-screen overflow-x-hidden">
       <ShaderBackground
         variant="mesh-gradient"
-        colors={["#030D14", "#082032", "#0F3B5F", "#1B7FBF"]}
+        colors={["#030D14", "#082032", "#0F3B5F", "#0f79b8"]}
         aria-hidden
-        className="pointer-events-none absolute inset-0 h-full w-full bg-[#030D14]"
+        className="pointer-events-none fixed inset-0 h-screen w-screen bg-[#030D14]"
       />
       <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-5 pt-12 pb-28 md:px-10 md:py-20">
       <div className="flex w-full items-center justify-between pt-6 pb-4">
@@ -188,12 +188,12 @@ export default function TransparansiPage() {
           <Logo varian="putih" tinggi={24} alt="" />
         </Link>
         <span className="flex items-center gap-5">
-          <Link href="/" className="min-h-12 inline-flex items-center font-mono text-[11px] tracking-[0.15em] text-white/80 uppercase hover:text-white">
+          <Link href="/" className="hidden min-h-12 items-center font-mono text-[11px] tracking-[0.15em] text-white/80 uppercase hover:text-white sm:inline-flex">
             ← Beranda
           </Link>
           <Link
             href="/masuk"
-            className="relative inline-flex min-h-10 items-center justify-center border border-white/40 bg-white/10 px-3.5 font-mono text-[11px] tracking-[0.15em] text-white uppercase backdrop-blur-sm hover:bg-white/20"
+            className="relative inline-flex min-h-10 shrink-0 items-center justify-center border border-white/40 bg-white/10 px-3.5 font-mono text-[11px] tracking-[0.15em] whitespace-nowrap text-white uppercase backdrop-blur-sm hover:bg-white/20"
           >
             <span aria-hidden="true" className="absolute top-0 left-0 h-1.5 w-1.5 border-t border-l border-white" />
             <span aria-hidden="true" className="absolute top-0 right-0 h-1.5 w-1.5 border-t border-r border-white" />

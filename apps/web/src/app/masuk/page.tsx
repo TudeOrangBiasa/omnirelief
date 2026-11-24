@@ -81,16 +81,23 @@ export default async function MasukPage({
     <div className="relative ml-[calc(50%-50vw)] min-h-screen w-screen overflow-x-hidden">
       <ShaderBackground
         variant="mesh-gradient"
-        colors={["#030D14", "#082032", "#0F3B5F", "#1B7FBF"]}
+        colors={["#030D14", "#082032", "#0F3B5F", "#0f79b8"]}
         aria-hidden
-        className="pointer-events-none absolute inset-0 h-full w-full bg-[#030D14]"
+        className="pointer-events-none fixed inset-0 h-screen w-screen bg-[#030D14]"
       />
       <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-md flex-col justify-center gap-6 p-6 pb-28 md:pb-6">
       <nav aria-label="Kembali" className="flex items-center justify-between">
         <a href="/" className="inline-flex min-h-12 items-center text-sm font-medium text-white hover:text-white/80">
           ← Kembali ke Beranda
         </a>
-        <a href="/transparansi" className="inline-flex min-h-12 items-center text-sm font-medium text-white hover:text-white/80">
+        <a
+          href="/transparansi"
+          className="relative inline-flex min-h-10 shrink-0 items-center justify-center border border-white/40 bg-white/10 px-3.5 font-mono text-[11px] tracking-[0.15em] whitespace-nowrap text-white uppercase backdrop-blur-sm hover:bg-white/20"
+        >
+          <span aria-hidden="true" className="absolute top-0 left-0 h-1.5 w-1.5 border-t border-l border-white" />
+          <span aria-hidden="true" className="absolute top-0 right-0 h-1.5 w-1.5 border-t border-r border-white" />
+          <span aria-hidden="true" className="absolute bottom-0 left-0 h-1.5 w-1.5 border-b border-l border-white" />
+          <span aria-hidden="true" className="absolute right-0 bottom-0 h-1.5 w-1.5 border-r border-b border-white" />
           Lihat Transparansi
         </a>
       </nav>

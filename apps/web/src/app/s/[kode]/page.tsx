@@ -140,9 +140,9 @@ export default function SumbanganPage({
     <div className="relative min-h-screen w-full overflow-x-hidden">
       <ShaderBackground
         variant="mesh-gradient"
-        colors={["#030D14", "#082032", "#0F3B5F", "#1B7FBF"]}
+        colors={["#030D14", "#082032", "#0F3B5F", "#0f79b8"]}
         aria-hidden
-        className="pointer-events-none fixed inset-0 h-full w-full bg-[#030D14]"
+        className="pointer-events-none fixed inset-0 h-screen w-screen bg-[#030D14]"
       />
       <main className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 p-6 pb-28 md:pb-6">
       <div className="relative flex min-h-0 flex-col gap-6">
