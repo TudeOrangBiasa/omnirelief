@@ -6,6 +6,7 @@ import {
   BoxMinimalisticIcon,
   ClipboardCheckIcon,
   ClipboardListIcon,
+  ChartIcon,
   CloseCircleIcon,
   EyeIcon,
   HelpIcon,
@@ -23,6 +24,7 @@ import {
 } from "@solar-icons/react/linear";
 import {
   BoxMinimalisticIcon as BoxMinimalisticDuoIcon,
+  ChartIcon as ChartDuoIcon,
   ClipboardCheckIcon as ClipboardCheckDuoIcon,
   ClipboardListIcon as ClipboardListDuoIcon,
   EyeIcon as EyeDuoIcon,
@@ -82,6 +84,7 @@ const IKON_LIN: Record<NavItem["ikon"], Ikon> = {
   beranda: HomeIcon,
   cek: MagnifierIcon,
   transparansi: EyeIcon,
+  dasbor: ChartIcon,
   masuk: LoginIcon,
   verifikasi: ClipboardCheckIcon,
   kirim: SendSquareIcon,
@@ -433,7 +436,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
             ))}
           </SidebarContent>
           <SidebarFooter>
-            <div className="border border-[#0B1F2E]/15 p-3 font-mono text-[10px]">
+            <div className="garis-rambut-diam p-3 font-mono text-[10px]">
               <p className="flex items-center gap-1.5">
                 <span aria-hidden="true" className="inline-block size-1.5 rounded-full bg-emerald-600" />
                 LEDGER SHA-256 AKTIF

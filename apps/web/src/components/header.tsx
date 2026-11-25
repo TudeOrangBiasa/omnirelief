@@ -86,7 +86,7 @@ export default function Header({ nama }: { nama: string | null }) {
   return (
     <header className="sticky top-0 z-40 h-14 border-b border-[#0B1F2E]/15 bg-white print:hidden">
       <div className="flex h-14 w-full items-center gap-2 pr-3 pl-3 md:pl-4">
-        <SidebarTrigger className="hidden h-9 w-9 rounded-none border border-[#0B1F2E]/15 after:absolute after:-inset-1.5 after:content-[''] md:flex" />
+        <SidebarTrigger className="hidden h-9 w-9 rounded-none garis-rambut-diam after:absolute after:-inset-1.5 after:content-[''] md:flex" />
         <Separator orientation="vertical" className="hidden h-4 w-px bg-[#0B1F2E]/20 md:block" />
         <Breadcrumb aria-label="Lokasi halaman" className="min-w-0 font-mono text-[#0B1F2E]/70 [&_li]:text-xs [&_li]:uppercase [&_li]:tracking-wider">
           <BreadcrumbList>
@@ -117,7 +117,7 @@ export default function Header({ nama }: { nama: string | null }) {
                   <button
                     type="button"
                     onClick={() => mintaBukaPintasan()}
-                    aria-label="Buka pintasan dan panduan cepat"
+                    aria-label="Buka pintasan dan panduan cepat (Ctrl K)"
                     className="relative flex h-9 w-9 items-center justify-center rounded-none border border-[#0B1F2E]/20 bg-white font-mono text-xs text-foreground after:absolute after:-inset-1.5 after:content-[''] hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                   >
                     <span aria-hidden="true">?</span>
@@ -125,7 +125,7 @@ export default function Header({ nama }: { nama: string | null }) {
                 }
               />
               <TooltipContent side="bottom">
-                Pintasan dan panduan cepat
+                Pintasan dan panduan cepat (Ctrl K)
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

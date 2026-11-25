@@ -11,6 +11,7 @@ export type NavItem = {
     | "beranda"
     | "cek"
     | "transparansi"
+    | "dasbor"
     | "masuk"
     | "verifikasi"
     | "kirim"
@@ -62,6 +63,7 @@ export const LABEL_SINGKAT: Record<NavPeran, string> = {
 export const NAVIGASI_SIDEBAR: Record<NavPeran, NavItem[]> = {
   PUBLIK: [
     { href: "/", label: "Beranda", ikon: "beranda" },
+    { href: "/dasbor", label: "Dasbor", ikon: "dasbor" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
     { href: "/audit", label: "Audit log", ikon: "verifikasi" },
     { href: "/bantuan", label: "Pusat bantuan", ikon: "bantuan" },
@@ -156,6 +158,7 @@ export const NAVIGASI_LAINNYA: Record<NavPeran, NavItem[]> = {
     { href: "/masuk", label: "Masuk", ikon: "masuk" },
     { href: "/bantuan", label: "Pusat bantuan", ikon: "bantuan" },
     { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
+    { href: "/dasbor", label: "Dasbor", ikon: "dasbor" },
   ],
   BPBD: [
     { href: "/bantuan", label: "Pusat bantuan", ikon: "bantuan" },
