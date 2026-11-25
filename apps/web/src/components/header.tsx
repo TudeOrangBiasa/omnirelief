@@ -37,10 +37,25 @@ const PETA_LABEL: Record<string, string> = {
   audit: "Audit log",
   admin: "Admin",
   transparansi: "Transparansi",
+  dasbor: "Dasbor",
 };
+
+function remahManifest(
+  segmen: string[],
+): { label: string; href?: string }[] | null {
+  if (segmen[0] !== "m" && segmen[0] !== "s") return null;
+  if (segmen.length < 2 || segmen[1] === "") return null;
+  return [
+    { label: "Beranda", href: "/beranda" },
+    { label: "Transparansi", href: "/transparansi" },
+    { label: segmen[1] },
+  ];
+}
 
 function remah(pathname: string): { label: string; href?: string }[] {
   const segmen = pathname.split("/").filter(Boolean);
+  const manifest = remahManifest(segmen);
+  if (manifest) return manifest;
   if (segmen.length === 0 || segmen[0] === "beranda")
     return [{ label: "Beranda" }];
   const utama = PETA_LABEL[segmen[0]] ?? "Halaman";
@@ -52,8 +67,7 @@ function remah(pathname: string): { label: string; href?: string }[] {
     { label: kedua },
   ];
 }
-
-export default function Header({ nama }: { nama: string | null }) {
+export default function Header({ nama, masuk }: { nama: string | null; masuk: boolean }) {
   const pathname = usePathname();
   const [daring, setDaring] = useState(true);
   const [antre, setAntre] = useState(0);
@@ -78,7 +92,7 @@ export default function Header({ nama }: { nama: string | null }) {
 
   // Top-nav publik (landing dkk) dicabut sementara: desain landing dikerjakan
   // terakhir setelah dasbor + fitur utama (keputusan Nov 2026).
-  if (!zonaDasbor(pathname ?? "/")) return null;
+  if (!zonaDasbor(pathname ?? "/") || !masuk) return null;
 
   const daftar = remah(pathname ?? "/");
   const macet = !daring || antre > 0;

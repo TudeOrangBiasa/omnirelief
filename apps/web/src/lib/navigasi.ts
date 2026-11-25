@@ -211,11 +211,20 @@ export function tabAktif(pathname: string, hash: string, href: string): boolean 
 }
 
 /**
- * Sidebar hanya tampil di zona dasbor (work zone internal).
- * Halaman publik (landing, transparansi, detail, masuk) hanya pakai top-nav.
+ * Sidebar hanya tampil di zona dasbor (work zone internal) dan, bila sudah
+ * masuk, di halaman publik transparan (/transparansi, /dasbor, /m, /s).
+ * Anonim tetap top-nav + shader gelap; login dapat kulit terang + sidebar.
+ * Gate login ada di BilahNav/Header, bukan di sini.
  */
 export function zonaDasbor(pathname: string): boolean {
-  return ["/beranda", "/bpbd", "/gudang", "/posko", "/tim", "/pengaturan", "/profil", "/admin", "/bantuan", "/audit"].some(
+  return ["/beranda", "/bpbd", "/gudang", "/posko", "/tim", "/pengaturan", "/profil", "/admin", "/bantuan", "/audit", "/transparansi", "/dasbor", "/m", "/s"].some(
+    (dasar) => pathname === dasar || pathname.startsWith(`${dasar}/`)
+  );
+}
+
+/** Rute publik transparan yang punya varian terang bila sudah masuk. */
+export function rutePublikTransparan(pathname: string): boolean {
+  return ["/transparansi", "/dasbor", "/m", "/s"].some(
     (dasar) => pathname === dasar || pathname.startsWith(`${dasar}/`)
   );
 }

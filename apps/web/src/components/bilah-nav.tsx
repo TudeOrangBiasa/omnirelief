@@ -297,12 +297,15 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
 
   const path = pathname ?? "/";
   const gelap = path === "/";
+  const masuk = peran !== "PUBLIK";
   const publik =
-    path === "/" ||
-    path === "/transparansi" ||
-    path === "/masuk" ||
-    path.startsWith("/m/") ||
-    path.startsWith("/s/");
+    !masuk && (
+      path === "/" ||
+      path === "/transparansi" ||
+      path === "/masuk" ||
+      path.startsWith("/m/") ||
+      path.startsWith("/s/")
+    );
   const sembunyi = sembunyikanTabBar(path);
   const diDasbor = zonaDasbor(path);
   const tab = NAVIGASI_TAB[peran];
@@ -395,7 +398,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
           </div>
         </header>
       )}
-      {diDasbor && (
+      {diDasbor && masuk && (
         <Sidebar
           variant="inset"
           collapsible="icon"

@@ -58,7 +58,7 @@ export default async function RootLayout({
             <SidebarProvider>
               <BilahNav peran={peran} nama={profil?.nama ?? null} />
               <SidebarInset className="bg-[#F4F7F9]">
-                <Header nama={profil?.nama ?? null} />
+                <Header nama={profil?.nama ?? null} masuk={peran !== "PUBLIK"} />
                 <div className="mx-auto w-full max-w-[1400px] min-w-0 flex-1 px-6 py-8 lg:px-10">
                   {children}
                 </div>
