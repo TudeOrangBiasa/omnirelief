@@ -159,9 +159,10 @@ export default function IsiDasbor({ masuk }: { masuk: boolean }) {
         </p>
       </div>
 
-      <section aria-label="Sumber dan masa data" className={`grid grid-cols-1 gap-2 rounded-none p-4 text-sm md:grid-cols-3 md:items-start md:gap-x-6 ${panelInfo}`}>
+      <section aria-label="Sumber dan masa data" className={`grid grid-cols-1 gap-2 rounded-none p-4 text-sm sm:grid-cols-2 md:items-start md:gap-x-6 lg:grid-cols-4 ${panelInfo}`}>
+        <p><span className={`font-mono text-[11px] tracking-[0.15em] uppercase ${teksLabel}`}>Penerbit</span><br /><span className="font-semibold">BPBD</span></p>
         <p><span className={`font-mono text-[11px] tracking-[0.15em] uppercase ${teksLabel}`}>Periode Pemantauan</span><br /><span className="font-semibold">Aktif</span></p>
-        <p><span className={`font-mono text-[11px] tracking-[0.15em] uppercase ${teksLabel}`}>Sumber Data</span><br /><span className="font-semibold">Ledger Terkunci BPBD</span></p>
+        <p><span className={`font-mono text-[11px] tracking-[0.15em] uppercase ${teksLabel}`}>Sumber Data</span><br /><span className="font-semibold">Ledger Terkunci</span></p>
         <p><span className={`font-mono text-[11px] tracking-[0.15em] uppercase ${teksLabel}`}>Waktu Pembaruan Terakhir</span><br /><span className="t-angka font-semibold tabular-nums">{status === "siap" && waktuMuat ? formatWaktuID(waktuMuat) : "Belum dimuat"}</span></p>
       </section>
 
