@@ -206,7 +206,7 @@ export default function IsiTransparansi({ masuk }: { masuk: boolean }) {
           Jatah, pengiriman, penerimaan, dan selisih tiap daerah. Angka tidak digabung antar posko.
         </p>
       </div>
-      <section aria-label="Sumber dan masa data" className={`flex flex-col gap-2 rounded-none p-4 text-sm md:flex-row md:flex-wrap md:items-center md:gap-x-6 ${panelInfo}`}>
+      <section aria-label="Sumber dan masa data" className={`grid grid-cols-1 gap-2 rounded-none p-4 text-sm md:grid-cols-3 md:items-start md:gap-x-6 ${panelInfo}`}>
         <p><span className={`font-mono text-[11px] tracking-[0.15em] uppercase ${teksLabel}`}>Periode Pemantauan</span><br /><span className="font-semibold">Aktif</span></p>
         <p><span className={`font-mono text-[11px] tracking-[0.15em] uppercase ${teksLabel}`}>Sumber Data</span><br /><span className="font-semibold">Ledger Terkunci BPBD</span></p>
         <p><span className={`font-mono text-[11px] tracking-[0.15em] uppercase ${teksLabel}`}>Waktu Pembaruan Terakhir</span><br /><span className="t-angka font-semibold tabular-nums">{status === "siap" && waktuMuat ? formatWaktuID(waktuMuat) : "Belum dimuat"}</span></p>

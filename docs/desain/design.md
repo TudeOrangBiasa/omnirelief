@@ -99,6 +99,10 @@ tanpa elevasi), **sorot-tunggal** (satu highlight primer per layar).
 8. Separator tick kecil rata tengah (40px, ~70% daftar) + padding atas-bawah
    seimbang; bukan garis full-bleed. Jeda antar-zona seragam — diukur di
    browser (bounding box + garis tengah), bukan dikira-kira.
+9. Strip info 2–5 item memakai grid kolom setara (`md:grid-cols-N`), bukan
+   flex berderet — flex menyisakan whitespace mati di kanan, grid mengisi
+   baris penuh dan trailing line tetap sejajar panel lain.
+   <!-- 2026-11-25: /gridlines strip sumber-masa-data 3 kolom -->
 
 ## Komponen (props tertutup, satu file per modul)
 
