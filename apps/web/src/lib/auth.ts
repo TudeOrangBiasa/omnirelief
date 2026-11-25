@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "./supabase/server";
 
-export type Peran = "BPBD" | "GUDANG" | "POSKO" | "TIM";
+export type Peran = "BPBD" | "GUDANG" | "POSKO" | "TIM" | "ADMIN";
 
 export type Profil = {
   id: string;

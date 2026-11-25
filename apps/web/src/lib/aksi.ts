@@ -8,6 +8,7 @@ export const AKSI_PERAN: Record<Peran, { label: string; href: Route }[]> = {
   GUDANG: [{ label: "Catat batch masuk", href: "/gudang" }],
   POSKO: [{ label: "Lapor penyintas", href: "/posko" }],
   TIM: [{ label: "Buka tugas distribusi", href: "/tim" }],
+  ADMIN: [{ label: "Buka admin", href: "/admin" }],
 };
 
 export function daftarAksi(peran: Peran): AksiItem[] {

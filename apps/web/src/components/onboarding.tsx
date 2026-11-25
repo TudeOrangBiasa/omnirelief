@@ -83,6 +83,18 @@ const LANGKAH: Record<Peran, Langkah[]> = {
       href: "/tim",
     },
   ],
+  ADMIN: [
+    {
+      judul: "1. Kelola pengguna dan peran",
+      aksiLabel: "Buka admin",
+      href: "/admin",
+    },
+    {
+      judul: "2. Unduh bukti audit CSV",
+      aksiLabel: "Buka admin",
+      href: "/admin",
+    },
+  ],
 };
 
 function kunciUntuk(peran: Peran): string {

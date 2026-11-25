@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export default async function BerandaPage() {
   const profil = await getProfil();
   if (!profil) redirect("/masuk");
-
+  if (profil.peran === "ADMIN") redirect("/admin");
 
   return (
     <main className="w-full max-w-[1400px] px-6 py-8 lg:px-10">

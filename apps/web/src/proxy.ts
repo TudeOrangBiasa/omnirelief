@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const TERLINDUNGI = [/^\/beranda/, /^\/bpbd/, /^\/gudang/, /^\/posko/, /^\/tim/];
+const TERLINDUNGI = [/^\/beranda/, /^\/bpbd/, /^\/gudang/, /^\/posko/, /^\/tim/, /^\/admin/];
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -41,5 +41,6 @@ export const config = {
     "/gudang/:path*",
     "/posko/:path*",
     "/tim/:path*",
+    "/admin",
   ],
 };

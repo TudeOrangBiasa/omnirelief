@@ -158,3 +158,35 @@ export function validasiPembatalan(body: Record<string, unknown>) {
     return { ok: false as const, galat: "manifest pengganti tidak valid" };
   return { ok: true as const, manifest_id, alasan, manifest_pengganti_id };
 }
+
+// Murni, tanpa Next. Dipakai rute admin saja.
+const PERAN_SAH = ["BPBD", "GUDANG", "POSKO", "TIM", "ADMIN"] as const;
+
+export function validasiPeranPengguna(body: Record<string, unknown>) {
+  const id = typeof body.id === "string" ? body.id : "";
+  if (id === "") return { ok: false as const, galat: "id pengguna wajib diisi" };
+  const peran = body.peran;
+  if (typeof peran !== "string" || !(PERAN_SAH as readonly string[]).includes(peran))
+    return { ok: false as const, galat: "peran tidak dikenal" };
+  return { ok: true as const, id, peran };
+}
+
+export function validasiAktifPengguna(body: Record<string, unknown>) {
+  const id = typeof body.id === "string" ? body.id : "";
+  if (id === "") return { ok: false as const, galat: "id pengguna wajib diisi" };
+  if (typeof body.aktif !== "boolean")
+    return { ok: false as const, galat: "aktif harus boolean" };
+  return { ok: true as const, id, aktif: body.aktif };
+}
+
+export function validasiUndang(body: Record<string, unknown>) {
+  const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
+    return { ok: false as const, galat: "email tidak valid" };
+  const nama = typeof body.nama === "string" ? body.nama.trim().slice(0, 40) : "";
+  if (nama === "") return { ok: false as const, galat: "nama wajib diisi" };
+  const peran = body.peran;
+  if (typeof peran !== "string" || !(PERAN_SAH as readonly string[]).includes(peran))
+    return { ok: false as const, galat: "peran tidak dikenal" };
+  return { ok: true as const, email, nama, peran };
+}
