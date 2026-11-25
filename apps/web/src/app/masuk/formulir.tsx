@@ -280,7 +280,7 @@ export default function FormulirMasuk({
             </Button>
           </form>
           {tiket && (
-            <div className="flex flex-col gap-3 rounded-none border border-[#0B1F2E]/15 bg-[#DCE8EE] p-4">
+            <div className="flex flex-col gap-3 rounded-none garis-rambut-diam bg-[#DCE8EE] p-4">
               <p className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[#0f79b8]">
                 Kode tiket reset
               </p>

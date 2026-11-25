@@ -290,7 +290,7 @@ export default function PusatNotifikasi() {
               )}
             </div>
             {bisu && (
-              <p role="status" className="border border-[#0B1F2E]/15 bg-[#DCE8EE] px-3 py-2 text-xs font-semibold text-[#0B1F2E]">
+              <p role="status" className="garis-rambut-diam bg-[#DCE8EE] px-3 py-2 text-xs font-semibold text-[#0B1F2E]">
                 Disenyapkan. Semua bunyi dan lencana dimatikan sementara. Matikan sakelar Senyapkan Semua Sementara di Pengaturan untuk menyalakan lagi.
               </p>
             )}

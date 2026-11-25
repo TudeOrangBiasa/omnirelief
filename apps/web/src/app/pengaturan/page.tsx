@@ -20,7 +20,7 @@ export const dynamic = "force-dynamic";
 const VERSI = process.env.NEXT_PUBLIC_APP_VERSION ?? "dev";
 const HASH = (process.env.VERCEL_GIT_COMMIT_SHA ?? "").slice(0, 7) || "lokal";
 
-const KARTU = "rounded-none border border-[#0B1F2E]/15 bg-white";
+const KARTU = "rounded-none garis-rambut-diam bg-white";
 const LABEL = "font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[#0f79b8]";
 
 export default async function PengaturanPage() {
@@ -105,7 +105,7 @@ export default async function PengaturanPage() {
                 Butuh bantuan cepat? Hubungi command center BPBD lewat jalur yang sudah dibagikan saat
                 pembekalan.
               </p>
-              <details className="rounded-none border border-[#0B1F2E]/15 p-3">
+              <details className="rounded-none garis-rambut-diam p-3">
                 <summary className="flex min-h-12 cursor-pointer items-center font-semibold">
                   Apakah ribet memakai aplikasi ini?
                 </summary>
@@ -114,7 +114,7 @@ export default async function PengaturanPage() {
                   menekan tombol status. Semua tombol setinggi 48px dan bisa dipakai offline.
                 </p>
               </details>
-              <details className="rounded-none border border-[#0B1F2E]/15 p-3">
+              <details className="rounded-none garis-rambut-diam p-3">
                 <summary className="flex min-h-12 cursor-pointer items-center font-semibold">
                   Data saya hilang saat sinyal putus?
                 </summary>
@@ -123,7 +123,7 @@ export default async function PengaturanPage() {
                   daring kembali.
                 </p>
               </details>
-              <details className="rounded-none border border-[#0B1F2E]/15 p-3">
+              <details className="rounded-none garis-rambut-diam p-3">
                 <summary className="flex min-h-12 cursor-pointer items-center font-semibold">
                   Lupa password?
                 </summary>

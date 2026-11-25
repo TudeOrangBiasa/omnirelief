@@ -100,6 +100,7 @@ const IKON_DUO: Record<NavItem["ikon"], Ikon> = {
   beranda: HomeDuoIcon,
   cek: MagnifierDuoIcon,
   transparansi: EyeDuoIcon,
+  dasbor: ChartDuoIcon,
   masuk: LoginDuoIcon,
   verifikasi: ClipboardCheckDuoIcon,
   kirim: SendSquareDuoIcon,

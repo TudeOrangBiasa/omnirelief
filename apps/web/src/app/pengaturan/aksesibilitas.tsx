@@ -119,7 +119,7 @@ export default function AksesibilitasForm() {
         <button
           type="button"
           onClick={aturUlang}
-          className="flex min-h-12 items-center rounded-none border border-[#0B1F2E]/15 bg-white px-4 text-xs font-bold uppercase tracking-wide text-[#0B1F2E] hover:bg-[#DCE8EE]"
+          className="flex min-h-12 items-center rounded-none garis-rambut-diam bg-white px-4 text-xs font-bold uppercase tracking-wide text-[#0B1F2E] hover:bg-[#DCE8EE]"
         >
           Reset ke Default
         </button>

@@ -86,7 +86,7 @@ export function PetaAlurRingkasan({
 }) {
   const posisi = TAHAP.findIndex((t) => t.peran === peran);
   return (
-    <div className="rounded-none border border-[#0B1F2E]/15 bg-white px-4 py-3">
+    <div className="rounded-none garis-rambut-diam bg-white px-4 py-3">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">

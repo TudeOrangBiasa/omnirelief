@@ -155,7 +155,7 @@ export const NAVIGASI_LAINNYA: Record<NavPeran, NavItem[]> = {
   PUBLIK: [
     { href: "/masuk", label: "Masuk", ikon: "masuk" },
     { href: "/bantuan", label: "Pusat bantuan", ikon: "bantuan" },
-    { href: "/transparansi", label: "Tentang", ikon: "transparansi" },
+    { href: "/transparansi", label: "Transparansi", ikon: "transparansi" },
   ],
   BPBD: [
     { href: "/bantuan", label: "Pusat bantuan", ikon: "bantuan" },

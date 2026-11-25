@@ -201,7 +201,7 @@ export default function NotifikasiForm() {
       <div role="radiogroup" aria-label="Frekuensi pemberitahuan" className="flex flex-col gap-2">
         <label
           htmlFor="notif-frek-seketika"
-          className="flex min-h-12 cursor-pointer items-center gap-3 border border-[#0B1F2E]/15 bg-white px-4 py-2 has-checked:border-[#0f79b8] has-checked:bg-[#DCE8EE]/40 has-disabled:cursor-not-allowed has-disabled:opacity-50"
+          className="flex min-h-12 cursor-pointer items-center gap-3 garis-rambut-diam bg-white px-4 py-2 has-checked:border-[#0f79b8] has-checked:bg-[#DCE8EE]/40 has-disabled:cursor-not-allowed has-disabled:opacity-50"
         >
           <input
             id="notif-frek-seketika"
@@ -220,7 +220,7 @@ export default function NotifikasiForm() {
         </label>
         <label
           htmlFor="notif-frek-perjam"
-          className="flex min-h-12 cursor-pointer items-center gap-3 border border-[#0B1F2E]/15 bg-white px-4 py-2 has-checked:border-[#0f79b8] has-checked:bg-[#DCE8EE]/40 has-disabled:cursor-not-allowed has-disabled:opacity-50"
+          className="flex min-h-12 cursor-pointer items-center gap-3 garis-rambut-diam bg-white px-4 py-2 has-checked:border-[#0f79b8] has-checked:bg-[#DCE8EE]/40 has-disabled:cursor-not-allowed has-disabled:opacity-50"
         >
           <input
             id="notif-frek-perjam"
@@ -247,7 +247,7 @@ export default function NotifikasiForm() {
         <button
           type="button"
           onClick={aturUlang}
-          className="flex min-h-12 items-center rounded-none border border-[#0B1F2E]/15 bg-white px-4 text-xs font-bold uppercase tracking-wide text-[#0B1F2E] hover:bg-[#DCE8EE]"
+          className="flex min-h-12 items-center rounded-none garis-rambut-diam bg-white px-4 text-xs font-bold uppercase tracking-wide text-[#0B1F2E] hover:bg-[#DCE8EE]"
         >
           Reset ke Default
         </button>

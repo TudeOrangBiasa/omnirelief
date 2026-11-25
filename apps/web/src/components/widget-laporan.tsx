@@ -1,4 +1,5 @@
 "use client";
+import type { ReactNode } from "react";
 import type { AksiItem } from "@/lib/aksi";
 import type { Route } from "next";
 
@@ -52,7 +53,7 @@ export function BilahPerintah({
   return (
     <section
       aria-label={label}
-      className="flex flex-col gap-2 rounded-none border border-[#0B1F2E]/15 bg-white p-3 sm:flex-row sm:items-center"
+      className="flex flex-col gap-2 rounded-none garis-rambut-diam bg-white p-3 sm:flex-row sm:items-center"
     >
       <Button
         variant={aksi.varian ?? "default"}
@@ -243,6 +244,31 @@ export function KotakKosong({
       >
         {aksiLabel}
       </Button>
+    </div>
+  );
+}
+
+/**
+ * Bingkai sudut untuk CTA empty state. Empat siku L menempel tepat di
+ * sudut tombol (bukan teks ASCII) sehingga selalu sejajar grid.
+ */
+export function TombolSudut({ children }: { children: ReactNode }) {
+  const sudut = [
+    "top-0 left-0 border-t-2 border-l-2",
+    "top-0 right-0 border-t-2 border-r-2",
+    "bottom-0 left-0 border-b-2 border-l-2",
+    "right-0 bottom-0 border-r-2 border-b-2",
+  ];
+  return (
+    <div className="relative p-2">
+      {sudut.map((posisi) => (
+        <span
+          key={posisi}
+          aria-hidden="true"
+          className={`pointer-events-none absolute h-3 w-3 ${posisi} border-[#0B1F2E]/40`}
+        />
+      ))}
+      {children}
     </div>
   );
 }

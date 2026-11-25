@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 const LABEL =
   "font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[#0f79b8]";
-const KARTU = "rounded-none border border-[#0B1F2E]/15 bg-white";
+const KARTU = "rounded-none garis-rambut-diam bg-white";
 const TOMBOL_AKTIF =
   "min-h-12 rounded-none bg-[#0B1F2E] px-4 text-sm font-semibold text-white";
 const TOMBOL_BIASA =
@@ -331,7 +331,7 @@ export default function BantuanPage() {
         </Artikel>
       </div>
 
-      <p id="bantuan-kosong" className="mt-6 hidden rounded-none border border-[#0B1F2E]/15 bg-white p-5 text-sm text-[#0B1F2E]">
+      <p id="bantuan-kosong" className="mt-6 hidden rounded-none garis-rambut-diam bg-white p-5 text-sm text-[#0B1F2E]">
         Tidak ada artikel yang cocok. Coba kata kunci lain atau pilih kategori
         Semua.
       </p>

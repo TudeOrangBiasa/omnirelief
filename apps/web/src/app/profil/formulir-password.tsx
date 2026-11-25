@@ -131,7 +131,7 @@ export default function FormulirPassword({
             </p>
           )}
         </div>
-        <label className="flex min-h-12 cursor-pointer items-start gap-3 rounded-none border border-[#0B1F2E]/15 p-3 text-sm">
+        <label className="flex min-h-12 cursor-pointer items-start gap-3 rounded-none garis-rambut-diam p-3 text-sm">
           <input
             type="checkbox"
             checked={yakin}

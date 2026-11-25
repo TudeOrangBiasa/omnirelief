@@ -382,7 +382,7 @@ export default async function AuditPage({
           <form
             method="get"
             action="/audit"
-            className="mt-6 flex flex-col gap-2 rounded-none border border-[#0B1F2E]/15 bg-[#DCE8EE] p-3"
+            className="mt-6 flex flex-col gap-2 rounded-none garis-rambut-diam bg-[#DCE8EE] p-3"
           >
             <div className="flex flex-col gap-2 sm:flex-row">
               <div className="relative flex-1">

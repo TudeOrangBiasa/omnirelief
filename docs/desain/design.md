@@ -119,7 +119,8 @@ page lain; validasi murni tetap di `lib/validasi.ts`.
 ## Pages (sections berurutan → sorotan)
 
 `/` hero+kode+CTA, statistik, 4 janji, 3 langkah, footer, CTA bawah.
-`/transparansi` filter/cari, kartu selisih + badge, empty+reset.
+`/dasbor` KPI 4 sel, strip arus (dikirim/diterima/di jalan) + sebaran kritis/kejar/tuntas, prioritas 5 teratas, daftar saring+urut, CSV. Satu-satunya layar bergaya dasbor.
+`/transparansi` ledger publik: kode MNF/DNT, filter/cari, kartu selisih + badge, empty+reset. Bukan dasbor, tanpa KPI eksekutif.
 `/m/[kode]` header TERKUNCI+QR+salin, tabel item-batch, timeline, kartu
 batal/merah + ketidaksesuaian/kuning. `/s/[kode]` header+izin sumber,
 progress "X dari Y", daftar pemakai. `/masuk` judul, email+password+ingat,
@@ -207,7 +208,7 @@ log audit, danger ketik.
 - **Kata status koneksi adalah "Daring" (pasangan "Luring"), bukan "Online".**
   Why: keputusan eksplisit user, menggantikan "Online" 2026-11-23.
   <!-- 2026-11-24: /whips "ganti teks Online menjadi Daring"; write all -->
-- **Keputusan konflik 2026-11-24 (final sampai diubah user): (a) operasional tetap `rounded-none` — radius 12–16 design.md hanya untuk halaman publik; (b) `#0B1F2E`/`#DCE8EE`/`#1B7FBF` tetap literal di komponen operasional — token `--tinta`/`--es`/`--aksen` di `globals.css` bernilai sama untuk pemakaian baru; (c) trik area sentuh `after:-inset-*` sah untuk kontrol h-9/w-7.**
+- **Keputusan konflik 2026-11-25 (final sampai diubah user): kotak hairline TIDAK pakai `border`, melainkan cincin bayangan `garis-rambut`/`garis-rambut-diam` (`box-shadow` 1px). Token bayangan sudah ada di `globals.css` sejak awal; yang salah adalah 41 pemakaian `border-[#0B1F2E]/15` manual di komponen — sudah dimigrasi. `border` tersisa hanya untuk pemisah 1px fungsional (thead lengket, hairline tabel, divider) dan blok aksen solid.**
 
 ## Garis tepi (gridlines 2026-11-24, diukur probe + mata)
 

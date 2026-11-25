@@ -331,6 +331,9 @@ export default function IsiBeranda({
           Halo, {nama}. Rangkuman kunjungan terakhir
           {baru > 0 ? `: ${baru} pembaruan baru` : ""}
         </h2>
+        <p className="mt-1 font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
+          Angka hari ini · {new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric" }).format(new Date())}
+        </p>
         {status === "memuat" && (
           <div role="status" aria-label="Memuat ringkasan" className="mt-3 grid grid-cols-1 gap-0 sm:grid-cols-3">
             {[0, 1, 2].map((i) => (

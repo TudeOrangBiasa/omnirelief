@@ -149,7 +149,7 @@ export default function Onboarding({ peran }: { peran: Peran }) {
     return (
       <section
         aria-label="Panduan singkat"
-        className="border border-[#0B1F2E]/15 bg-white"
+        className="garis-rambut-diam bg-white"
       >
         <div className="flex flex-wrap items-center justify-between gap-3 p-4">
           <div>
@@ -177,7 +177,7 @@ export default function Onboarding({ peran }: { peran: Peran }) {
   return (
     <section
       aria-label="Panduan singkat"
-      className="border border-[#0B1F2E]/15 bg-white"
+      className="garis-rambut-diam bg-white"
     >
       <div className="border-b border-[#0B1F2E]/10 bg-[#DCE8EE] p-4">
         <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
