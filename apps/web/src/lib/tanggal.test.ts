@@ -103,3 +103,19 @@ describe("formatWaktuID", () => {
     expect(formatWaktuID(new Date("2026-11-25T13:29:00+08:00"))).toContain("2026");
   });
 });
+
+describe("tepi tanggal", () => {
+  it("formatHariLokal kembalikan mentah bila bukan tanggal", () => {
+    expect(formatHariLokal("bukan-tanggal")).toBe("bukan-tanggal");
+  });
+  it("jamSejak NaN bila ISO rusak", () => {
+    expect(jamSejak("bukan-tanggal")).toBeNaN();
+  });
+  it("persenPemenuhan nol bila input tak hingga", () => {
+    expect(persenPemenuhan(Number.NaN, 5)).toBe(0);
+    expect(persenPemenuhan(0, 0)).toBe(0);
+  });
+  it("sisaHariKalender NaN bila tanggal rusak", () => {
+    expect(sisaHariKalender("xx")).toBeNaN();
+  });
+});

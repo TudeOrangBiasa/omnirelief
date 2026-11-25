@@ -7,4 +7,12 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
+  test: {
+    coverage: {
+      provider: "v8",
+      include: ["src/lib/**/*.ts"],
+      exclude: ["src/lib/**/*.test.ts"],
+      thresholds: { statements: 80 },
+    },
+  },
 });

@@ -38,6 +38,7 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@vitest/coverage-v8": "^5",
     "oxlint": "^1.94.0",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
