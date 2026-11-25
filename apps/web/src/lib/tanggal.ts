@@ -32,6 +32,11 @@ export function formatTanggalLokal(iso: string): string {
   return `${fmtHari.format(d)}, ${jam} ${namaZona()}`;
 }
 
+/** Date -> "25 Nov 2026, 13.29". Untuk cap waktu pembaruan dasbor. Murni. */
+export function formatWaktuID(tanggal: Date): string {
+  return tanggal.toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" });
+}
+
 /** "2026-11-21" -> "21 Nov 2026". Untuk tanggal tanpa jam (kedaluwarsa). */
 export function formatHariLokal(iso: string): string {
   const d = new Date(iso.length <= 10 ? `${iso}T00:00:00` : iso);

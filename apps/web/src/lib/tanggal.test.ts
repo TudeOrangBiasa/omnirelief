@@ -3,6 +3,7 @@ import {
   catatanRamah,
   formatHariLokal,
   formatTanggalLokal,
+  formatWaktuID,
   jamSejak,
   labelStatusRiwayat,
   persenPemenuhan,
@@ -94,5 +95,11 @@ describe("persenPemenuhan", () => {
 
   it("mentok di 100", () => {
     expect(persenPemenuhan(100, 150)).toBe(100);
+  });
+});
+
+describe("formatWaktuID", () => {
+  it("memformat Date ala id-ID", () => {
+    expect(formatWaktuID(new Date("2026-11-25T13:29:00+08:00"))).toContain("2026");
   });
 });

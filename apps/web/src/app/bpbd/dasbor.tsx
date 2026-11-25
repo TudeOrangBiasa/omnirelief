@@ -34,6 +34,7 @@ import { Textarea } from "@omnirelief/ui/components/textarea";
 import { cn } from "@omnirelief/ui/lib/utils";
 import { baris } from "@/lib/supabase/baris";
 import { persenPemenuhan } from "@/lib/tanggal";
+import { selCsv } from "@/lib/csv";
 import { BantuanIstilah } from "@/components/bantuan-istilah";
 import { BilahHalaman, BilahMassal, BilahSaring, TombolUrut } from "@/components/kontrol-tabel";
 import { BarisSegarkan } from "@/components/kepala-halaman";
@@ -68,10 +69,6 @@ function galatDari(data: unknown, bawaan: string): string {
     return String(data.galat);
   }
   return bawaan;
-}
-
-function selCsv(nilai: string | number): string {
-  return `"${String(nilai).replace(/"/g, '""')}"`;
 }
 
 function KartuMuat() {

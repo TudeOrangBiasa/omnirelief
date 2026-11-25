@@ -39,9 +39,10 @@ import {
 } from "@omnirelief/ui/components/table";
 import { baris, tunggal } from "@/lib/supabase/baris";
 import { catatanRamah, formatHariLokal, formatTanggalLokal, labelStatusRiwayat } from "@/lib/tanggal";
+import { kulitPublik } from "@/lib/kulit";
+import { CangkangPublik } from "@/components/cangkang-publik";
 import { BantuanIstilah } from "@/components/bantuan-istilah";
 import TombolSalin from "@/components/tombol-salin";
-import { ShaderBackground } from "@/components/motion/shader-background";
 
 type StatusMuat = "memuat" | "siap" | "kosong" | "gagal";
 
@@ -161,8 +162,7 @@ export default function IsiManifest({
   const lapor = manifest ? baris<LaporRow>(manifest.ketidaksesuaian) : [];
   const dibatalkan = manifest?.status === "DIBATALKAN";
 
-  const teksJudul = masuk ? "text-foreground" : "text-white";
-  const teksRedup = masuk ? "text-muted-foreground" : "text-white/70";
+  const { teksJudul, teksRedup } = kulitPublik(masuk);
 
   const isi = (
     <>
@@ -427,17 +427,9 @@ export default function IsiManifest({
 
   if (!masuk) {
     return (
-      <div className="relative min-h-screen w-full overflow-x-hidden">
-        <ShaderBackground
-          variant="mesh-gradient"
-          colors={["#030D14", "#082032", "#0F3B5F", "#0f79b8"]}
-          aria-hidden
-          className="pointer-events-none fixed inset-0 h-screen w-screen bg-[#030D14] print:hidden"
-        />
-        <main className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 p-6 pb-28 print:min-h-0 print:bg-white md:pb-6">
-          <div className="relative flex min-h-0 flex-col gap-6">{isi}</div>
-        </main>
-      </div>
+      <CangkangPublik lebar="lebar">
+        {isi}
+      </CangkangPublik>
     );
   }
 

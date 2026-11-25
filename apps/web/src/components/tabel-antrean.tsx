@@ -15,6 +15,7 @@ import {
   TableRow,
 } from "@omnirelief/ui/components/table";
 import { jamSejak } from "@/lib/tanggal";
+import { selCsv } from "@/lib/csv";
 import { BilahHalaman, PilihKolom } from "./kontrol-tabel";
 
 export type Antrean = {
@@ -48,10 +49,6 @@ function umurDari(iso: string): string {
   const jam = Math.floor(menit / 60);
   if (jam < 24) return `${jam} jam lalu`;
   return `${Math.floor(jam / 24)} hari lalu`;
-}
-
-function selCsv(nilai: string | number): string {
-  return `"${String(nilai).replace(/"/g, '""')}"`;
 }
 
 type KunciSortir = "umur" | "total";

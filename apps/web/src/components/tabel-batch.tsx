@@ -15,16 +15,12 @@ import {
   TableRow,
 } from "@omnirelief/ui/components/table";
 import { sisaHariKalender } from "@/lib/tanggal";
+import { selCsv } from "@/lib/csv";
 import type { GudangBatchRow } from "@/lib/supabase/baris";
 import TombolSalin from "./tombol-salin";
 import { BilahHalaman, PilihKolom } from "./kontrol-tabel";
 
 export type KunciUrutBatch = "kode" | "barang" | "sisa" | "kedaluwarsa";
-
-function selCsv(nilai: string | number): string {
-  return `"${String(nilai).replace(/"/g, '""')}"`;
-}
-
 const KOLOM = [
   { kunci: "kode", label: "Kode" },
   { kunci: "barang", label: "Barang" },

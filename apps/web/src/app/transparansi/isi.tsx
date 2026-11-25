@@ -17,8 +17,11 @@ import {
 import { Input } from "@omnirelief/ui/components/input";
 import { Skeleton } from "@omnirelief/ui/components/skeleton";
 import { baris, type DashboardRow } from "@/lib/supabase/baris";
+import { selCsv } from "@/lib/csv";
+import { formatWaktuID } from "@/lib/tanggal";
+import { kulitPublik } from "@/lib/kulit";
 import TombolKeAtas from "@/components/tombol-ke-atas";
-import { ShaderBackground } from "@/components/motion/shader-background";
+import { CangkangPublik } from "@/components/cangkang-publik";
 import { normalisasiKode, ruteKode } from "@/lib/kode";
 import Logo from "@/components/logo";
 
@@ -41,15 +44,6 @@ function KartuMuat() {
 }
 
 const KUNCI_RIWAYAT_CARI = "omnirelief-transparansi-cari";
-
-function selCsv(nilai: string | number): string {
-  const teks = String(nilai);
-  return /[",\n]/.test(teks) ? `"${teks.replace(/"/g, '""')}"` : teks;
-}
-
-function formatWaktuID(tanggal: Date): string {
-  return tanggal.toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" });
-}
 
 function persenTerima(butuh: number, diterima: number) {
    if (butuh <= 0) return diterima > 0 ? 100 : 0;
@@ -175,27 +169,17 @@ export default function IsiTransparansi({ masuk }: { masuk: boolean }) {
   }
 
   // Kulit ganda: anonim = shader gelap ikut landing, login = terang ikut dasbor.
-  const teksJudul = masuk ? "text-foreground" : "text-white";
-  const teksRedup = masuk ? "text-muted-foreground" : "text-white/70";
-  const teksLabel = masuk ? "text-muted-foreground" : "text-white/60";
-  const panelInfo = masuk
-    ? "garis-rambut-diam bg-white text-foreground"
-    : "rounded-none border border-white/20 bg-white/10 text-white";
-  const tombolPrimer = masuk
-    ? "bg-primary text-primary-foreground hover:bg-primary/90"
-    : "bg-white text-[#0B1F2E] hover:bg-white/90";
-  const tombolGhost = masuk
-    ? "border-input bg-white text-foreground hover:bg-slate-100"
-    : "border-white/40 bg-white/10 text-white hover:bg-white/20";
-  const inputKelas = masuk
-    ? "border-input bg-white text-foreground placeholder:text-muted-foreground"
-    : "border-white/25 bg-white/10 text-white placeholder:text-white/50";
-  const saringAktif = masuk
-    ? "bg-[#0B1F2E] text-white"
-    : "bg-white text-[#0B1F2E]";
-  const saringMati = masuk
-    ? "text-muted-foreground hover:text-foreground"
-    : "text-white/70 hover:text-white";
+  const {
+    teksJudul,
+    teksRedup,
+    teksLabel,
+    panelInfo,
+    tombolPrimer,
+    tombolGhost,
+    inputKelas,
+    saringAktif,
+    saringMati,
+  } = kulitPublik(masuk);
 
   const isi = (
     <>
@@ -479,14 +463,8 @@ export default function IsiTransparansi({ masuk }: { masuk: boolean }) {
 
   if (!masuk) {
     return (
-      <div className="relative ml-[calc(50%-50vw)] min-h-screen w-screen overflow-x-hidden">
-        <ShaderBackground
-          variant="mesh-gradient"
-          colors={["#030D14", "#082032", "#0F3B5F", "#0f79b8"]}
-          aria-hidden
-          className="pointer-events-none fixed inset-0 h-screen w-screen bg-[#030D14]"
-        />
-        <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-5 pt-12 pb-28 md:px-10 md:py-20">
+      <CangkangPublik
+        bilahAtas={
           <div className="flex w-full items-center justify-between pt-6 pb-4">
             <Link href="/" className="flex items-center gap-2" aria-label="OmniRelief beranda">
               <Logo varian="putih" tinggi={24} alt="" />
@@ -507,9 +485,10 @@ export default function IsiTransparansi({ masuk }: { masuk: boolean }) {
               </Link>
             </span>
           </div>
-          <div className="relative flex min-h-0 flex-col gap-8">{isi}</div>
-        </main>
-      </div>
+        }
+      >
+        {isi}
+      </CangkangPublik>
     );
   }
 
