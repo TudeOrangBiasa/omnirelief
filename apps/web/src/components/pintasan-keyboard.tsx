@@ -359,7 +359,7 @@ export default function PintasanKeyboard({
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-1">
-            <label htmlFor="cari-bantuan" className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+            <label htmlFor="cari-bantuan" className="t-label text-muted-foreground">
               Cari fitur atau pengaturan
             </label>
             <Input
@@ -431,7 +431,7 @@ export default function PintasanKeyboard({
                       >
                         <span className="text-sm font-semibold">
                           {sorot(g.judul, kata)}
-                          {g.aksi && <span className="ml-2 font-mono text-[11px] uppercase tracking-widest opacity-70">Aksi</span>}
+                          {g.aksi && <span className="ml-2 t-label opacity-70">Aksi</span>}
                         </span>
                         <span className="text-xs text-muted-foreground">
                           {sorot(g.deskripsi, kata)}

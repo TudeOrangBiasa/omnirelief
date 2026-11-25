@@ -165,7 +165,7 @@ export default function Onboarding({ peran }: { peran: Peran }) {
       >
         <div className="flex flex-wrap items-center justify-between gap-3 p-4">
           <div>
-            <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
+            <p className="t-label text-[#0B1F2E]/70">
               Panduan singkat
             </p>
             <p className="mt-1 text-sm font-bold text-[#0B1F2E]">
@@ -192,7 +192,7 @@ export default function Onboarding({ peran }: { peran: Peran }) {
       className="garis-rambut-diam bg-white"
     >
       <div className="border-b border-[#0B1F2E]/10 bg-[#DCE8EE] p-4">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
+        <p className="t-label text-[#0B1F2E]/70">
           Panduan singkat
         </p>
         <div className="mt-1 flex flex-wrap items-center justify-between gap-3">

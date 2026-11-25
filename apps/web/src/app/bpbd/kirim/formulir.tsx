@@ -316,15 +316,15 @@ function IsiFormulirKirim() {
       </div>
       <section aria-label="Ringkasan stok" className="grid grid-cols-3 gap-3 rounded-none border bg-[#DCE8EE] p-4">
         <div className="border bg-card p-3">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Batch tersedia</p>
+          <p className="t-label text-muted-foreground">Batch tersedia</p>
           <p className="text-4xl font-light tabular-nums text-primary">{batch.length}</p>
         </div>
         <div className="border bg-card p-3">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Paket tersedia</p>
+          <p className="t-label text-muted-foreground">Paket tersedia</p>
           <p className="text-4xl font-light tabular-nums text-primary">{batch.reduce((s, b) => s + Math.max(0, b.sisa), 0)}</p>
         </div>
         <div className="border bg-card p-3">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Posko tujuan</p>
+          <p className="t-label text-muted-foreground">Posko tujuan</p>
           <p className="text-4xl font-light tabular-nums text-primary">{posko.length}</p>
         </div>
       </section>
@@ -384,15 +384,15 @@ function IsiFormulirKirim() {
                 </DialogHeader>
                 <dl className="flex flex-col gap-2 text-sm">
                   <div className="flex flex-col gap-1 border p-3">
-                    <dt className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Posko tujuan</dt>
+                    <dt className="t-label text-muted-foreground">Posko tujuan</dt>
                     <dd className="font-semibold">{poskoTujuan ? `${poskoTujuan.nama} (${poskoTujuan.wilayah})` : "-"}</dd>
                   </div>
                   <div className="flex flex-col gap-1 border p-3">
-                    <dt className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Tim distribusi</dt>
+                    <dt className="t-label text-muted-foreground">Tim distribusi</dt>
                     <dd className="font-semibold">{tim.trim() === "" ? "-" : tim.trim()}</dd>
                   </div>
                   <div className="flex flex-col gap-1 border p-3">
-                    <dt className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Estimasi waktu check-in</dt>
+                    <dt className="t-label text-muted-foreground">Estimasi waktu check-in</dt>
                     <dd className="font-semibold">Sekitar {cekMasukTeks}</dd>
                   </div>
                 </dl>
@@ -400,9 +400,9 @@ function IsiFormulirKirim() {
                   <Table>
                     <TableHeader className="bg-[#0B1F2E]">
                       <TableRow className="hover:bg-[#0B1F2E]">
-                        <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Barang</TableHead>
-                        <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Kode batch</TableHead>
-                        <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Jumlah</TableHead>
+                        <TableHead className="t-label text-white">Barang</TableHead>
+                        <TableHead className="t-label text-white">Kode batch</TableHead>
+                        <TableHead className="t-label text-white">Jumlah</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -535,11 +535,11 @@ function IsiFormulirKirim() {
               <Table>
                 <TableHeader className="bg-[#0B1F2E]">
                   <TableRow className="hover:bg-[#0B1F2E]">
-                    <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Kode</TableHead>
-                    <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Barang</TableHead>
-                    <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Sisa</TableHead>
-                    <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Kedaluwarsa</TableHead>
-                    <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Aksi</TableHead>
+                    <TableHead className="t-label text-white">Kode</TableHead>
+                    <TableHead className="t-label text-white">Barang</TableHead>
+                    <TableHead className="t-label text-white">Sisa</TableHead>
+                    <TableHead className="t-label text-white">Kedaluwarsa</TableHead>
+                    <TableHead className="t-label text-white">Aksi</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

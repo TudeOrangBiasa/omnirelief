@@ -160,7 +160,7 @@ export default function FormulirPosko() {
           ] as const
         ).map(([label, nilai]) => (
           <div key={label} className="border bg-card p-3">
-            <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">{label}</p>
+            <p className="t-label text-muted-foreground">{label}</p>
             <p className="text-2xl font-light tabular-nums text-primary">{nilai}</p>
           </div>
         ))}

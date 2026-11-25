@@ -134,7 +134,7 @@ function lolosRentang(waktu: string, rentang: FilterRentang, kini: number): bool
 
 function kelasStatus(status: string): string {
   const dasar =
-    "inline-flex min-h-12 items-center rounded-none border px-2 font-mono text-[11px] uppercase tracking-widest tabular-nums";
+    "inline-flex min-h-12 items-center rounded-none border px-2 t-label tabular-nums";
   if (status === "DITERIMA") return `${dasar} border-green-700/40 bg-green-50 text-green-800`;
   if (status === "DIPUBLIKASIKAN") return `${dasar} border-[#0f79b8]/40 bg-[#DCE8EE] text-[#0B1F2E]`;
   if (status === "PERLU_DICEK" || status === "DARURAT")
@@ -309,7 +309,7 @@ export default async function AuditPage({
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card className="rounded-none border border-slate-200 bg-white shadow-xs">
           <CardHeader>
-            <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
+            <p className="t-label text-[#0B1F2E]/70">
               Total Log Tercatat
             </p>
             <CardTitle className="text-3xl font-bold tabular-nums text-[#0B1F2E]">
@@ -322,7 +322,7 @@ export default async function AuditPage({
         </Card>
         <Card className="rounded-none border border-slate-200 bg-white shadow-xs">
           <CardHeader>
-              <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
+              <p className="t-label text-[#0B1F2E]/70">
               Log Manifest
             </p>
             <CardTitle className="text-3xl font-bold tabular-nums text-[#0B1F2E]">
@@ -335,7 +335,7 @@ export default async function AuditPage({
         </Card>
         <Card className="rounded-none border border-slate-200 bg-white shadow-xs">
           <CardHeader>
-              <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
+              <p className="t-label text-[#0B1F2E]/70">
               Log Sumbangan
             </p>
             <CardTitle className="text-3xl font-bold tabular-nums text-[#0B1F2E]">
@@ -348,7 +348,7 @@ export default async function AuditPage({
         </Card>
         <Card className="rounded-none border border-slate-200 bg-white shadow-xs">
           <CardHeader>
-              <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
+              <p className="t-label text-[#0B1F2E]/70">
               Status Integritas Hash
             </p>
             <CardTitle
@@ -371,7 +371,7 @@ export default async function AuditPage({
 
       {galatMuat ? (
         <div className="mt-6 rounded-none border border-dashed border-[#0B1F2E]/30 bg-white p-8 text-center">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Gagal</p>
+          <p className="t-label text-[#0B1F2E]/70">Gagal</p>
           <p className="mt-2 font-semibold text-[#0B1F2E]">{galatMuat}</p>
           <a href="/audit" className={cn(buttonVariants(), "mt-4 min-h-12 rounded-none")}>
             Coba lagi
@@ -412,7 +412,7 @@ export default async function AuditPage({
               </Button>
             </div>
             <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Jenis log">
-                <span className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
+                <span className="t-label text-[#0B1F2E]/70">
                 Jenis:
               </span>
               {PILIHAN_JENIS.map((p) => (
@@ -422,8 +422,8 @@ export default async function AuditPage({
                   aria-pressed={jenis === p.nilai}
                   className={
                     jenis === p.nilai
-                      ? "inline-flex min-h-12 items-center rounded-none bg-[#0B1F2E] px-4 font-mono text-[11px] uppercase tracking-widest text-white"
-                      : "inline-flex min-h-12 items-center rounded-none border border-[#0B1F2E]/30 bg-white px-4 font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E] hover:bg-white"
+                      ? "inline-flex min-h-12 items-center rounded-none bg-[#0B1F2E] px-4 t-label text-white"
+                      : "inline-flex min-h-12 items-center rounded-none border border-[#0B1F2E]/30 bg-white px-4 t-label text-[#0B1F2E] hover:bg-white"
                   }
                 >
                   {p.label}
@@ -431,7 +431,7 @@ export default async function AuditPage({
               ))}
             </div>
             <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Rentang waktu">
-                <span className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
+                <span className="t-label text-[#0B1F2E]/70">
                 Rentang:
               </span>
               {PILIHAN_RENTANG.map((p) => (
@@ -441,8 +441,8 @@ export default async function AuditPage({
                   aria-pressed={rentang === p.nilai}
                   className={
                     rentang === p.nilai
-                      ? "inline-flex min-h-12 items-center rounded-none bg-[#0B1F2E] px-4 font-mono text-[11px] uppercase tracking-widest text-white"
-                      : "inline-flex min-h-12 items-center rounded-none border border-[#0B1F2E]/30 bg-white px-4 font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E] hover:bg-white"
+                      ? "inline-flex min-h-12 items-center rounded-none bg-[#0B1F2E] px-4 t-label text-white"
+                      : "inline-flex min-h-12 items-center rounded-none border border-[#0B1F2E]/30 bg-white px-4 t-label text-[#0B1F2E] hover:bg-white"
                   }
                 >
                   {p.label}
@@ -452,7 +452,7 @@ export default async function AuditPage({
             <div className="flex flex-wrap items-center gap-2">
               <label
                 htmlFor="per-halaman"
-                className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70"
+                className="t-label text-[#0B1F2E]/70"
               >
                 Baris per halaman:
               </label>
@@ -464,8 +464,8 @@ export default async function AuditPage({
                     aria-pressed={per === n}
                     className={
                       per === n
-                        ? "inline-flex min-h-12 items-center rounded-none bg-[#0B1F2E] px-4 font-mono text-[11px] uppercase tracking-widest text-white tabular-nums"
-                        : "inline-flex min-h-12 items-center rounded-none border border-[#0B1F2E]/30 bg-white px-4 font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E] tabular-nums hover:bg-white"
+                        ? "inline-flex min-h-12 items-center rounded-none bg-[#0B1F2E] px-4 t-label text-white tabular-nums"
+                        : "inline-flex min-h-12 items-center rounded-none border border-[#0B1F2E]/30 bg-white px-4 t-label text-[#0B1F2E] tabular-nums hover:bg-white"
                     }
                   >
                     {n}
@@ -475,7 +475,7 @@ export default async function AuditPage({
               <button
                 id="unduh-csv"
                 type="button"
-                className="inline-flex min-h-12 items-center rounded-none border border-[#0B1F2E]/30 bg-white px-4 font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E] hover:bg-[#0B1F2E]/5"
+                className="inline-flex min-h-12 items-center rounded-none border border-[#0B1F2E]/30 bg-white px-4 t-label text-[#0B1F2E] hover:bg-[#0B1F2E]/5"
               >
                 Unduh CSV Audit Log
               </button>
@@ -483,12 +483,12 @@ export default async function AuditPage({
           </form>
 
           <section aria-label="Log manifest" className="mt-6">
-            <h2 className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
+            <h2 className="t-label text-[#0B1F2E]/70">
               Log Manifest
             </h2>
             {logTampil.length === 0 ? (
               <div className="mt-2 rounded-none border border-dashed border-[#0B1F2E]/30 bg-white p-8 text-center">
-                <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
+                <p className="t-label text-[#0B1F2E]/70">
                   Kosong
                 </p>
                 <p className="mt-2 font-semibold text-[#0B1F2E]">Tidak ada log manifest yang cocok.</p>
@@ -503,22 +503,22 @@ export default async function AuditPage({
                 <Table id="tabel-log">
                   <TableHeader>
                     <TableRow className="bg-[#0B1F2E] hover:bg-[#0B1F2E]">
-                      <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">
+                      <TableHead className="t-label text-white">
                         Waktu
                       </TableHead>
-                      <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">
+                      <TableHead className="t-label text-white">
                         Kode
                       </TableHead>
-                      <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">
+                      <TableHead className="t-label text-white">
                         Status
                       </TableHead>
-                      <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">
+                      <TableHead className="t-label text-white">
                         Catatan
                       </TableHead>
-                      <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">
+                      <TableHead className="t-label text-white">
                         Pelaku
                       </TableHead>
-                      <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">
+                      <TableHead className="t-label text-white">
                         Hash
                       </TableHead>
                     </TableRow>
@@ -581,12 +581,12 @@ export default async function AuditPage({
           </section>
 
           <section aria-label="Log sumbangan" className="mt-8">
-            <h2 className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
+            <h2 className="t-label text-[#0B1F2E]/70">
               Log Sumbangan
             </h2>
             {batchTampil.length === 0 ? (
               <div className="mt-2 rounded-none border border-dashed border-[#0B1F2E]/30 bg-white p-8 text-center">
-                <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
+                <p className="t-label text-[#0B1F2E]/70">
                   Kosong
                 </p>
                 <p className="mt-2 font-semibold text-[#0B1F2E]">Tidak ada log sumbangan yang cocok.</p>
@@ -601,19 +601,19 @@ export default async function AuditPage({
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-[#0B1F2E] hover:bg-[#0B1F2E]">
-                      <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">
+                      <TableHead className="t-label text-white">
                         Kode
                       </TableHead>
-                      <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">
+                      <TableHead className="t-label text-white">
                         Jumlah
                       </TableHead>
-                      <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">
+                      <TableHead className="t-label text-white">
                         Tanggal Masuk
                       </TableHead>
-                      <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">
+                      <TableHead className="t-label text-white">
                         Sumber
                       </TableHead>
-                      <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">
+                      <TableHead className="t-label text-white">
                         Status
                       </TableHead>
                     </TableRow>

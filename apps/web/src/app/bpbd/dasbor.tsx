@@ -389,7 +389,7 @@ export default function DasborBpbd() {
       </section>
 
       <section aria-label="Perlu dicek" className="flex flex-col gap-2">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Pantau</p>
+        <p className="t-label text-[#0B1F2E]/70">Pantau</p>
         <div className="flex items-center gap-2">
           <h2 className="text-xl font-bold text-destructive">Perlu Dicek ({pantau.length})</h2>
           {pantau.length > 0 && <Badge variant="destructive">Perlu Dicek</Badge>}
@@ -454,7 +454,7 @@ export default function DasborBpbd() {
 
 
       <section id="antrean" aria-label="Antrean verifikasi" className="flex flex-col gap-2 scroll-mt-20">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Verifikasi</p>
+        <p className="t-label text-[#0B1F2E]/70">Verifikasi</p>
         <h2 className="text-xl font-bold text-[#0B1F2E]">Antrean verifikasi ({antrean.length})</h2>
         <p className="text-sm text-muted-foreground">
           <BantuanIstilah istilah="verifikasi" label="Verifikasi" />: setujui, minta revisi, atau
@@ -473,12 +473,12 @@ export default function DasborBpbd() {
           <Table>
             <TableHeader>
               <TableRow className="bg-[#0B1F2E] hover:bg-[#0B1F2E]">
-                <TableHead aria-label="Pilih" className="font-mono text-[11px] uppercase tracking-widest text-white">Pilih</TableHead>
-                <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Posko</TableHead>
-                <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Kategori rentan</TableHead>
-                <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Total</TableHead>
-                <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Umur antrean</TableHead>
-                <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Putusan</TableHead>
+                <TableHead aria-label="Pilih" className="t-label text-white">Pilih</TableHead>
+                <TableHead className="t-label text-white">Posko</TableHead>
+                <TableHead className="t-label text-white">Kategori rentan</TableHead>
+                <TableHead className="t-label text-white">Total</TableHead>
+                <TableHead className="t-label text-white">Umur antrean</TableHead>
+                <TableHead className="t-label text-white">Putusan</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -510,7 +510,7 @@ export default function DasborBpbd() {
       </section>
 
       <section aria-label="Prioritas kebutuhan" className="flex flex-col gap-2">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Kebutuhan</p>
+        <p className="t-label text-[#0B1F2E]/70">Kebutuhan</p>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <h2 className="flex-1 text-xl font-bold text-[#0B1F2E]">Prioritas kebutuhan</h2>
           {prioritas.length > 0 && (
@@ -547,7 +547,7 @@ export default function DasborBpbd() {
           </div>
         ) : prioritas.length === 0 ? (
           <div className="rounded-none border border-dashed border-[#0B1F2E]/25 bg-white/60 p-8">
-            <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Kosong</p>
+            <p className="t-label text-[#0B1F2E]/70">Kosong</p>
             <p className="mt-1 text-lg font-bold text-[#0B1F2E]">Belum ada data selisih</p>
             <p className="mt-1 text-sm text-muted-foreground">
               Tabel selisih tampil setelah ada snapshot yang disetujui dan manifest yang berjalan.

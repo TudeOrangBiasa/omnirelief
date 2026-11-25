@@ -331,7 +331,7 @@ export default function IsiBeranda({
           Halo, {nama}. Rangkuman kunjungan terakhir
           {baru > 0 ? `: ${baru} pembaruan baru` : ""}
         </h2>
-        <p className="mt-1 font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
+        <p className="mt-1 t-label text-[#0B1F2E]/70">
           Angka hari ini · {new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric" }).format(new Date())}
         </p>
         {status === "memuat" && (
@@ -370,7 +370,7 @@ export default function IsiBeranda({
         </div>
       </section>
       <section aria-label="Aktivitas terakhir">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Aktivitas</p>
+        <p className="t-label text-[#0B1F2E]/70">Aktivitas</p>
         <div className="flex flex-wrap items-center gap-2">
           <h2 className="text-xl font-bold text-[#0B1F2E]">Aktivitas terakhir</h2>
           {baru > 0 && <Badge variant="destructive">{baru} baru</Badge>}

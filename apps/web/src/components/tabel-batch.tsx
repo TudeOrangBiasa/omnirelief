@@ -162,7 +162,7 @@ export function TabelBatch({ rows }: { rows: GudangBatchRow[] }) {
               {tampilKolom.kode && (
                 <TableHead
                   aria-sort={kunciUrut === "kode" ? (arahUrut === "naik" ? "ascending" : "descending") : "none"}
-                  className="sticky left-0 border-r border-white/25 bg-[#0B1F2E] font-mono text-[11px] uppercase tracking-widest text-white"
+                  className="sticky left-0 border-r border-white/25 bg-[#0B1F2E] t-label text-white"
                 >
                   <button
                     type="button"
@@ -177,7 +177,7 @@ export function TabelBatch({ rows }: { rows: GudangBatchRow[] }) {
               {tampilKolom.barang && (
                 <TableHead
                   aria-sort={kunciUrut === "barang" ? (arahUrut === "naik" ? "ascending" : "descending") : "none"}
-                  className="font-mono text-[11px] uppercase tracking-widest text-white"
+                  className="t-label text-white"
                 >
                   <button
                     type="button"
@@ -192,7 +192,7 @@ export function TabelBatch({ rows }: { rows: GudangBatchRow[] }) {
               {tampilKolom.sisa && (
                 <TableHead
                   aria-sort={kunciUrut === "sisa" ? (arahUrut === "naik" ? "ascending" : "descending") : "none"}
-                  className="font-mono text-[11px] uppercase tracking-widest text-white"
+                  className="t-label text-white"
                 >
                   <button
                     type="button"
@@ -207,7 +207,7 @@ export function TabelBatch({ rows }: { rows: GudangBatchRow[] }) {
               {tampilKolom.kedaluwarsa && (
                 <TableHead
                   aria-sort={kunciUrut === "kedaluwarsa" ? (arahUrut === "naik" ? "ascending" : "descending") : "none"}
-                  className="font-mono text-[11px] uppercase tracking-widest text-white"
+                  className="t-label text-white"
                 >
                   <button
                     type="button"
@@ -219,7 +219,7 @@ export function TabelBatch({ rows }: { rows: GudangBatchRow[] }) {
                   </button>
                 </TableHead>
               )}
-              <TableHead className="sticky right-0 border-l border-white/25 bg-[#0B1F2E] font-mono text-[11px] uppercase tracking-widest text-white">Aksi</TableHead>
+              <TableHead className="sticky right-0 border-l border-white/25 bg-[#0B1F2E] t-label text-white">Aksi</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

@@ -216,7 +216,7 @@ export function TabelAntrean({
             <TableRow className="bg-[#0B1F2E] hover:bg-[#0B1F2E]">
               <TableHead
                 aria-label="Pilih"
-                className="sticky left-0 border-r border-white/25 bg-[#0B1F2E] font-mono text-[11px] uppercase tracking-widest text-white"
+                className="sticky left-0 border-r border-white/25 bg-[#0B1F2E] t-label text-white"
               >
                 <Checkbox
                   checked={semuaTerpilih}
@@ -226,13 +226,13 @@ export function TabelAntrean({
                 />
               </TableHead>
               {tampilKolom.posko && (
-                <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Posko</TableHead>
+                <TableHead className="t-label text-white">Posko</TableHead>
               )}
               {tampilKolom.kategori && (
-                <TableHead className="font-mono text-[11px] uppercase tracking-widest text-white">Kategori rentan</TableHead>
+                <TableHead className="t-label text-white">Kategori rentan</TableHead>
               )}
               {tampilKolom.total && (
-                <TableHead aria-sort={kunciSortir === "total" ? (arahSortir === "naik" ? "ascending" : "descending") : "none"} className="font-mono text-[11px] uppercase tracking-widest text-white">
+                <TableHead aria-sort={kunciSortir === "total" ? (arahSortir === "naik" ? "ascending" : "descending") : "none"} className="t-label text-white">
                   <button
                     type="button"
                     onClick={() => alihSortir("total")}
@@ -244,7 +244,7 @@ export function TabelAntrean({
                 </TableHead>
               )}
               {tampilKolom.umur && (
-                <TableHead aria-sort={kunciSortir === "umur" ? (arahSortir === "naik" ? "ascending" : "descending") : "none"} className="font-mono text-[11px] uppercase tracking-widest text-white">
+                <TableHead aria-sort={kunciSortir === "umur" ? (arahSortir === "naik" ? "ascending" : "descending") : "none"} className="t-label text-white">
                   <button
                     type="button"
                     onClick={() => alihSortir("umur")}
@@ -255,7 +255,7 @@ export function TabelAntrean({
                   </button>
                 </TableHead>
               )}
-              <TableHead className="sticky right-0 border-l border-white/25 bg-[#0B1F2E] font-mono text-[11px] uppercase tracking-widest text-white">Putusan</TableHead>
+              <TableHead className="sticky right-0 border-l border-white/25 bg-[#0B1F2E] t-label text-white">Putusan</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

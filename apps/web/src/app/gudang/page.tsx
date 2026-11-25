@@ -399,15 +399,15 @@ export default function GudangPage() {
         <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-[#0B1F2E]">Stok batch · FEFO</h2>
         <dl className="grid grid-cols-3 gap-3">
           <div className="border bg-card p-3">
-            <dt className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Batch tercatat</dt>
+            <dt className="t-label text-muted-foreground">Batch tercatat</dt>
             <dd className="text-4xl font-light tabular-nums text-primary">{batch.length}</dd>
           </div>
           <div className="border bg-card p-3">
-            <dt className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Paket siap kirim</dt>
+            <dt className="t-label text-muted-foreground">Paket siap kirim</dt>
             <dd className="text-4xl font-light tabular-nums text-primary">{batch.reduce((s, b) => s + Math.max(0, b.sisa), 0)}</dd>
           </div>
           <div className="border bg-card p-3">
-            <dt className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Kedaluwarsa &lt; 30 hari</dt>
+            <dt className="t-label text-muted-foreground">Kedaluwarsa &lt; 30 hari</dt>
             <dd className="text-4xl font-light tabular-nums text-primary">{batch.filter((b) => b.kedaluwarsa !== null && new Date(b.kedaluwarsa).getTime() < Date.now() + 30 * 24 * 3600 * 1000 && b.sisa > 0).length}</dd>
           </div>
         </dl>
@@ -441,7 +441,7 @@ export default function GudangPage() {
             aria-label="5 batch FEFO teratas, pakai duluan"
             className="flex flex-col gap-1 rounded-none garis-rambut-diam bg-white p-3"
           >
-            <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
+            <p className="t-label text-[#0B1F2E]/70">
               Pakai duluan · 5 teratas FEFO
             </p>
             <ol className="flex flex-col gap-1 text-sm tabular-nums">

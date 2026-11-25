@@ -164,15 +164,15 @@ export default function TugasTim() {
       />
       <section aria-label="Ringkasan tugas" className="grid grid-cols-3 gap-3 rounded-none border bg-[#DCE8EE] p-4">
         <div className="border bg-card p-3">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Tugas aktif</p>
+          <p className="t-label text-muted-foreground">Tugas aktif</p>
           <p className="text-4xl font-light tabular-nums text-primary">{tugas.length}</p>
         </div>
         <div className="border bg-card p-3">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Perlu check-in</p>
+          <p className="t-label text-muted-foreground">Perlu check-in</p>
           <p className={`text-4xl font-light tabular-nums ${perluDicek > 0 ? "text-destructive" : "text-primary"}`}>{perluDicek}</p>
         </div>
         <div className="border bg-card p-3">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Sudah tiba</p>
+          <p className="t-label text-muted-foreground">Sudah tiba</p>
           <p className="text-4xl font-light tabular-nums text-primary">{tugas.filter((t) => t.log_terakhir?.status === "TIBA").length}</p>
         </div>
       </section>

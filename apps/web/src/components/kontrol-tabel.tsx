@@ -46,7 +46,7 @@ export function PilihKolom<T extends string>({
         onClick={() => setBuka((v) => !v)}
         aria-expanded={buka}
         aria-controls={id}
-        className="flex min-h-12 w-full items-center gap-2 rounded-none px-4 font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70 sm:w-auto"
+        className="flex min-h-12 w-full items-center gap-2 rounded-none px-4 t-label text-[#0B1F2E]/70 sm:w-auto"
       >
         Kolom tampil
         <span aria-hidden="true" className={`text-base leading-none transition-transform ${buka ? "rotate-45" : ""}`}>+</span>
@@ -124,8 +124,8 @@ export function BilahSaring({
             aria-pressed={aktif === p.nilai}
             className={
               aktif === p.nilai
-                ? "min-h-12 rounded-none bg-[#0B1F2E] px-4 font-mono text-[11px] uppercase tracking-widest text-white"
-                : "min-h-12 rounded-none border border-[#0B1F2E]/30 bg-white px-4 font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E] hover:bg-white"
+                ? "min-h-12 rounded-none bg-[#0B1F2E] px-4 t-label text-white"
+                : "min-h-12 rounded-none border border-[#0B1F2E]/30 bg-white px-4 t-label text-[#0B1F2E] hover:bg-white"
             }
           >
             {p.label}
@@ -194,7 +194,7 @@ export function BilahHalaman({
         Menampilkan {awal}–{akhir} dari {total} data
       </p>
       <div className="flex items-center gap-2">
-        <label htmlFor={idPilih} className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Per halaman</label>
+        <label htmlFor={idPilih} className="t-label text-[#0B1F2E]/70">Per halaman</label>
         <select
           id={idPilih}
           value={perHalaman}

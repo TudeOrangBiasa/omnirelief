@@ -93,12 +93,12 @@ export function StripKpi({ label, item }: { label: string; item: KpiItem[] }) {
       {item.map((r) => (
         <div key={r.label} className="flex flex-col gap-1 p-4">
           <span className="text-4xl font-light tabular-nums text-[#0B1F2E]">{r.angka}</span>
-          <span className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
+          <span className="t-label text-[#0B1F2E]/70">
             {r.label}
           </span>
           <span className="text-xs text-[#0B1F2E]/70">{r.konteks}</span>
           {r.lencana ? (
-            <span className="mt-1 w-fit rounded-none bg-[#0B1F2E] px-2 py-0.5 font-mono text-[11px] uppercase tracking-widest text-white">
+            <span className="mt-1 w-fit rounded-none bg-[#0B1F2E] px-2 py-0.5 t-label text-white">
               {r.lencana}
             </span>
           ) : null}
@@ -144,7 +144,7 @@ export function GridAksiCepat({ label, aksi }: { label: string; aksi: AksiItem[]
   const router = useRouter();
   return (
     <section aria-label={label}>
-      <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">{label}</p>
+      <p className="t-label text-[#0B1F2E]/70">{label}</p>
       <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
         {aksi.map((a, i) => (
           <Button
@@ -202,7 +202,7 @@ export function DaftarAktivitas({ item }: { item: AktivitasItem[] }) {
             <CardContent className="-mt-2 text-sm text-muted-foreground">
               <p>{a.sub}</p>
               {a.waktuLabel !== "" && (
-                <p className="mt-1 font-mono text-[11px] uppercase tracking-widest">
+                <p className="mt-1 t-label">
                   {a.waktuLabel}
                 </p>
               )}
@@ -232,7 +232,7 @@ export function KotakKosong({
   const router = useRouter();
   return (
     <div className="rounded-none border border-dashed border-[#0B1F2E]/25 bg-white/60 p-8">
-      <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">{label}</p>
+      <p className="t-label text-[#0B1F2E]/70">{label}</p>
       <p className="mt-1 text-lg font-bold text-[#0B1F2E]">{judul}</p>
       <p className="mt-1 text-sm text-muted-foreground">{deskripsi}</p>
       <Button

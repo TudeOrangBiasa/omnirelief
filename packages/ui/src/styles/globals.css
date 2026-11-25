@@ -175,6 +175,14 @@
     text-transform: uppercase;
     letter-spacing: var(--tracking-micro);
   }
+  /* Label mikro operasional: persis font-mono text-[11px] uppercase tracking-widest.
+     Pakai ini, bukan arbitrary values. tracking 0.1em = tracking-widest. */
+  .t-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
   .section-napas {
     padding-block: var(--space-section);
   }

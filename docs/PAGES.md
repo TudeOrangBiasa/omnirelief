@@ -21,6 +21,6 @@ Sumber: Bab 10 dan U4 dokumen tim. Status UI dicatat agar migrasi shadcn konsist
 
 ## Aturan migrasi
 
-1. Urut backlog lint `no-arbitrary-values`, terbesar dulu. Terakhir: dasbor 0, bantuan 0, tugas 9, formulir 8, gudang 7, kirim 7.
-2. Satu halaman selesai artinya nol peringatan di file itu plus build hijau.
+1. Daftar putih `no-arbitrary-values` (tidak perlu nol): literal tinta/es `#0B1F2E`/`#DCE8EE`/`#1B7FBF` (keputusan 210b), label mikro `t-label`, tracking mikro `[0.15em]`/`[0.2em]`, `max-w-[1400px]` wadah. Selain itu tetap nol peringatan per file.
+2. Satu halaman selesai artinya nol peringatan di luar daftar putih plus build hijau.
 3. Komponen dari `@omnirelief/ui`, token dari theme, tanpa warna arbitrary baru.

@@ -16,7 +16,7 @@ export function KepalaHalaman({
 }) {
   const isi = (
     <>
-      <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
+      <p className="t-label text-[#0B1F2E]/70">
         {label}
       </p>
       <h1 className="mt-1 text-2xl font-bold text-[#0B1F2E]">{judul}</h1>

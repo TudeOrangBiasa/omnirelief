@@ -243,7 +243,7 @@ export default function IsiDasbor({ masuk }: { masuk: boolean }) {
             </section>
 
             <section aria-label="Butuh perhatian">
-              <p className={`font-mono text-[11px] uppercase tracking-widest ${teksRedup}`}>Prioritas kirim</p>
+              <p className={`t-label ${teksRedup}`}>Prioritas kirim</p>
               <h2 className={`t-h2 t-balance mt-1 ${teksJudul}`}>Butuh perhatian dulu</h2>
               {kritis.length === 0 ? (
                 <div role="status" className={`mt-3 rounded-none border border-dashed p-6 ${masuk ? "border-[#0B1F2E]/25 bg-white" : "border-white/30 bg-white/5"}`}>
@@ -259,7 +259,7 @@ export default function IsiDasbor({ masuk }: { masuk: boolean }) {
                         <div className="flex items-baseline gap-3">
                           <span aria-hidden="true" className="t-h2 t-angka text-[#0B1F2E]/30 tabular-nums">{String(i + 1).padStart(2, "0")}</span>
                           <div className="min-w-0 flex-1">
-                            <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">{p.wilayah}</p>
+                            <p className="t-label text-muted-foreground">{p.wilayah}</p>
                             <p className="truncate text-base font-bold text-[#0B1F2E]">{p.posko_nama}</p>
                           </div>
                           <Badge variant="destructive" className="shrink-0 rounded-none">Kurang {p.selisih}</Badge>
@@ -279,7 +279,7 @@ export default function IsiDasbor({ masuk }: { masuk: boolean }) {
 
             <section aria-label="Cari dan urutkan posko" className="flex flex-col gap-3">
               <div>
-                <p className={`font-mono text-[11px] uppercase tracking-widest ${teksRedup}`}>Semua posko</p>
+                <p className={`t-label ${teksRedup}`}>Semua posko</p>
                 <h2 className={`t-h2 t-balance mt-1 ${teksJudul}`}>Pemenuhan tiap daerah</h2>
               </div>
               <div className="relative flex gap-2 print:hidden">
@@ -307,14 +307,14 @@ export default function IsiDasbor({ masuk }: { masuk: boolean }) {
                     aria-pressed={filterStatus === o.nilai}
                     className={
                       filterStatus === o.nilai
-                        ? `inline-flex min-h-12 items-center rounded-none px-4 font-mono text-[11px] uppercase tracking-widest ${saringAktif}`
-                        : `inline-flex min-h-12 items-center rounded-none border px-4 font-mono text-[11px] uppercase tracking-widest ${masuk ? "border-input bg-white text-muted-foreground hover:text-foreground" : "border-white/25 bg-white/5 text-white/80 hover:bg-white/10"}`
+                        ? `inline-flex min-h-12 items-center rounded-none px-4 t-label ${saringAktif}`
+                        : `inline-flex min-h-12 items-center rounded-none border px-4 t-label ${masuk ? "border-input bg-white text-muted-foreground hover:text-foreground" : "border-white/25 bg-white/5 text-white/80 hover:bg-white/10"}`
                     }
                   >
                     {o.label}
                   </button>
                 ))}
-                <label htmlFor="urut-dasbor" className={`ml-auto font-mono text-[11px] uppercase tracking-widest ${teksRedup}`}>
+                <label htmlFor="urut-dasbor" className={`ml-auto t-label ${teksRedup}`}>
                   Urut
                 </label>
                 <select
@@ -354,7 +354,7 @@ export default function IsiDasbor({ masuk }: { masuk: boolean }) {
                       <li key={p.posko_id} className="rounded-none bg-white p-4 md:p-5">
                         <div className="flex flex-wrap items-center gap-2">
                           <div className="min-w-0 flex-1">
-                            <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">{p.wilayah}</p>
+                            <p className="t-label text-muted-foreground">{p.wilayah}</p>
                             <p className="truncate text-base font-bold text-[#0B1F2E]">{p.posko_nama}</p>
                           </div>
                           {p.selisih > 0 ? (

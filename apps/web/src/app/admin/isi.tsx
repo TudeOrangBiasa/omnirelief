@@ -230,7 +230,7 @@ export default function IsiAdmin() {
       )}
 
       <section aria-label="Pemakaian">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Pemakaian</p>
+        <p className="t-label text-[#0B1F2E]/70">Pemakaian</p>
         <h2 className="mt-1 text-xl font-bold text-[#0B1F2E]">Angka sistem</h2>
         {status === "memuat" ? (
           <div role="status" aria-label="Memuat angka" className="mt-3 grid grid-cols-2 gap-px lg:grid-cols-5">
@@ -268,7 +268,7 @@ export default function IsiAdmin() {
       )}
 
       <section aria-label="Undang pengguna">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Akses baru</p>
+        <p className="t-label text-[#0B1F2E]/70">Akses baru</p>
         <h2 className="mt-1 text-xl font-bold text-[#0B1F2E]">Undang pengguna</h2>
         <form onSubmit={kirimUndang} className="mt-3 flex flex-col gap-2 rounded-none garis-rambut-diam bg-white p-4 sm:flex-row sm:items-end">
           <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm">
@@ -298,7 +298,7 @@ export default function IsiAdmin() {
       </section>
 
       <section aria-label="Daftar pengguna">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Akses</p>
+        <p className="t-label text-[#0B1F2E]/70">Akses</p>
         <h2 className="mt-1 text-xl font-bold text-[#0B1F2E]">Pengguna ({pengguna.length})</h2>
         {status === "memuat" ? (
           <div role="status" aria-label="Memuat pengguna" className="mt-3 flex flex-col gap-2">
@@ -403,7 +403,7 @@ export default function IsiAdmin() {
       )}
 
       <section aria-label="Log audit">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Jejak</p>
+        <p className="t-label text-[#0B1F2E]/70">Jejak</p>
         <h2 className="mt-1 text-xl font-bold text-[#0B1F2E]">Log audit terbaru</h2>
         {status === "memuat" ? (
           <div role="status" aria-label="Memuat log" className="mt-3 flex flex-col gap-2">

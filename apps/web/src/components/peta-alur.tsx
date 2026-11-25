@@ -89,7 +89,7 @@ export function PetaAlurRingkasan({
     <div className="rounded-none garis-rambut-diam bg-white px-4 py-3">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
+          <p className="t-label text-[#0B1F2E]/70">
             Peta alur bantuan
           </p>
           <p className="mt-0.5 truncate text-sm text-[#0B1F2E]">
