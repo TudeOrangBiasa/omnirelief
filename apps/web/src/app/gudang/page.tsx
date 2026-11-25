@@ -24,8 +24,8 @@ import { baris, type GudangBatchRow, type ItemKatalogRow } from "@/lib/supabase/
 import TombolSalin from "@/components/tombol-salin";
 import { BantuanIstilah } from "@/components/bantuan-istilah";
 import { BarisSegarkan, KepalaHalaman } from "@/components/kepala-halaman";
-import { BilahHalaman, BilahSaring } from "@/components/kontrol-tabel";
-import { KotakKosong } from "@/components/widget-laporan";
+import { BilahSaring } from "@/components/kontrol-tabel";
+import { KotakKosong, TombolSudut } from "@/components/widget-laporan";
 
 type GalatField = {
   item_id?: string;
@@ -86,8 +86,6 @@ export default function GudangPage() {
   const [statusKatalog, setStatusKatalog] = useState<StatusBatch>("memuat");
   const [cariBatch, setCariBatch] = useState("");
   const [filterBatch, setFilterBatch] = useState<FilterBatch>("semua");
-  const [halaman, setHalaman] = useState(1);
-  const [ukuranHalaman, setUkuranHalaman] = useState<5 | 10 | 20>(10);
   const formRef = useRef<HTMLFormElement>(null);
 
   const muatBatch = useCallback(() => {
@@ -174,16 +172,18 @@ export default function GudangPage() {
     [tampilBatch]
   );
 
-  const totalHalaman = Math.max(1, Math.ceil(tampilBatch.length / ukuranHalaman));
-  const halamanAman = Math.min(halaman, totalHalaman);
-  const awal = tampilBatch.length === 0 ? 0 : (halamanAman - 1) * ukuranHalaman + 1;
-  const akhir = Math.min(halamanAman * ukuranHalaman, tampilBatch.length);
-  const batchHalaman = tampilBatch.slice((halamanAman - 1) * ukuranHalaman, halamanAman * ukuranHalaman);
-
   function aturUlangFilter() {
     setCariBatch("");
     setFilterBatch("semua");
-    setHalaman(1);
+  }
+
+  function bersihkanGalat(kunci: keyof GalatField) {
+    setGalatField((sebelum) => {
+      if (!(kunci in sebelum)) return sebelum;
+      const ganti = { ...sebelum };
+      delete ganti[kunci];
+      return ganti;
+    });
   }
 
   function fokusForm() {
@@ -299,6 +299,7 @@ export default function GudangPage() {
             defaultValue=""
             required
             disabled={statusKatalog !== "siap"}
+            onChange={() => bersihkanGalat("item_id")}
             className="min-h-12 w-full rounded-none border border-input bg-card px-3 text-sm disabled:opacity-50"
             aria-invalid={galatField.item_id ? true : undefined}
             aria-describedby={galatField.item_id ? "gudang-item-galat" : undefined}
@@ -337,6 +338,7 @@ export default function GudangPage() {
             name="jumlah"
             type="number"
             min={1}
+            onChange={() => bersihkanGalat("jumlah")}
             className="min-h-12"
             aria-invalid={galatField.jumlah ? true : undefined}
             aria-describedby={galatField.jumlah ? "gudang-jumlah-galat" : undefined}
@@ -353,6 +355,7 @@ export default function GudangPage() {
             id="gudang-exp"
             name="kedaluwarsa"
             type="date"
+            onChange={() => bersihkanGalat("kedaluwarsa")}
             className="min-h-12"
             aria-invalid={galatField.kedaluwarsa ? true : undefined}
             aria-describedby={galatField.kedaluwarsa ? "gudang-exp-galat" : undefined}
@@ -372,6 +375,7 @@ export default function GudangPage() {
             id="gudang-sumber"
             name="sumber"
             type="text"
+            onChange={() => bersihkanGalat("sumber")}
             className="min-h-12"
             aria-invalid={galatField.sumber ? true : undefined}
             aria-describedby={galatField.sumber ? "gudang-sumber-galat" : undefined}
@@ -435,7 +439,7 @@ export default function GudangPage() {
           <div
             role="status"
             aria-label="5 batch FEFO teratas, pakai duluan"
-            className="flex flex-col gap-1 rounded-none border border-[#0B1F2E]/15 bg-white p-3"
+            className="flex flex-col gap-1 rounded-none garis-rambut-diam bg-white p-3"
           >
             <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">
               Pakai duluan · 5 teratas FEFO
@@ -460,7 +464,7 @@ export default function GudangPage() {
           labelCari="Cari batch"
           placeholder="Cari kode, barang, atau sumber..."
           cari={cariBatch}
-          onCari={(nilai) => { setCariBatch(nilai); setHalaman(1); }}
+          onCari={(nilai) => { setCariBatch(nilai); }}
           labelGrup="Saring batch"
           pilihan={[
             { nilai: "semua", label: "Semua" },
@@ -471,7 +475,6 @@ export default function GudangPage() {
           onPilih={(nilai) => {
             if (nilai === "semua" || nilai === "segera" || nilai === "menipis") {
               setFilterBatch(nilai);
-              setHalaman(1);
             }
           }}
         />
@@ -533,21 +536,7 @@ export default function GudangPage() {
           />
         )}
         {statusBatch === "siap" && tampilBatch.length > 0 && (
-          <div className="flex flex-col gap-3">
-          <TabelBatch rows={batchHalaman} />
-          <BilahHalaman
-            awal={awal}
-            akhir={akhir}
-            total={tampilBatch.length}
-            perHalaman={ukuranHalaman}
-            onPerHalaman={(nilai) => { setUkuranHalaman(nilai); setHalaman(1); }}
-            bisaMundur={halamanAman > 1}
-            bisaMaju={halamanAman < totalHalaman}
-            onMundur={() => setHalaman((h) => Math.max(1, h - 1))}
-            onMaju={() => setHalaman((h) => Math.min(totalHalaman, h + 1))}
-            idPilih="ukuran-halaman"
-          />
-          </div>
+          <TabelBatch rows={tampilBatch} />
         )}
       </section>
         </div>
@@ -561,11 +550,11 @@ export default function GudangPage() {
             <p className="text-sm text-muted-foreground">
               Setiap batch yang tersimpan lewat formulir muncul di sini beserta kodenya.
             </p>
-            <span aria-hidden="true" className="font-mono text-xs text-muted-foreground">┌ ──┐</span>
-            <Button onClick={fokusForm} className="min-h-12 rounded-none">
-              Catat batch masuk
-            </Button>
-            <span aria-hidden="true" className="font-mono text-xs text-muted-foreground">└ ──┘</span>
+            <TombolSudut>
+              <Button onClick={fokusForm} className="min-h-12 w-full rounded-none">
+                Catat batch masuk
+              </Button>
+            </TombolSudut>
           </div>
         ) : (
           riwayat.map((r) => (

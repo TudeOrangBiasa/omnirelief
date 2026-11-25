@@ -456,7 +456,7 @@ export default function DasborBpbd() {
       <div className="flex flex-col gap-8">
 
 
-      <section aria-label="Antrean verifikasi" className="flex flex-col gap-2">
+      <section id="antrean" aria-label="Antrean verifikasi" className="flex flex-col gap-2 scroll-mt-20">
         <p className="font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70">Verifikasi</p>
         <h2 className="text-xl font-bold text-[#0B1F2E]">Antrean verifikasi ({antrean.length})</h2>
         <p className="text-sm text-muted-foreground">
@@ -472,7 +472,7 @@ export default function DasborBpbd() {
           />
         )}
         {memuatAwal ? (
-          <div className="overflow-x-auto rounded-none border border-[#0B1F2E]/15">
+          <div className="overflow-x-auto rounded-none garis-rambut-diam">
           <Table>
             <TableHeader>
               <TableRow className="bg-[#0B1F2E] hover:bg-[#0B1F2E]">
@@ -529,7 +529,7 @@ export default function DasborBpbd() {
           )}
         </div>
         {memuatAwal ? (
-          <div className="overflow-x-auto rounded-none border border-[#0B1F2E]/15">
+          <div className="overflow-x-auto rounded-none garis-rambut-diam">
           <Table>
             <TableHeader>
               <TableRow className="bg-[#0B1F2E] hover:bg-[#0B1F2E]">
@@ -590,7 +590,7 @@ export default function DasborBpbd() {
               onAksi={aturUlangFilterPrioritas}
             />
           ) : (
-          <div className="overflow-x-auto rounded-none border border-[#0B1F2E]/15">
+          <div className="overflow-x-auto rounded-none garis-rambut-diam">
           <Table>
             <TableHeader>
               <TableRow className="bg-[#0B1F2E] hover:bg-[#0B1F2E]">

@@ -23,6 +23,7 @@ import { Textarea } from "@omnirelief/ui/components/textarea";
 import { kirimAntrean, kirimSatuAntrean, tambahAntrean } from "@/lib/offline";
 import TombolSalin from "@/components/tombol-salin";
 import { formatTanggalLokal, labelStatusRiwayat } from "@/lib/tanggal";
+import { TombolSudut } from "@/components/widget-laporan";
 import { BarisSegarkan } from "@/components/kepala-halaman";
 
 type Tugas = {
@@ -60,6 +61,7 @@ export default function TugasTim() {
   const [tanyaDarurat, setTanyaDarurat] = useState(false);
   const [antre, setAntre] = useState(0);
   const [diperbarui, setDiperbarui] = useState("");
+  const [sibukKirim, setSibukKirim] = useState(false);
 
   const muat = useCallback(async () => {
     setStatus("memuat");
@@ -103,6 +105,8 @@ export default function TugasTim() {
   }, [muat]);
 
   async function kirim(label: string, url: string, badan: object) {
+    if (sibukKirim) return;
+    setSibukKirim(true);
     const isi = badan as Record<string, unknown>;
     try {
       const res = await fetch(url, {
@@ -127,6 +131,8 @@ export default function TugasTim() {
       );
       setAntre(hitungAntrean());
       toast.info("Koneksi lemah, update tersimpan dan terkirim otomatis.");
+    } finally {
+      setSibukKirim(false);
     }
   }
 
@@ -230,11 +236,11 @@ export default function TugasTim() {
             Manifest baru dari BPBD muncul di sini setelah dipublikasikan. Tetap siaga dan
             check-in bila diminta command center.
           </p>
-          <span aria-hidden="true" className="font-mono text-xs text-muted-foreground">┌ ──┐</span>
-          <Button onClick={() => void muat()} variant="outline" className="min-h-12 rounded-none">
+        <TombolSudut>
+          <Button onClick={() => void muat()} variant="outline" className="min-h-12 w-full rounded-none">
             Muat ulang tugas
           </Button>
-          <span aria-hidden="true" className="font-mono text-xs text-muted-foreground">└ ──┘</span>
+        </TombolSudut>
         </div>
       )}
 
@@ -243,7 +249,7 @@ export default function TugasTim() {
           <p role="status" className="text-sm text-muted-foreground">
             {tugas.length} tugas hari ini
             {perluDicek > 0 ? ` · ${perluDicek} Perlu Dicek (lewat batas check-in)` : ""}
-            {pilih === null ? " · ketuk tugas untuk update status." : ""}
+            {pilih === null ? " · pilih tugas untuk update status." : ""}
           </p>
           {tugas.map((t) => {
             const sisa = menitMenujuBatas(t);
@@ -251,14 +257,7 @@ export default function TugasTim() {
             return (
               <Card
                 key={t.id}
-                role="button"
-                tabIndex={0}
-                aria-pressed={pilih === t.id}
-                onClick={() => setPilih(t.id)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") setPilih(t.id);
-                }}
-                className={`cursor-pointer text-left ${pilih === t.id ? "border-2 border-primary" : ""}`}
+                className={`text-left ${pilih === t.id ? "border-2 border-primary" : ""}`}
               >
                 <CardContent className="flex flex-col gap-1 p-4 text-sm">
                   <p className="flex flex-wrap items-center gap-2 font-bold">
@@ -279,16 +278,23 @@ export default function TugasTim() {
                       ? `Batas check-in: ${formatTanggalLokal(t.batas_checkin)}`
                       : "Tanpa batas check-in"}
                   </p>
-                  <div className="mt-1 flex">
+                  <div className="mt-1 flex flex-col gap-2 sm:flex-row">
+                    <Button
+                      type="button"
+                      variant={pilih === t.id ? "default" : "outline"}
+                      onClick={() => setPilih(t.id)}
+                      aria-pressed={pilih === t.id}
+                      className="min-h-12 flex-1 rounded-none sm:flex-none sm:px-6"
+                    >
+                      {pilih === t.id ? "Dipilih, buka panel" : "Pilih tugas"}
+                    </Button>
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={(e) => {
-                        e.stopPropagation();
+                      onClick={() => {
                         setPilih(t.id);
                         document.getElementById("check-in")?.scrollIntoView({ behavior: "smooth", block: "start" });
                       }}
-                      onKeyDown={(e) => e.stopPropagation()}
                       className="min-h-12 flex-1 rounded-none sm:flex-none sm:px-6"
                     >
                       Check-in sekarang
@@ -374,6 +380,7 @@ export default function TugasTim() {
                         <li key={a.status} className="flex min-w-28 flex-1">
                           <button
                             type="button"
+                            disabled={sibukKirim}
                             onClick={() =>
                               void kirim(a.label, "/api/tim/status", {
                                 manifest_id: aktif.id,
@@ -381,8 +388,8 @@ export default function TugasTim() {
                               })
                             }
                             aria-current={tahapKini ? "step" : undefined}
-                            aria-label={`Kirim status ${a.label}`}
-                            className="flex min-h-12 w-full flex-col items-center gap-1 rounded-none px-1 py-2 focus-visible:ring-2 focus-visible:ring-primary"
+                            aria-label={sibukKirim ? `Mengirim status ${a.label}` : `Kirim status ${a.label}`}
+                            className="flex min-h-12 w-full flex-col items-center gap-1 rounded-none px-1 py-2 focus-visible:ring-2 focus-visible:ring-primary disabled:opacity-50"
                           >
                             <span aria-hidden="true" className="flex w-full items-center">
                               <span
@@ -465,11 +472,11 @@ export default function TugasTim() {
                       darurat,
                     });
                   }}
-                  disabled={kendala.trim() === ""}
+                  disabled={kendala.trim() === "" || sibukKirim}
                   variant={darurat ? "destructive" : "outline"}
                   className="min-h-12 w-full"
                 >
-                  {darurat ? "Kirim tanda darurat" : "Lapor kendala"}
+                  {sibukKirim ? "Mengirim..." : darurat ? "Kirim tanda darurat" : "Lapor kendala"}
                 </Button>
               </CardContent>
             </Card>

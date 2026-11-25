@@ -1,7 +1,74 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@omnirelief/ui/components/button";
 
+
+/**
+ * Disclosure tampil kolom tabel. Render kondisional (bukan details/summary)
+ * agar kontrol tersembunyi tidak punya kotak layout dan tidak bisa difokus.
+ */
+export function PilihKolom<T extends string>({
+  id,
+  kolom,
+  tampil,
+  onUbah,
+}: {
+  id: string;
+  kolom: readonly { kunci: T; label: string }[];
+  tampil: Record<T, boolean>;
+  onUbah: (kunci: T, nilai: boolean) => void;
+}) {
+  const [buka, setBuka] = useState(false);
+  const wadah = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!buka) return;
+    function tutupSaatLuar(e: MouseEvent) {
+      if (wadah.current && !wadah.current.contains(e.target as Node)) setBuka(false);
+    }
+    function tutupSaatLepas(e: KeyboardEvent) {
+      if (e.key === "Escape") setBuka(false);
+    }
+    document.addEventListener("mousedown", tutupSaatLuar);
+    document.addEventListener("keydown", tutupSaatLepas);
+    return () => {
+      document.removeEventListener("mousedown", tutupSaatLuar);
+      document.removeEventListener("keydown", tutupSaatLepas);
+    };
+  }, [buka]);
+
+  return (
+    <div ref={wadah} className="relative rounded-none garis-rambut-diam bg-white sm:ml-auto">
+      <Button
+        type="button"
+        variant="ghost"
+        onClick={() => setBuka((v) => !v)}
+        aria-expanded={buka}
+        aria-controls={id}
+        className="flex min-h-12 w-full items-center gap-2 rounded-none px-4 font-mono text-[11px] uppercase tracking-widest text-[#0B1F2E]/70 sm:w-auto"
+      >
+        Kolom tampil
+        <span aria-hidden="true" className={`text-base leading-none transition-transform ${buka ? "rotate-45" : ""}`}>+</span>
+      </Button>
+      {buka && (
+        <div id={id} role="menu" className="absolute top-full right-0 z-30 mt-1 flex w-56 flex-col gap-2 rounded-none border border-[#0B1F2E]/15 bg-white p-2 shadow-lg">
+          {kolom.map((k) => (
+            <label key={k.kunci} className="flex min-h-12 cursor-pointer items-center gap-3 rounded-none px-2 text-sm hover:bg-muted">
+              <input
+                type="checkbox"
+                checked={tampil[k.kunci]}
+                onChange={(e) => onUbah(k.kunci, e.target.checked)}
+                className="h-5 w-5 accent-primary"
+              />
+              {k.label}
+            </label>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 export function BilahSaring({
   idCari,
   labelCari,
@@ -24,7 +91,7 @@ export function BilahSaring({
   onPilih: (nilai: string) => void;
 }) {
   return (
-    <div className="flex flex-col gap-2 rounded-none border border-[#0B1F2E]/15 bg-[#DCE8EE] p-3">
+    <div className="flex flex-col gap-2 rounded-none garis-rambut-diam bg-[#DCE8EE] p-3">
       <div className="flex flex-col gap-2 sm:flex-row">
         <div className="relative flex-1">
           <label htmlFor={idCari} className="sr-only">{labelCari}</label>

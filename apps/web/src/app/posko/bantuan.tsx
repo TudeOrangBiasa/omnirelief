@@ -22,6 +22,8 @@ import { WiFiOffIcon } from "@solar-icons/react/linear";
 import { kirimAntrean, kirimSatuAntrean, tambahAntrean } from "@/lib/offline";
 import { BantuanIstilah } from "@/components/bantuan-istilah";
 import { BarisSegarkan } from "@/components/kepala-halaman";
+import { TombolSudut } from "@/components/widget-laporan";
+
 type Bantuan = {
   id: number;
   kode: string;
@@ -236,11 +238,11 @@ export default function BantuanPosko() {
             Kiriman bantuan dari BPBD muncul di sini setelah dipublikasikan. Konfirmasi terima
             segera agar tercatat publik.
           </p>
-          <span aria-hidden="true" className="font-mono text-xs text-muted-foreground">┌ ──┐</span>
-          <Button onClick={() => void muat()} variant="outline" className="min-h-12 rounded-none">
+        <TombolSudut>
+          <Button onClick={() => void muat()} variant="outline" className="min-h-12 w-full rounded-none">
             Muat ulang kiriman
           </Button>
-          <span aria-hidden="true" className="font-mono text-xs text-muted-foreground">└ ──┘</span>
+        </TombolSudut>
         </div>
       )}
       {status === "siap" &&

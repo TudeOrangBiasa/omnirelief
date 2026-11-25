@@ -53,6 +53,15 @@ export default function FormulirPosko() {
   const [galatField, setGalatField] = useState<Partial<Record<NamaMedan, string>>>({});
   const [modeSibuk, setModeSibuk] = useState<"kirim" | "draf" | null>(null);
   const [diperbarui, setDiperbarui] = useState("");
+
+  function bersihkanGalat(kunci: NamaMedan) {
+    setGalatField((sebelum) => {
+      if (!(kunci in sebelum)) return sebelum;
+      const ganti = { ...sebelum };
+      delete ganti[kunci];
+      return ganti;
+    });
+  }
   async function muat() {
     const res = await fetch("/api/posko/laporan");
     const data = (await res.json()) as { ok: boolean; laporan?: Laporan[] };
@@ -259,6 +268,7 @@ export default function FormulirPosko() {
               type="number"
               min={0}
               defaultValue={0}
+              onChange={() => bersihkanGalat(m.nama)}
               className="min-h-12"
               aria-invalid={galatField[m.nama] ? true : undefined}
               aria-describedby={galatField[m.nama] ? `posko-${m.nama}-galat` : undefined}

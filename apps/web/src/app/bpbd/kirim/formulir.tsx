@@ -44,6 +44,7 @@ import { baris } from "@/lib/supabase/baris";
 import { sisaHariKalender } from "@/lib/tanggal";
 import { BantuanIstilah } from "@/components/bantuan-istilah";
 import { BarisSegarkan } from "@/components/kepala-halaman";
+import { TombolSudut } from "@/components/widget-laporan";
 
 type Posko = { id: number; nama: string; wilayah: string };
 
@@ -458,11 +459,11 @@ function IsiFormulirKirim() {
           <p className="text-sm text-muted-foreground">
             Gudang belum mencatat batch dengan sisa stok. Isi stok dulu sebelum membuat manifest.
           </p>
-          <span aria-hidden="true" className="font-mono text-xs text-muted-foreground">┌ ──┐</span>
-          <Button onClick={() => window.location.reload()} variant="outline" className="min-h-12 rounded-none">
-            Muat ulang data
-          </Button>
-          <span aria-hidden="true" className="font-mono text-xs text-muted-foreground">└ ──┘</span>
+          <TombolSudut>
+            <Button onClick={() => window.location.reload()} variant="outline" className="min-h-12 w-full rounded-none">
+              Muat ulang data
+            </Button>
+          </TombolSudut>
         </div>
       ) : (
         <>
@@ -495,7 +496,7 @@ function IsiFormulirKirim() {
             <div
               role="status"
               aria-label="Kalkulator alokasi"
-              className="flex flex-col gap-1 rounded-none border border-[#0B1F2E]/15 bg-white p-3 text-sm"
+              className="flex flex-col gap-1 rounded-none garis-rambut-diam bg-white p-3 text-sm"
             >
               <p className="font-semibold">
                 {poskoTujuan?.nama ?? "Posko"} butuh {butuhTujuan?.butuh ?? 0} jiwa
