@@ -31,3 +31,10 @@ Perintah berguna: `bun run build` (semua paket), `bun run check-types`, `bun --f
 Scaffold: Better-T-Stack (`bts.jsonc`, perintah reproduksi di dalamnya).
 
 Sumber kebenaran: `docs/OmniRelief-Dokumen-Tim-Lengkap.pdf`. Kalau konflik soal deadline dan scope, dokumen itu yang menang.
+
+<p align="center">
+  <img src="apps/web/public/logo/logo-simbol.svg" alt="Cincin cetak ganda OmniRelief" width="120" />
+</p>
+## Lisensi
+
+Kode dilepas di bawah MIT. Lihat `LICENSE`. Hak cipta dipegang Tim OmniRelief.
