@@ -15,3 +15,5 @@ Versi ditahan di `0.1.x` sampai kode matang. Tanpa tag dan tanpa GitHub release 
 - Tambah `ROADMAP.md` berisi peta produk tiga fase.
 - Tambah `docs/JURI.md` sebagai pintu masuk bukti penilaian.
 - Perbarui `README.md` dengan tautan ke dokumen baru.
+- Tambah seksi Demo di `README.md`: lima gif 30 detik plus galeri empat tangkapan, semua dari rekaman `agent-browser`.
+- Ganti galeri dengan frame hasil bedah video agar cocok dengan isi gif.
