@@ -75,6 +75,36 @@ Tonton alur publik 30 detik. Cek kode sumbangan di landing, buka rincian alokasi
 | Detail manifest | Detail sumbangan |
 | <img src="docs/gambar/shot-manifest.png" alt="Detail manifest terkunci berisi timeline dan QR" width="400" /> | <img src="docs/gambar/shot-sumbangan.png" alt="Detail sumbangan berisi alokasi dan QR" width="400" /> |
 
+### Demo per peran
+
+<details>
+<summary>Putar demo gudang (GIF, 30 detik)</summary>
+
+<img src="docs/gambar/demo-gudang.gif" alt="Demo catat batch masuk sampai kode sumbangan dan halaman publik" width="720" loading="lazy" />
+
+</details>
+
+<details>
+<summary>Putar demo posko (GIF, 30 detik)</summary>
+
+<img src="docs/gambar/demo-posko.gif" alt="Demo lapor penyintas sampai menunggu verifikasi BPBD" width="720" loading="lazy" />
+
+</details>
+
+<details>
+<summary>Putar demo BPBD (GIF, 30 detik)</summary>
+
+<img src="docs/gambar/demo-bpbd.gif" alt="Demo verifikasi snapshot sampai manifest terkunci permanen" width="720" loading="lazy" />
+
+</details>
+
+<details>
+<summary>Putar demo tim (GIF, 30 detik)</summary>
+
+<img src="docs/gambar/demo-tim.gif" alt="Demo pilih tugas sampai check-in tercatat" width="720" loading="lazy" />
+
+</details>
+
 ## Kepercayaan data
 
 - **Hanya tambah riwayat.** Manifest terpublikasi tidak punya tombol edit atau hapus. Database menolak update dan delete.
