@@ -8,7 +8,8 @@ const nextConfig: NextConfig = {
   cacheComponents: false,
   typedRoutes: true,
   reactCompiler: true,
-  poweredByHeader: false,
+  // Hilangkan tombol DevTools melayang agar tangkapan layar dan rekaman bersih.
+  devIndicators: false,
 };
 
 export default withVarlock(nextConfig);
