@@ -17,3 +17,4 @@ Versi ditahan di `0.1.x` sampai kode matang. Tanpa tag dan tanpa GitHub release 
 - Perbarui `README.md` dengan tautan ke dokumen baru.
 - Tambah seksi Demo di `README.md`: lima gif 30 detik plus galeri empat tangkapan, semua dari rekaman `agent-browser`.
 - Ganti galeri dengan frame hasil bedah video agar cocok dengan isi gif.
+- Rekam ulang lima gif di server produksi tanpa tombol DevTools mengambang. Ukuran tiap gif di bawah 10 MB.
