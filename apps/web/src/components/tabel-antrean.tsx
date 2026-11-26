@@ -211,7 +211,7 @@ export function TabelAntrean({
         />
       </div>
       <div className="overflow-x-auto rounded-none garis-rambut-diam">
-        <Table>
+        <Table className="min-w-140">
           <TableHeader>
             <TableRow className="bg-[#0B1F2E] hover:bg-[#0B1F2E]">
               <TableHead

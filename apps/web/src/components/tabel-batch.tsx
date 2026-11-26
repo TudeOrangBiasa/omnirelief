@@ -156,7 +156,7 @@ export function TabelBatch({ rows }: { rows: GudangBatchRow[] }) {
         />
       </div>
       <div className="overflow-x-auto border bg-card">
-        <Table>
+        <Table className="min-w-140">
           <TableHeader className="bg-[#0B1F2E]">
             <TableRow className="hover:bg-[#0B1F2E]">
               {tampilKolom.kode && (
