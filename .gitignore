@@ -57,3 +57,7 @@ coverage
 tmp
 temp
 .gridlines/
+
+# Rekaman mentah demo README, hanya hasil final yang di commit
+docs/gambar/raw-*
+docs/gambar/cut-*

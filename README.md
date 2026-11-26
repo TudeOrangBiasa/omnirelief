@@ -7,6 +7,16 @@
 <p align="center">Sistem supply chain pangan darurat yang tercatat dari gudang sampai posko dan bisa dicek publik per daerah.</p>
 
 <p align="center">
+  <img src="https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white" alt="Next.js 16" />
+  <img src="https://img.shields.io/badge/Supabase-2-3FCF8E?logo=supabase&logoColor=white" alt="Supabase 2" />
+  <img src="https://img.shields.io/badge/Vercel-deploy-black?logo=vercel&logoColor=white" alt="Vercel" />
+  <img src="https://img.shields.io/badge/Bun-1.3-f9f1e1?logo=bun&logoColor=black" alt="Bun 1.3" />
+  <img src="https://img.shields.io/badge/Turborepo-2-E8E8E8?logo=turborepo&logoColor=black" alt="Turborepo 2" />
+  <img src="https://img.shields.io/badge/License-MIT-blue" alt="Lisensi MIT" />
+  <img src="https://img.shields.io/badge/Bahasa-Indonesia-E70011" alt="Bahasa Indonesia" />
+</p>
+
+<p align="center">
   <a href="docs/OmniRelief-Dokumen-Tim-Lengkap.pdf">Dokumen tim</a> ·
   <a href="docs/JURI.md">Panduan juri</a> ·
   <a href="docs/SETUP.md">Setup</a> ·
@@ -47,6 +57,23 @@ OmniRelief menjawab dengan satu alur tercatat. Sumbangan masuk lewat gudang dan 
 - **BPBD.** Verifikasi snapshot dalam tiga putusan. Lihat daftar prioritas penyaluran. Buat draf manifest dan publikasikan menjadi QR. Pantau kiriman berstatus Perlu Dicek dan batalkan kiriman bila perlu.
 - **Gudang.** Catat item, jumlah, tanggal kedaluwarsa, sumber, dan izin tampil nama. Hasil pencatatan langsung memberi kode sumbangan.
 - **Tim.** Lihat tugas hari ini. Perbarui status kiriman dan kirim check-in. Lapor kendala dan tandai kondisi darurat. Aplikasi menyimpan kiriman saat offline sebagai Menunggu Sinkronisasi lalu mengirim otomatis saat koneksi kembali.
+
+## Demo
+
+Tonton alur publik 30 detik. Cek kode sumbangan di landing, buka rincian alokasi, lanjut ke dashboard transparansi, tutup di detail manifest terkunci.
+
+<details>
+<summary>Putar demo publik (GIF, 30 detik)</summary>
+
+<img src="docs/gambar/demo-publik.gif" alt="Demo cek kode sumbangan sampai detail manifest terkunci" width="720" loading="lazy" />
+
+</details>
+
+| Landing | Dashboard transparansi |
+| --- | --- |
+| <img src="docs/gambar/shot-landing.png" alt="Halaman utama dengan form cek kode" width="400" /> | <img src="docs/gambar/shot-transparansi.png" alt="Dashboard per posko berisi angka butuh dan diterima" width="400" /> |
+| Detail manifest | Detail sumbangan |
+| <img src="docs/gambar/shot-manifest.png" alt="Detail manifest terkunci berisi timeline dan QR" width="400" /> | <img src="docs/gambar/shot-sumbangan.png" alt="Detail sumbangan berisi alokasi dan QR" width="400" /> |
 
 ## Kepercayaan data
 
