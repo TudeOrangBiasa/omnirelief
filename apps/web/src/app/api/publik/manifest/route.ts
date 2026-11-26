@@ -19,13 +19,20 @@ type ManifestRow = {
   wilayah: string;
 };
 
+type ProfilAktor = {
+  nama: string;
+  peran: string | null;
+  posko: { nama: string } | { nama: string }[] | null;
+};
+
 type LogRow = {
   status: string;
   catatan: string | null;
   dibuat_pada: string;
   dibuat_oleh: string | null;
-  profil: { nama: string } | null;
+  profil: ProfilAktor | null;
 };
+
 
 export async function GET(request: Request) {
   const kode = normalisasiKode(new URL(request.url).searchParams.get("kode") ?? "");
@@ -64,15 +71,27 @@ export async function GET(request: Request) {
 
   const { data: mentahLog } = await admin
     .from("manifest_log")
-    .select("status,catatan,dibuat_pada,dibuat_oleh,profil:dibuat_oleh(nama)")
+    .select("status,catatan,dibuat_pada,dibuat_oleh,profil:dibuat_oleh(nama,peran,posko:posko_id(nama))")
     .eq("manifest_id", manifestId)
     .order("dibuat_pada");
-  const riwayat = baris<LogRow>(mentahLog).map((l) => ({
-    status: l.status,
-    catatan: l.catatan,
-    dibuat_pada: l.dibuat_pada,
-    aktor: l.profil?.nama ?? null,
-  }));
+  const riwayat = baris<LogRow>(mentahLog).map((l) => {
+    const poskoProfil = Array.isArray(l.profil?.posko) ? l.profil.posko[0]?.nama : l.profil?.posko?.nama;
+    const posko = poskoProfil ?? manifest.posko_nama;
+    let aktor: string | null = null;
+    if (l.profil) {
+      const peran = l.profil.peran;
+      if (peran === "BPBD") aktor = "Petugas BPBD";
+      else if (peran === "GUDANG") aktor = "Petugas Gudang";
+      else if (peran === "ADMIN") aktor = "Petugas Admin";
+      else aktor = `Relawan ${posko}`;
+    }
+    return {
+      status: l.status,
+      catatan: l.catatan,
+      dibuat_pada: l.dibuat_pada,
+      aktor,
+    };
+  });
 
   const { data: mentahBatal } = await admin
     .from("pembatalan")

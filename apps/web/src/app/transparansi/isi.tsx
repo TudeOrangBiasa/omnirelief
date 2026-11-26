@@ -23,6 +23,7 @@ import { kulitPublik } from "@/lib/kulit";
 import TombolKeAtas from "@/components/tombol-ke-atas";
 import { CangkangPublik } from "@/components/cangkang-publik";
 import { normalisasiKode, ruteKode } from "@/lib/kode";
+import BannerOffline from "@/components/banner-offline";
 import Logo from "@/components/logo";
 
 type StatusMuat = "memuat" | "siap" | "gagal";
@@ -190,6 +191,7 @@ export default function IsiTransparansi({ masuk }: { masuk: boolean }) {
           Jatah, pengiriman, penerimaan, dan selisih tiap daerah. Angka tidak digabung antar posko.
         </p>
       </div>
+      <BannerOffline />
       <section aria-label="Sumber dan masa data" className={`grid grid-cols-1 gap-2 rounded-none p-4 text-sm sm:grid-cols-2 md:items-start md:gap-x-6 lg:grid-cols-4 ${panelInfo}`}>
         <p><span className={`font-mono text-[11px] tracking-[0.15em] uppercase ${teksLabel}`}>Penerbit</span><br /><span className="font-semibold">BPBD</span></p>
         <p><span className={`font-mono text-[11px] tracking-[0.15em] uppercase ${teksLabel}`}>Periode Pemantauan</span><br /><span className="font-semibold">Aktif</span></p>

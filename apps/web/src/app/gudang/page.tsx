@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { toast } from "sonner";
 import { CheckIcon, MagnifierIcon } from "@solar-icons/react/linear";
@@ -44,6 +46,7 @@ type IntakeHariIni = {
 };
 
 type StatusBatch = "memuat" | "siap" | "gagal" | "tanpa-akses";
+type StatusAkses = "memeriksa" | "boleh" | "ditolak";
 
 function validasiClient(formData: FormData): { nilai: { item_id: number; jumlah: number; kedaluwarsa: string; sumber: string; tampilkan_nama: boolean }; galat: GalatField } {
   const galat: GalatField = {};
@@ -89,6 +92,8 @@ export default function GudangPage() {
   const [cariBatch, setCariBatch] = useState("");
   const [filterBatch, setFilterBatch] = useState<FilterBatch>("semua");
   const formRef = useRef<HTMLFormElement>(null);
+  const router = useRouter();
+  const [akses, setAkses] = useState<StatusAkses>("memeriksa");
 
   useEffect(
     () => () => {
@@ -150,9 +155,45 @@ export default function GudangPage() {
   }, []);
 
   useEffect(() => {
+    if (akses !== "boleh") return;
     muatBatch();
     muatKatalog();
-  }, [muatBatch, muatKatalog]);
+  }, [akses, muatBatch, muatKatalog]);
+  useEffect(() => {
+    let aktif = true;
+    const supabase = createClient();
+    supabase.auth
+      .getUser()
+      .then(async ({ data }) => {
+        if (!aktif) return;
+        if (!data.user) {
+          setAkses("ditolak");
+          router.replace("/masuk");
+          return;
+        }
+        const { data: profil } = await supabase
+          .from("profil")
+          .select("peran")
+          .eq("id", data.user.id)
+          .single();
+        const peran = (profil as { peran?: string } | null)?.peran;
+        if (peran !== "BPBD" && peran !== "GUDANG") {
+          setAkses("ditolak");
+          router.replace("/beranda");
+          return;
+        }
+        setAkses("boleh");
+      })
+      .catch(() => {
+        if (!aktif) return;
+        setAkses("ditolak");
+        router.replace("/masuk");
+      });
+    return () => {
+      aktif = false;
+    };
+  }, [router]);
+
 
   const tampilBatch = useMemo(() => {
     const kata = cariBatch.trim().toLowerCase();
@@ -248,6 +289,21 @@ export default function GudangPage() {
     }
   }
 
+  if (akses !== "boleh") {
+    return (
+      <main className="mx-auto w-full max-w-[1400px] px-6 py-8 lg:px-10">
+        <div
+          role="status"
+          aria-label="Memeriksa akses gudang"
+          className="flex flex-col gap-4"
+        >
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-64 w-full" />
+        </div>
+      </main>
+    );
+  }
 
   const diperbarui = new Date().toLocaleString("id-ID", { hour: "2-digit", minute: "2-digit" });
   return (

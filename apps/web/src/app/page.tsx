@@ -21,6 +21,7 @@ import {
 } from "@omnirelief/ui/components/dialog";
 import { Input } from "@omnirelief/ui/components/input";
 import TombolKeAtas from "@/components/tombol-ke-atas";
+import BannerOffline from "@/components/banner-offline";
 import { ShaderBackground } from "@/components/motion/shader-background";
 import { normalisasiKode, ruteKode } from "@/lib/kode";
 import Logo from "@/components/logo";
@@ -352,6 +353,9 @@ export default function Home() {
 
   return (
     <main className="relative w-full pb-28 md:pb-0">
+      <div className="relative mx-auto w-full max-w-6xl px-5 pt-6 md:px-10">
+        <BannerOffline />
+      </div>
       <ShaderBackground
         variant="mesh-gradient"
         colors={["#030D14", "#082032", "#0F3B5F", "#0f79b8"]}

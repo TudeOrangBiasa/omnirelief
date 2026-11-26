@@ -8,6 +8,7 @@ import {
   MagnifierIcon,
 } from "@solar-icons/react/linear";
 import { BantuanIstilah } from "@/components/bantuan-istilah";
+import BannerOffline from "@/components/banner-offline";
 import TombolSalin from "@/components/tombol-salin";
 import {
   Alert,
@@ -149,6 +150,7 @@ export default function IsiSumbangan({
         <ArrowLeftIcon aria-hidden="true" />
         Kembali ke Transparansi
       </Link>
+      <BannerOffline />
 
       {status === "memuat" && (
         <div

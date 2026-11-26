@@ -42,6 +42,7 @@ import { catatanRamah, formatHariLokal, formatTanggalLokal, labelStatusRiwayat }
 import { kulitPublik } from "@/lib/kulit";
 import { CangkangPublik } from "@/components/cangkang-publik";
 import { BantuanIstilah } from "@/components/bantuan-istilah";
+import BannerOffline from "@/components/banner-offline";
 import TombolSalin from "@/components/tombol-salin";
 
 type StatusMuat = "memuat" | "siap" | "kosong" | "gagal";
@@ -173,7 +174,7 @@ export default function IsiManifest({
         <ArrowLeftIcon aria-hidden="true" />
         Kembali ke Transparansi
       </Link>
-
+      <BannerOffline />
       {status === "memuat" && (
         <div
           role="status"
