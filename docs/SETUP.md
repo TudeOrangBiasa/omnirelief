@@ -44,8 +44,8 @@ Password bagikan internal saja, jangan commit.
 
 Project `omnirelief` sudah link ke repo ini dan auto-deploy tiap push ke `main`.
 Proteksi SSO dimatikan agar URL bisa dibuka juri tanpa login.
-Env yang terpasang sekarang masih dummy agar pipeline terbukti hijau.
-Ganti dengan nilai asli setelah project Supabase jadi:
+Env production sudah live (terbukti baca data per 26 Nov 2026); kalau rotasi kunci, ganti via dashboard Vercel → Settings → Environment Variables, lalu redeploy:
+ Contoh rotasi satu variabel:
 
 1. `bunx vercel env rm NAMA production` lalu `echo "asli" | bunx vercel env add NAMA production` untuk `DATABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`.
 2. Push commit apa pun untuk picu deploy ulang, atau `bunx vercel deploy --yes`.

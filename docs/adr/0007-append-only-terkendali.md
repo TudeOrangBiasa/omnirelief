@@ -12,6 +12,6 @@ di luar daftar sah dan menolak UPDATE kolom selain status/dipublikasikan_pada
 (hash hanya boleh berubah saat penguncian DRAFT → TERKUNCI_PUBLIK).
 
 Konsekuensi: apply ke database adalah langkah manusia (file ini hanya
-tulisan, tanpa apply); skrip `bun scripts/uji-anti-manipulasi.mjs` membuktikan
+tulisan, tanpa apply); skrip `cd apps/web && bun scripts/uji-anti-manipulasi.mjs` membuktikan
 probe anon/non-BPBD gagal dan rantai hash utuh. Kalau butuh transisi status
 baru, ubah daftar di trigger + ADR ini, bukan UPDATE langsung.
