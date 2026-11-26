@@ -38,6 +38,57 @@ const CONTOH_DNT = "DNT-2026-001";
 // Padding kiri seragam tiap section agar tidak ada teks menempel sumbu border-l.
 const PAD = "pl-6 pr-5 md:pl-12 md:pr-10 lg:pl-14 lg:pr-12";
 
+function gerakKecil(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
+
+// Count-up rAF ~800ms ease-out dari 0 ke target.
+function useAngka(target: number): number {
+  const [tampil, setTampil] = useState(0);
+  useEffect(() => {
+    if (gerakKecil()) {
+      setTampil(target);
+      return;
+    }
+    let bingkai = 0;
+    const mulai = performance.now();
+    const lama = 800;
+    const putar = (kini: number) => {
+      const t = Math.min((kini - mulai) / lama, 1);
+      const reda = 1 - Math.pow(1 - t, 3);
+      setTampil(Math.round(target * reda));
+      if (t < 1) bingkai = requestAnimationFrame(putar);
+    };
+    bingkai = requestAnimationFrame(putar);
+    return () => cancelAnimationFrame(bingkai);
+  }, [target]);
+  return tampil;
+}
+
+// Reveal sekali-jalan: konten default terlihat; IO hanya menambah .animate-enter.
+function useUngkap(): void {
+  useEffect(() => {
+    if (typeof IntersectionObserver === "undefined") return;
+    const el = Array.from(document.querySelectorAll("[data-ungkap]"));
+    if (el.length === 0) return;
+    const io = new IntersectionObserver(
+      (masuk) => {
+        for (const m of masuk) {
+          if (m.isIntersecting) {
+            m.target.classList.add("animate-enter");
+            io.unobserve(m.target);
+          }
+        }
+      },
+      { threshold: 0.15 },
+    );
+    for (const x of el) io.observe(x);
+    return () => io.disconnect();
+  }, []);
+}
 const JANJI = [
   {
     nomor: "01",
@@ -186,8 +237,8 @@ function TombolSudut({
       href={href}
       className={
         terang
-          ? "relative inline-flex min-h-12 items-center justify-center px-5 font-mono text-[11px] tracking-[0.15em] text-[#0B1F2E] uppercase hover:bg-[#0B1F2E]/5"
-          : "relative inline-flex min-h-12 items-center justify-center border border-white/40 bg-white/10 px-5 font-mono text-[11px] tracking-[0.15em] text-white uppercase backdrop-blur-sm hover:bg-white/20"
+          ? "tekan relative inline-flex min-h-12 items-center justify-center px-5 font-mono text-[11px] tracking-[0.15em] text-[#0B1F2E] uppercase hover:bg-[#0B1F2E]/5"
+          : "tekan relative inline-flex min-h-12 items-center justify-center border border-white/40 bg-white/10 px-5 font-mono text-[11px] tracking-[0.15em] text-white uppercase backdrop-blur-sm hover:bg-white/20"
       }
     >
       <Sudut terang={terang} />
@@ -221,11 +272,13 @@ function AkordeonGelap() {
                 {terbuka ? "−" : "+"}
               </span>
             </button>
-            {terbuka && (
-              <p className="max-w-2xl pb-6 text-sm leading-relaxed text-white/70">
-                {g.isi}
-              </p>
-            )}
+            <div className="akor-bungkus" data-buka={terbuka} inert={!terbuka}>
+              <div className="akor-dalam">
+                <p className="max-w-2xl pb-6 text-sm leading-relaxed text-white/70">
+                  {g.isi}
+                </p>
+              </div>
+            </div>
           </div>
         );
       })}
@@ -255,11 +308,13 @@ function AkordeonTerang() {
                 {terbuka ? "−" : "+"}
               </span>
             </button>
-            {terbuka && (
-              <p className="max-w-2xl pb-6 text-sm leading-relaxed opacity-70">
-                {f.jawab}
-              </p>
-            )}
+            <div className="akor-bungkus" data-buka={terbuka} inert={!terbuka}>
+              <div className="akor-dalam">
+                <p className="max-w-2xl pb-6 text-sm leading-relaxed opacity-70">
+                  {f.jawab}
+                </p>
+              </div>
+            </div>
           </div>
         );
       })}
@@ -273,6 +328,10 @@ export default function Home() {
   const [totalDiterima, setTotalDiterima] = useState(0);
   const [totalSelisih, setTotalSelisih] = useState(0);
   const [legal, setLegal] = useState<string | null>(null);
+  useUngkap();
+  const angkaPosko = useAngka(totalPosko);
+  const angkaDiterima = useAngka(totalDiterima);
+  const angkaSelisih = useAngka(totalSelisih);
 
   useEffect(() => {
     void fetch("/api/publik/dashboard")
@@ -350,7 +409,7 @@ export default function Home() {
                 </div>
                 <button
                   type="submit"
-                  className="relative inline-flex min-h-12 items-center gap-2 bg-white px-5 font-mono text-[11px] tracking-[0.15em] text-[#0B1F2E] uppercase hover:bg-white/90"
+                  className="tekan relative inline-flex min-h-12 items-center gap-2 bg-white px-5 font-mono text-[11px] tracking-[0.15em] text-[#0B1F2E] uppercase hover:bg-white/90"
                 >
                   <Sudut terang />
                   <MagnifierIcon aria-hidden="true" />
@@ -414,24 +473,24 @@ export default function Home() {
             <div
               className={`relative grid grid-cols-1 gap-8 py-14 md:py-20 lg:grid-cols-12 ${PAD}`}
             >
-              <div className="flex flex-col justify-center gap-2 lg:col-span-5">
+              <div data-ungkap style={{ "--stagger": 0 } as React.CSSProperties} className="flex flex-col justify-center gap-2 lg:col-span-5">
                 <p className="t-micro font-mono text-[11px] tracking-[0.2em] uppercase opacity-70">
                   Tanpa login
                 </p>
                 <h2 className="t-h2 t-balance">Transparansi pangan per posko</h2>
               </div>
-              <dl className="relative flex flex-col divide-y divide-[#0B1F2E]/20 lg:col-span-7">
+              <dl data-ungkap style={{ "--stagger": 1 } as React.CSSProperties} className="relative flex flex-col divide-y divide-[#0B1F2E]/20 lg:col-span-7">
                 <div className="flex items-baseline justify-between gap-4 py-4 first:pt-0 last:pb-0">
                   <dt className="text-sm">Posko Terpantau</dt>
-                  <dd className="t-h2 t-angka tabular-nums">{totalPosko}</dd>
+                  <dd className="t-h2 t-angka tabular-nums">{angkaPosko}</dd>
                 </div>
                 <div className="flex items-baseline justify-between gap-4 py-4 first:pt-0 last:pb-0">
                   <dt className="text-sm">Paket Diterima</dt>
-                  <dd className="t-h2 t-angka tabular-nums">{totalDiterima}</dd>
+                  <dd className="t-h2 t-angka tabular-nums">{angkaDiterima}</dd>
                 </div>
                 <div className="flex items-baseline justify-between gap-4 py-4 first:pt-0 last:pb-0">
                   <dt className="text-sm">Masih Kurang</dt>
-                  <dd className="t-h2 t-angka tabular-nums">{totalSelisih}</dd>
+                  <dd className="t-h2 t-angka tabular-nums">{angkaSelisih}</dd>
                 </div>
               </dl>
             </div>
@@ -445,7 +504,7 @@ export default function Home() {
             <div
               className={`relative grid grid-cols-1 gap-8 py-16 md:py-24 lg:grid-cols-12 ${PAD}`}
             >
-              <div className="flex flex-col justify-center gap-2 lg:col-span-5">
+              <div data-ungkap style={{ "--stagger": 0 } as React.CSSProperties} className="flex flex-col justify-center gap-2 lg:col-span-5">
                 <p className="t-micro font-mono text-[11px] tracking-[0.2em] text-white/70 uppercase">
                   Mengapa ini penting
                 </p>
@@ -454,7 +513,7 @@ export default function Home() {
                   tapi karena gelap.
                 </h2>
               </div>
-              <div className="flex flex-col gap-6 lg:col-span-7">
+              <div data-ungkap style={{ "--stagger": 1 } as React.CSSProperties} className="flex flex-col gap-6 lg:col-span-7">
                 <p className="max-w-2xl leading-relaxed text-white/70">
                   Saat bencana besar, bantuan menumpuk di gudang pusat
                   sementara posko terpencil kekurangan. Catatan kertas
@@ -492,7 +551,7 @@ export default function Home() {
             <div
               className={`relative grid grid-cols-1 gap-8 py-16 md:py-24 lg:grid-cols-12 ${PAD}`}
             >
-              <div className="flex flex-col justify-center gap-2 lg:col-span-5">
+              <div data-ungkap style={{ "--stagger": 0 } as React.CSSProperties} className="flex flex-col justify-center gap-2 lg:col-span-5">
                 <p className="t-micro font-mono text-[11px] tracking-[0.2em] uppercase opacity-70">
                   Empat janji anti-korupsi
                 </p>
@@ -500,7 +559,7 @@ export default function Home() {
                   Uang dan barang publik harus bisa diikuti siapa saja
                 </h2>
               </div>
-              <div className="grid sm:grid-cols-2 lg:col-span-7">
+              <div data-ungkap style={{ "--stagger": 1 } as React.CSSProperties} className="grid sm:grid-cols-2 lg:col-span-7">
                 <div className="grid gap-px overflow-hidden border border-[#0B1F2E]/20 bg-[#0B1F2E]/20 sm:col-span-2 sm:grid-cols-2">
                   {JANJI.map((j) => (
                     <div key={j.nomor} className="flex flex-col gap-2 bg-[#DCE8EE] p-6 md:p-8">
@@ -527,7 +586,7 @@ export default function Home() {
             <div
               className={`relative grid grid-cols-1 gap-8 py-16 md:py-24 lg:grid-cols-12 ${PAD}`}
             >
-              <div className="flex flex-col justify-center gap-2 lg:col-span-5">
+              <div data-ungkap style={{ "--stagger": 0 } as React.CSSProperties} className="flex flex-col justify-center gap-2 lg:col-span-5">
                 <p className="t-micro font-mono text-[11px] tracking-[0.2em] text-white/70 uppercase">
                   Alur operasional hulu ke hilir
                 </p>
@@ -540,7 +599,7 @@ export default function Home() {
                   detailnya.
                 </p>
               </div>
-              <div className="lg:col-span-7">
+              <div data-ungkap style={{ "--stagger": 1 } as React.CSSProperties} className="lg:col-span-7">
                 <AkordeonGelap />
               </div>
             </div>
@@ -554,13 +613,13 @@ export default function Home() {
             <div
               className={`relative grid grid-cols-1 gap-8 py-16 md:py-24 lg:grid-cols-12 ${PAD}`}
             >
-              <div className="flex flex-col justify-center gap-2 lg:col-span-5">
+              <div data-ungkap style={{ "--stagger": 0 } as React.CSSProperties} className="flex flex-col justify-center gap-2 lg:col-span-5">
                 <p className="t-micro font-mono text-[11px] tracking-[0.2em] uppercase opacity-70">
                   Verifikasi publik
                 </p>
                 <h2 className="t-h2 t-balance">Cek keaslian dalam 3 langkah</h2>
               </div>
-              <div className="flex flex-col gap-6 lg:col-span-7">
+              <div data-ungkap style={{ "--stagger": 1 } as React.CSSProperties} className="flex flex-col gap-6 lg:col-span-7">
                 <ol className="flex flex-col divide-y divide-[#0B1F2E]/20 border-y border-[#0B1F2E]/20">
                   {LANGKAH.map((l) => (
                     <li key={l.nomor} className="flex items-start gap-5 py-6">
@@ -592,7 +651,7 @@ export default function Home() {
             <div
               className={`relative grid grid-cols-1 gap-8 py-16 md:py-24 lg:grid-cols-12 ${PAD}`}
             >
-              <div className="flex flex-col justify-center gap-2 lg:col-span-5">
+              <div data-ungkap style={{ "--stagger": 0 } as React.CSSProperties} className="flex flex-col justify-center gap-2 lg:col-span-5">
                 <p className="t-micro font-mono text-[11px] tracking-[0.2em] text-white/70 uppercase">
                   Standar teknis dan keandalan
                 </p>
@@ -600,7 +659,7 @@ export default function Home() {
                   Dirancang untuk medan bencana yang sulit dan audit ketat.
                 </h2>
               </div>
-              <div className="flex flex-col gap-8 lg:col-span-7">
+              <div data-ungkap style={{ "--stagger": 1 } as React.CSSProperties} className="flex flex-col gap-8 lg:col-span-7">
                 {ARSITEKTUR.map((a) => (
                   <div key={a.nomor} className="border-t border-white/20 pt-6">
                     <p className="font-mono text-[11px] tracking-[0.2em] text-white/60">
@@ -625,7 +684,7 @@ export default function Home() {
             <div
               className={`relative grid grid-cols-1 gap-8 py-16 md:py-24 lg:grid-cols-12 ${PAD}`}
             >
-              <div className="flex flex-col justify-center gap-2 lg:col-span-5">
+              <div data-ungkap style={{ "--stagger": 0 } as React.CSSProperties} className="flex flex-col justify-center gap-2 lg:col-span-5">
                 <p className="t-micro font-mono text-[11px] tracking-[0.2em] uppercase opacity-70">
                   Pertanyaan umum (FAQ)
                 </p>
@@ -633,7 +692,7 @@ export default function Home() {
                   Hal yang sering ditanyakan publik dan relawan
                 </h2>
               </div>
-              <div className="lg:col-span-7">
+              <div data-ungkap style={{ "--stagger": 1 } as React.CSSProperties} className="lg:col-span-7">
                 <AkordeonTerang />
               </div>
             </div>
@@ -647,7 +706,7 @@ export default function Home() {
             <div className={`relative py-16 md:py-24 ${PAD}`}>
               <div className="border border-white/25 bg-white/[0.04] p-8 backdrop-blur-md md:p-12">
                 <div className="grid grid-cols-1 gap-8 divide-y divide-white/20 lg:grid-cols-2 lg:gap-12 lg:divide-x lg:divide-y-0">
-                  <div className="flex flex-col items-start gap-4 pb-8 lg:pb-0 lg:pr-12">
+                  <div data-ungkap style={{ "--stagger": 0 } as React.CSSProperties} className="flex flex-col items-start gap-4 pb-8 lg:pb-0 lg:pr-12">
                     <h2 className="t-h2 t-balance text-white">
                       Pegang kode manifest atau sumbangan?
                     </h2>
@@ -659,7 +718,7 @@ export default function Home() {
                       Buka dashboard transparansi
                     </TombolSudut>
                   </div>
-                  <div className="flex flex-col items-start gap-4 pt-8 lg:pt-0 lg:pl-12">
+                  <div data-ungkap style={{ "--stagger": 1 } as React.CSSProperties} className="flex flex-col items-start gap-4 pt-8 lg:pt-0 lg:pl-12">
                     <h2 className="t-h2 t-balance text-white">
                       Bertugas di gudang, posko, atau armada?
                     </h2>
