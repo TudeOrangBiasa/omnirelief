@@ -160,16 +160,18 @@ export default function Header({ nama, masuk }: { nama: string | null; masuk: bo
               : "flex h-9 items-center gap-1.5 rounded-none border border-emerald-700/30 bg-emerald-50 px-3 font-mono text-[11px] uppercase tracking-wider text-emerald-900"
           }
           >
-            {macet ? (
-              <WiFiOffIcon aria-hidden="true" className="size-4" />
-            ) : (
-              <WiFiIcon aria-hidden="true" className="size-4" />
-            )}
-            {!daring
-              ? `Luring${antre > 0 ? `, ${antre} Menunggu` : ""}`
-              : antre > 0
-                ? `${antre} Menunggu Sinkronisasi`
-                : "Daring"}
+            <span key={`${daring}-${antre}`} className="pudar-masuk flex items-center gap-1.5">
+              {macet ? (
+                <WiFiOffIcon aria-hidden="true" className="size-4" />
+              ) : (
+                <WiFiIcon aria-hidden="true" className="size-4" />
+              )}
+              {!daring
+                ? `Luring${antre > 0 ? `, ${antre} Menunggu` : ""}`
+                : antre > 0
+                  ? `${antre} Menunggu Sinkronisasi`
+                  : "Daring"}
+            </span>
           </p>
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import BannerOffline, { hitungAntrean } from "@/components/banner-offline";
@@ -18,7 +18,7 @@ import {
 } from "@omnirelief/ui/components/select";
 import { Skeleton } from "@omnirelief/ui/components/skeleton";
 import { Textarea } from "@omnirelief/ui/components/textarea";
-import { WiFiOffIcon } from "@solar-icons/react/linear";
+import { CheckIcon, WiFiOffIcon } from "@solar-icons/react/linear";
 import { kirimAntrean, kirimSatuAntrean, tambahAntrean } from "@/lib/offline";
 import { BantuanIstilah } from "@/components/bantuan-istilah";
 import { BarisSegarkan } from "@/components/kepala-halaman";
@@ -52,6 +52,9 @@ export default function BantuanPosko() {
   const [galat, setGalat] = useState<string | null>(null);
   const [sibukKonfirmasi, setSibukKonfirmasi] = useState<number | null>(null);
   const [sibukLapor, setSibukLapor] = useState(false);
+  const [suksesKonfirmasi, setSuksesKonfirmasi] = useState<number | null>(null);
+  const [suksesLapor, setSuksesLapor] = useState(false);
+  const timerSukses = useRef<number | null>(null);
   const [diperbarui, setDiperbarui] = useState("");
   const [antre, setAntre] = useState(0);
 
@@ -112,6 +115,12 @@ export default function BantuanPosko() {
     window.addEventListener("online", saatOnline);
     return () => window.removeEventListener("online", saatOnline);
   }, []);
+  useEffect(
+    () => () => {
+      if (timerSukses.current !== null) window.clearTimeout(timerSukses.current);
+    },
+    []
+  );
 
   async function konfirmasi(manifest_id: number) {
     setGalat(null);
@@ -128,6 +137,12 @@ export default function BantuanPosko() {
       else {
         setPesan("Penerimaan dikonfirmasi. Terima kasih.");
         toast.success("Penerimaan dikonfirmasi.");
+        setSuksesKonfirmasi(manifest_id);
+        if (timerSukses.current !== null) window.clearTimeout(timerSukses.current);
+        timerSukses.current = window.setTimeout(() => {
+          setSuksesKonfirmasi(null);
+          setSuksesLapor(false);
+        }, 1200);
         await muat();
       }
     } catch {
@@ -159,6 +174,12 @@ export default function BantuanPosko() {
       else {
         setPesan("Laporan tampil publik sebagai dokumen terbuka.");
         toast.success("Laporan ketidaksesuaian terkirim.");
+        setSuksesLapor(true);
+        if (timerSukses.current !== null) window.clearTimeout(timerSukses.current);
+        timerSukses.current = window.setTimeout(() => {
+          setSuksesKonfirmasi(null);
+          setSuksesLapor(false);
+        }, 1200);
         setLaporId(null);
         setKeterangan("");
         await muat();
@@ -266,10 +287,10 @@ export default function BantuanPosko() {
                   <div className="flex gap-2">
                     <Button
                       onClick={() => void konfirmasi(b.id)}
-                      disabled={sibuk}
-                      className="min-h-12 flex-1 bg-success text-white hover:bg-success/80"
+                      disabled={sibuk || suksesKonfirmasi !== null}
+                      className={suksesKonfirmasi === b.id ? "morf-tombol min-h-12 flex-1 bg-success text-white hover:bg-success" : "morf-tombol min-h-12 flex-1 bg-success text-white hover:bg-success/80"}
                     >
-                      {sibukKonfirmasi === b.id ? "Mengonfirmasi..." : "Konfirmasi terima"}
+                      {sibukKonfirmasi === b.id ? "Mengonfirmasi..." : suksesKonfirmasi === b.id ? (<><CheckIcon aria-hidden="true" /> Dikonfirmasi</>) : "Konfirmasi terima"}
                     </Button>
                     <Button
                       variant="outline"
@@ -338,10 +359,10 @@ export default function BantuanPosko() {
                     <Button
                       variant="destructive"
                       onClick={() => void lapor(b.id)}
-                      disabled={sibuk}
-                      className="min-h-12"
+                      disabled={sibuk || suksesLapor}
+                      className={suksesLapor ? "morf-tombol min-h-12 border-success bg-success text-white hover:bg-success" : "morf-tombol min-h-12"}
                     >
-                      {sibukLapor ? "Mengirim..." : "Kirim laporan publik"}
+                      {sibukLapor ? "Mengirim..." : suksesLapor ? (<><CheckIcon aria-hidden="true" /> Terkirim</>) : "Kirim laporan publik"}
                     </Button>
                   </div>
                 )}

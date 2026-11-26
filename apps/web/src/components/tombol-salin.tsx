@@ -63,14 +63,13 @@ export default function TombolSalin({
     <Button
       onClick={() => void salin()}
       variant={variant}
-      className={cn("min-h-12 w-full", className)}
+      className={cn("tekan min-h-12 w-full", className)}
       aria-live="polite"
     >
-      {tersalin ? (
-        <CheckIcon aria-hidden="true" />
-      ) : (
-        <CopyIcon aria-hidden="true" />
-      )}
+      <span aria-hidden="true" className="tukar-ikon">
+        <CopyIcon className={tersalin ? "opacity-0" : "opacity-100"} />
+        <CheckIcon className={tersalin ? "opacity-100" : "opacity-0"} />
+      </span>
       {tersalin ? "Tersalin" : label}
     </Button>
   );

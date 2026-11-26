@@ -1,10 +1,11 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import QRCode from "qrcode";
 import { toast } from "sonner";
 import {
+  CheckIcon,
   DangerTriangleIcon,
   LockKeyholeMinimalisticIcon,
   QrCodeIcon,
@@ -104,7 +105,16 @@ function IsiFormulirKirim() {
   const [sibuk, setSibuk] = useState(false);
   const [tanyaKunci, setTanyaKunci] = useState(false);
   const [poskoOtomatis, setPoskoOtomatis] = useState(false);
+  const [suksesDraf, setSuksesDraf] = useState(false);
+  const [suksesKunci, setSuksesKunci] = useState(false);
+  const timerSukses = useRef<number | null>(null);
   const [diperbarui, setDiperbarui] = useState("");
+  useEffect(
+    () => () => {
+      if (timerSukses.current !== null) window.clearTimeout(timerSukses.current);
+    },
+    []
+  );
 
   useEffect(() => {
     void (async () => {
@@ -245,6 +255,12 @@ function IsiFormulirKirim() {
           : [];
         setDraf({ id, kode, peringatan });
         toast.success(`Draf ${kode} tersimpan.`);
+        setSuksesDraf(true);
+        if (timerSukses.current !== null) window.clearTimeout(timerSukses.current);
+        timerSukses.current = window.setTimeout(() => {
+          setSuksesDraf(false);
+          setSuksesKunci(false);
+        }, 1200);
       } else {
         setGalat(
           typeof data === "object" && data !== null && "galat" in data
@@ -277,6 +293,12 @@ function IsiFormulirKirim() {
         });
         setHasil({ kode, url_publik: url, qr });
         toast.success(`Manifest ${kode} terkunci publik.`);
+        setSuksesKunci(true);
+        if (timerSukses.current !== null) window.clearTimeout(timerSukses.current);
+        timerSukses.current = window.setTimeout(() => {
+          setSuksesDraf(false);
+          setSuksesKunci(false);
+        }, 1200);
       } else {
         setGalat(
           typeof data === "object" && data !== null && "galat" in data
@@ -336,7 +358,7 @@ function IsiFormulirKirim() {
         </Alert>
       )}
       {hasil ? (
-        <Card className="border-transparent bg-success-bg">
+        <Card className="animate-enter border-transparent bg-success-bg">
           <CardContent className="flex flex-col items-center gap-2 p-4 text-sm text-success">
             <Badge className="border-transparent bg-success text-white">
               <LockKeyholeMinimalisticIcon aria-hidden="true" />
@@ -356,7 +378,7 @@ function IsiFormulirKirim() {
           </CardContent>
         </Card>
       ) : draf ? (
-        <Card>
+        <Card className="animate-enter">
           <CardContent className="flex flex-col gap-2 p-4 text-sm">
             <p className="font-bold">Draf {draf.kode} tersimpan.</p>
             {draf.peringatan.length > 0 && (
@@ -443,10 +465,10 @@ function IsiFormulirKirim() {
                       setTanyaKunci(false);
                       void publikasikan();
                     }}
-                    disabled={sibuk}
-                    className="min-h-12 flex-1 rounded-none"
+                    disabled={sibuk || suksesKunci}
+                    className={suksesKunci ? "morf-tombol min-h-12 flex-1 rounded-none bg-success text-white hover:bg-success" : "morf-tombol min-h-12 flex-1 rounded-none"}
                   >
-                    {sibuk ? "Mengunci..." : "Kunci permanen"}
+                    {sibuk ? "Mengunci..." : suksesKunci ? (<><CheckIcon aria-hidden="true" /> Terkunci</>) : "Kunci permanen"}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -454,7 +476,7 @@ function IsiFormulirKirim() {
           </CardContent>
         </Card>
       ) : batch.length === 0 ? (
-        <div role="status" className="flex flex-col gap-2 rounded-none border border-dashed p-4">
+        <div role="status" className="animate-enter flex flex-col gap-2 rounded-none border border-dashed p-4">
           <p className="text-base font-semibold">Belum ada manifest perlu dicek</p>
           <p className="text-sm text-muted-foreground">
             Gudang belum mencatat batch dengan sisa stok. Isi stok dulu sebelum membuat manifest.
@@ -663,10 +685,10 @@ function IsiFormulirKirim() {
             </p>
             <Button
               onClick={() => void buatDraf()}
-              disabled={sibuk || poskoId === "" || tim.trim() === ""}
-              className="min-h-12 flex-1 rounded-none bg-[#1B7FBF] text-white hover:bg-[#0B1F2E] sm:flex-none sm:px-8"
+              disabled={sibuk || suksesDraf || poskoId === "" || tim.trim() === ""}
+              className={suksesDraf ? "morf-tombol min-h-12 flex-1 rounded-none bg-success text-white hover:bg-success sm:flex-none sm:px-8" : "morf-tombol min-h-12 flex-1 rounded-none bg-[#1B7FBF] text-white hover:bg-[#0B1F2E] sm:flex-none sm:px-8"}
             >
-              {sibuk ? "Menyimpan..." : "Simpan draf"}
+              {sibuk ? "Menyimpan..." : suksesDraf ? (<><CheckIcon aria-hidden="true" /> Tersimpan</>) : "Simpan draf"}
             </Button>
           </div>
         </>

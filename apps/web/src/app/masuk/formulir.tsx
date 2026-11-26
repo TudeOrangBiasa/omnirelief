@@ -49,6 +49,7 @@ export default function FormulirMasuk({
   const [password, setPassword] = useState("");
   const [pin, setPin] = useState("");
   const [galatPin, setGalatPin] = useState<string | null>(null);
+  const [goyang, setGoyang] = useState(0);
   const contekanRef = useRef<HTMLDetailsElement>(null);
 
   function pilihAkunDemo(emailDemo: string) {
@@ -83,6 +84,7 @@ export default function FormulirMasuk({
     data.set("password", password);
     const hasil = await tahapSatu(data);
     if (hasil && hasil.perluPin) setTahap("pin");
+    else setGoyang((g) => g + 1);
   }
 
   async function kirimPin(event: React.FormEvent<HTMLFormElement>) {
@@ -90,6 +92,7 @@ export default function FormulirMasuk({
     const bersih = pin.replace(/[^0-9]/g, "").slice(0, 6);
     if (!/^[0-9]{6}$/.test(bersih)) {
       setGalatPin("PIN harus 6 digit angka.");
+      setGoyang((g) => g + 1);
       return;
     }
     setGalatPin(null);
@@ -98,6 +101,7 @@ export default function FormulirMasuk({
     data.set("password", password);
     data.set("pin", bersih);
     await tahapDua(data);
+    setGoyang((g) => g + 1);
   }
 
   return (
@@ -110,13 +114,15 @@ export default function FormulirMasuk({
         </p>
       </div>
       {galat && (
-        <Alert variant="destructive" role="alert">
-          <AlertTitle>Gagal masuk</AlertTitle>
-          <AlertDescription id="masuk-galat">{galat}</AlertDescription>
-        </Alert>
+        <div key={`${galat}-${goyang}`} className="guncang">
+          <Alert variant="destructive" role="alert">
+            <AlertTitle>Gagal masuk</AlertTitle>
+            <AlertDescription id="masuk-galat">{galat}</AlertDescription>
+          </Alert>
+        </div>
       )}
       {tahap === "kredensial" ? (
-        <form onSubmit={(e) => void kirimKredensial(e)} className="flex flex-col gap-4">
+        <form key={tahap} onSubmit={(e) => void kirimKredensial(e)} className="tahap-masuk flex flex-col gap-4">
           <div className="flex flex-col gap-1">
             <Label htmlFor="masuk-email" className="text-white">Email</Label>
             <Input
@@ -196,15 +202,17 @@ export default function FormulirMasuk({
           </div>
         </form>
       ) : (
-        <form onSubmit={(e) => void kirimPin(e)} className="flex flex-col gap-4">
+        <form key={tahap} onSubmit={(e) => void kirimPin(e)} className="tahap-masuk flex flex-col gap-4">
           <p className="text-sm text-white/70">
             Akun memakai kode otorisasi. Masukkan PIN 6 digit untuk {email || "akun kamu"}.
           </p>
           {galatPin && (
-            <Alert variant="destructive" role="alert">
-              <AlertTitle>Kode salah</AlertTitle>
-              <AlertDescription>{galatPin}</AlertDescription>
-            </Alert>
+            <div key={`${galatPin}-${goyang}`} className="guncang">
+              <Alert variant="destructive" role="alert">
+                <AlertTitle>Kode salah</AlertTitle>
+                <AlertDescription>{galatPin}</AlertDescription>
+              </Alert>
+            </div>
           )}
           <div className="flex flex-col gap-1">
             <Label htmlFor="masuk-pin" className="text-white">Kode otorisasi PIN</Label>

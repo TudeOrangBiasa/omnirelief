@@ -16,8 +16,6 @@ export default function TombolKeAtas() {
     return () => window.removeEventListener("scroll", saatGulir);
   }, []);
 
-  if (!tampil) return null;
-
   return (
     <button
       type="button"
@@ -31,7 +29,10 @@ export default function TombolKeAtas() {
         })
       }
       aria-label="Kembali ke atas"
-      className="fixed right-6 bottom-24 z-50 inline-flex min-h-12 min-w-12 items-center justify-center rounded-full bg-foreground text-lg text-white shadow-lg hover:bg-foreground/90 md:bottom-6"
+      aria-hidden={tampil ? undefined : true}
+      tabIndex={tampil ? 0 : -1}
+      data-tampil={tampil ? "true" : "false"}
+      className="tombol-atas fixed right-6 bottom-24 z-50 inline-flex min-h-12 min-w-12 items-center justify-center rounded-full bg-foreground text-lg text-white shadow-lg hover:bg-foreground/90 md:bottom-6"
     >
       <span aria-hidden="true">↑</span>
     </button>

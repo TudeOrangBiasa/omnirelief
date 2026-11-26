@@ -43,14 +43,27 @@ export default function BannerOffline() {
   return (
     <Alert
       role="status"
-      className="border-warning bg-warning-bg text-warning-badge-fg"
+      className="geser-masuk border-warning bg-warning-bg text-warning-badge-fg"
     >
       <WiFiOffIcon />
       <AlertTitle>{!daring ? "Luring" : "Menunggu Sinkronisasi"}</AlertTitle>
       <AlertDescription className="text-warning-badge-fg">
-        {!daring
-          ? `Koneksi lemah, data tersimpan dan terkirim otomatis (${antre} antre).`
-          : `${antre} data menunggu sinkronisasi.`}
+        {!daring ? (
+          <>
+            Koneksi lemah, data tersimpan dan terkirim otomatis (
+            <span key={antre} className="pudar-masuk tabular-nums">
+              {antre}
+            </span>{" "}
+            antre).
+          </>
+        ) : (
+          <>
+            <span key={antre} className="pudar-masuk tabular-nums">
+              {antre}
+            </span>{" "}
+            data menunggu sinkronisasi.
+          </>
+        )}
       </AlertDescription>
     </Alert>
   );

@@ -265,7 +265,7 @@ export default function PusatNotifikasi() {
           <section
             role="dialog"
             aria-label="Pusat notifikasi"
-            className="absolute top-full right-0 z-50 mt-2 flex max-h-[70vh] w-[min(22rem,calc(100vw-2rem))] flex-col gap-2 overflow-hidden rounded-none border border-slate-300 bg-white p-3 shadow-lg"
+            className="panel-masuk absolute top-full right-0 z-50 mt-2 flex max-h-[70vh] w-[min(22rem,calc(100vw-2rem))] flex-col gap-2 overflow-hidden rounded-none border border-slate-300 bg-white p-3 shadow-lg"
           >
             <div className="flex items-center gap-2">
               <p className="font-mono text-xs tracking-widest text-muted-foreground uppercase">

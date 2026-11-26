@@ -3,6 +3,7 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import type { CSSProperties } from "react";
 import { Button, buttonVariants } from "@omnirelief/ui/components/button";
 import { Badge } from "@omnirelief/ui/components/badge";
 import { cn } from "@omnirelief/ui/lib/utils";
@@ -211,10 +212,10 @@ export default function Onboarding({ peran }: { peran: Peran }) {
           aria-label="Kemajuan panduan"
           className="mt-3 h-2 w-full bg-white"
         >
-          <div
-            className="h-2 bg-[#0f79b8]"
-            style={{ width: `${(jumlah / langkah.length) * 100}%` }}
-          />
+        <div
+          className="bilah-gerak h-2 bg-[#0f79b8]"
+          style={{ width: `${(jumlah / langkah.length) * 100}%` }}
+        />
         </div>
       </div>
       <ol className="flex flex-col divide-y divide-[#0B1F2E]/10">
@@ -223,7 +224,8 @@ export default function Onboarding({ peran }: { peran: Peran }) {
           return (
             <li
               key={l.judul}
-              className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
+              className="animate-enter flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
+              style={{ "--stagger": i * 0.6 } as CSSProperties}
             >
               <div className="flex items-start gap-3">
                 <span
@@ -236,13 +238,13 @@ export default function Onboarding({ peran }: { peran: Peran }) {
                 />
                 <div>
                   <p className="text-sm font-bold text-[#0B1F2E]">{l.judul}</p>
-                  <p className="mt-1">
+                  <p className="mt-1" key={done ? "selesai" : "belum"}>
                     {done ? (
-                      <Badge className="rounded-none bg-[#0f79b8] text-white">
+                      <Badge className="balik-masuk rounded-none bg-[#0f79b8] text-white">
                         Selesai
                       </Badge>
                     ) : (
-                      <Badge variant="outline" className="rounded-none">
+                      <Badge variant="outline" className="balik-masuk rounded-none">
                         Belum selesai
                       </Badge>
                     )}

@@ -294,20 +294,150 @@
  .tekan:active {
  transform: scale(0.98);
  }
+/* Morf tombol: transisi warna latar/teks/garis 200ms kurva standar. */
+.morf-tombol {
+transition:
+background-color 200ms cubic-bezier(0.23, 1, 0.32, 1),
+color 200ms cubic-bezier(0.23, 1, 0.32, 1),
+border-color 200ms cubic-bezier(0.23, 1, 0.32, 1),
+transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.morf-tombol:active {
+transform: scale(0.98);
+}
+/* Tukar ikon: crossfade Copy/Check 150ms, dua ikon bertumpuk grid. */
+.tukar-ikon {
+display: inline-grid;
+place-items: center;
+}
+.tukar-ikon > * {
+grid-area: 1 / 1;
+transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+/* Pudar masuk: swap konten 150ms (angka antre, pil daring). */
+.pudar-masuk {
+animation: pudar-masuk 150ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+/* Tahap masuk: swap kredensial-PIN 200ms. */
+.tahap-masuk {
+animation: pudar-masuk 200ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+/* Geser masuk: banner offline slide-fade 250ms. */
+.geser-masuk {
+animation: geser-masuk 250ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+/* Panel apung: notifikasi enter 200ms, origin kanan-atas. Keluar instan. */
+.panel-masuk {
+transform-origin: top right;
+animation: panel-masuk 200ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+/* Tombol-atas: selalu terpasang, fade+scale 0.9-1 200ms masuk/keluar. */
+.tombol-atas {
+opacity: 0;
+transform: scale(0.9);
+visibility: hidden;
+pointer-events: none;
+transition:
+opacity 200ms cubic-bezier(0.23, 1, 0.32, 1),
+transform 200ms cubic-bezier(0.23, 1, 0.32, 1),
+visibility 0s linear 200ms;
+}
+.tombol-atas[data-tampil="true"] {
+opacity: 1;
+transform: scale(1);
+visibility: visible;
+pointer-events: auto;
+transition:
+opacity 200ms cubic-bezier(0.23, 1, 0.32, 1),
+transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+/* Bilah kemajuan: lebar 300ms (onboarding). */
+.bilah-gerak {
+transition: width 300ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+/* Balik lencana: flip badge 200ms. */
+.balik-masuk {
+animation: balik-masuk 200ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
  }
+@keyframes pudar-masuk {
+from {
+opacity: 0;
+}
+}
+@keyframes geser-masuk {
+from {
+opacity: 0;
+transform: translateY(-8px);
+}
+}
+@keyframes panel-masuk {
+from {
+opacity: 0;
+transform: scale(0.97);
+}
+}
+@keyframes balik-masuk {
+from {
+opacity: 0;
+transform: rotateY(90deg);
+}
+}
+@keyframes guncang {
+0%,
+100% {
+transform: translateX(0);
+}
+20% {
+transform: translateX(-6px);
+}
+40% {
+transform: translateX(6px);
+}
+60% {
+transform: translateX(-4px);
+}
+80% {
+transform: translateX(4px);
+}
+}
+@layer components {
+/* Guncang: shake galat 300ms (3 ayun). */
+.guncang {
+animation: guncang 300ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-enter {
+  .animate-enter,
+  .pudar-masuk,
+  .tahap-masuk,
+  .geser-masuk,
+  .panel-masuk,
+  .balik-masuk,
+  .guncang {
     animation: none;
   }
   .akor-bungkus,
   .akor-bungkus[data-buka="true"] {
     transition: none;
   }
-  .tekan {
+  .tekan,
+  .morf-tombol,
+  .tukar-ikon > *,
+  .tombol-atas,
+  .tombol-atas[data-tampil="true"],
+  .bilah-gerak {
     transition: none;
   }
-  .tekan:active {
+  .tekan:active,
+  .morf-tombol:active {
     transform: none;
+  }
+  .tombol-atas {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+    pointer-events: auto;
   }
 }

@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import BannerOffline from "@/components/banner-offline";
 import { BarisSegarkan } from "@/components/kepala-halaman";
 import { Alert, AlertDescription, AlertTitle } from "@omnirelief/ui/components/alert";
 import { Badge } from "@omnirelief/ui/components/badge";
 import { Button } from "@omnirelief/ui/components/button";
+import { CheckIcon } from "@solar-icons/react/linear";
 import { Card, CardContent } from "@omnirelief/ui/components/card";
 import { Input } from "@omnirelief/ui/components/input";
 import { Label } from "@omnirelief/ui/components/label";
@@ -53,6 +54,8 @@ export default function FormulirPosko() {
   const [galatField, setGalatField] = useState<Partial<Record<NamaMedan, string>>>({});
   const [modeSibuk, setModeSibuk] = useState<"kirim" | "draf" | null>(null);
   const [diperbarui, setDiperbarui] = useState("");
+  const [sukses, setSukses] = useState<"kirim" | "draf" | null>(null);
+  const timerSukses = useRef<number | null>(null);
 
   function bersihkanGalat(kunci: NamaMedan) {
     setGalatField((sebelum) => {
@@ -62,6 +65,12 @@ export default function FormulirPosko() {
       return ganti;
     });
   }
+  useEffect(
+    () => () => {
+      if (timerSukses.current !== null) window.clearTimeout(timerSukses.current);
+    },
+    []
+  );
   async function muat() {
     const res = await fetch("/api/posko/laporan");
     const data = (await res.json()) as { ok: boolean; laporan?: Laporan[] };
@@ -114,6 +123,9 @@ export default function FormulirPosko() {
         const pesan = draft ? "Draf tersimpan." : "Laporan terkirim, menunggu verifikasi BPBD.";
         setHasil(pesan);
         toast.success(pesan);
+        setSukses(draft ? "draf" : "kirim");
+        if (timerSukses.current !== null) window.clearTimeout(timerSukses.current);
+        timerSukses.current = window.setTimeout(() => setSukses(null), 1200);
         await muat();
       } else setGalat(data.galat ?? "Gagal menyimpan.");
     } catch {
@@ -281,20 +293,24 @@ export default function FormulirPosko() {
           </div>
         ))}
         <div className="sticky bottom-20 z-10 flex gap-3 rounded-none border border-[#0B1F2E] bg-[#0B1F2E] p-3 shadow-lg md:bottom-4">
-          <Button type="submit" disabled={sibuk} className="min-h-12 flex-1 rounded-none">
-            {modeSibuk === "kirim" ? "Mengirim..." : "Kirim data"}
+          <Button
+            type="submit"
+            disabled={sibuk || sukses !== null}
+            className={sukses === "kirim" ? "morf-tombol min-h-12 flex-1 rounded-none bg-success text-white hover:bg-success" : "morf-tombol min-h-12 flex-1 rounded-none"}
+          >
+            {modeSibuk === "kirim" ? "Mengirim..." : sukses === "kirim" ? (<><CheckIcon aria-hidden="true" /> Terkirim</>) : "Kirim data"}
           </Button>
           <Button
             type="button"
             variant="outline"
-            disabled={sibuk}
+            disabled={sibuk || sukses !== null}
             onClick={(e) => {
               const form = (e.target as HTMLButtonElement).closest("form");
               if (form) void kirim(new FormData(form), true);
             }}
-            className="min-h-12 flex-1 rounded-none"
+            className={sukses === "draf" ? "morf-tombol min-h-12 flex-1 rounded-none border-success bg-success text-white hover:bg-success" : "morf-tombol min-h-12 flex-1 rounded-none"}
           >
-            {modeSibuk === "draf" ? "Menyimpan..." : "Simpan draf"}
+            {modeSibuk === "draf" ? "Menyimpan..." : sukses === "draf" ? (<><CheckIcon aria-hidden="true" /> Tersimpan</>) : "Simpan draf"}
           </Button>
         </div>
       </form>

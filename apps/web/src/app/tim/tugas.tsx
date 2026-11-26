@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import BannerOffline, { hitungAntrean } from "@/components/banner-offline";
 import Link from "next/link";
@@ -62,6 +62,8 @@ export default function TugasTim() {
   const [antre, setAntre] = useState(0);
   const [diperbarui, setDiperbarui] = useState("");
   const [sibukKirim, setSibukKirim] = useState(false);
+  const [sukses, setSukses] = useState<string | null>(null);
+  const timerSukses = useRef<number | null>(null);
 
   const muat = useCallback(async () => {
     setStatus("memuat");
@@ -101,7 +103,10 @@ export default function TugasTim() {
       });
     }
     window.addEventListener("online", saatOnline);
-    return () => window.removeEventListener("online", saatOnline);
+    return () => {
+      window.removeEventListener("online", saatOnline);
+      if (timerSukses.current !== null) window.clearTimeout(timerSukses.current);
+    };
   }, [muat]);
 
   async function kirim(label: string, url: string, badan: object) {
@@ -120,6 +125,9 @@ export default function TugasTim() {
       } else {
         toast.success(`${label} tercatat.`);
         setKendala("");
+        setSukses(label);
+        if (timerSukses.current !== null) window.clearTimeout(timerSukses.current);
+        timerSukses.current = window.setTimeout(() => setSukses(null), 1200);
         await muat();
       }
     } catch {
@@ -472,11 +480,11 @@ export default function TugasTim() {
                       darurat,
                     });
                   }}
-                  disabled={kendala.trim() === "" || sibukKirim}
-                  variant={darurat ? "destructive" : "outline"}
-                  className="min-h-12 w-full"
+                  disabled={kendala.trim() === "" || sibukKirim || sukses !== null}
+                  variant={sukses === "Kendala" ? "default" : darurat ? "destructive" : "outline"}
+                  className={sukses === "Kendala" ? "morf-tombol min-h-12 w-full bg-success text-white hover:bg-success" : "morf-tombol min-h-12 w-full"}
                 >
-                  {sibukKirim ? "Mengirim..." : darurat ? "Kirim tanda darurat" : "Lapor kendala"}
+                  {sibukKirim ? "Mengirim..." : sukses === "Kendala" ? (<><CheckIcon aria-hidden="true" /> Terkirim</>) : darurat ? "Kirim tanda darurat" : "Lapor kendala"}
                 </Button>
               </CardContent>
             </Card>

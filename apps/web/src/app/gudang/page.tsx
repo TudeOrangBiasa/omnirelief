@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { MagnifierIcon } from "@solar-icons/react/linear";
+import { CheckIcon, MagnifierIcon } from "@solar-icons/react/linear";
 import { Alert, AlertDescription, AlertTitle } from "@omnirelief/ui/components/alert";
 import { Button } from "@omnirelief/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@omnirelief/ui/components/card";
@@ -80,6 +80,8 @@ export default function GudangPage() {
   const [galatField, setGalatField] = useState<GalatField>({});
   const [riwayat, setRiwayat] = useState<IntakeHariIni[]>([]);
   const [sibuk, setSibuk] = useState(false);
+  const [sukses, setSukses] = useState(false);
+  const timerSukses = useRef<number | null>(null);
   const [batch, setBatch] = useState<GudangBatchRow[]>([]);
   const [statusBatch, setStatusBatch] = useState<StatusBatch>("memuat");
   const [katalog, setKatalog] = useState<ItemKatalogRow[]>([]);
@@ -87,6 +89,13 @@ export default function GudangPage() {
   const [cariBatch, setCariBatch] = useState("");
   const [filterBatch, setFilterBatch] = useState<FilterBatch>("semua");
   const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(
+    () => () => {
+      if (timerSukses.current !== null) window.clearTimeout(timerSukses.current);
+    },
+    []
+  );
 
   const muatBatch = useCallback(() => {
     setStatusBatch("memuat");
@@ -213,6 +222,9 @@ export default function GudangPage() {
       const data = (await res.json()) as { ok: boolean; kode_sumbangan?: string; galat?: string };
       if (data.ok && data.kode_sumbangan) {
         setHasil(data.kode_sumbangan);
+        setSukses(true);
+        if (timerSukses.current !== null) window.clearTimeout(timerSukses.current);
+        timerSukses.current = window.setTimeout(() => setSukses(false), 1200);
         setRiwayat((r) => [
           {
             kode: data.kode_sumbangan as string,
@@ -256,7 +268,7 @@ export default function GudangPage() {
       <div className="mt-6 grid grid-cols-12 gap-6">
         <div className="col-span-12 flex flex-col gap-6 lg:col-span-8">
       {hasil && (
-        <Card className="border-transparent bg-success-bg">
+        <Card className="animate-enter border-transparent bg-success-bg">
           <CardHeader>
             <CardTitle className="text-base text-success">Intake tersimpan</CardTitle>
           </CardHeader>
@@ -390,8 +402,12 @@ export default function GudangPage() {
           <input id="gudang-izin" name="tampilkan_nama" type="checkbox" className="h-5 w-5 accent-primary" />
           Tampilkan nama sumber ke publik
         </label>
-        <Button type="submit" disabled={sibuk} className="min-h-12">
-          {sibuk ? "Menyimpan..." : "Simpan batch"}
+        <Button
+          type="submit"
+          disabled={sibuk || sukses}
+          className={sukses ? "morf-tombol min-h-12 bg-success text-white hover:bg-success" : "morf-tombol min-h-12"}
+        >
+          {sibuk ? "Menyimpan..." : sukses ? (<><CheckIcon aria-hidden="true" /> Tersimpan</>) : "Simpan batch"}
         </Button>
       </form>
 
