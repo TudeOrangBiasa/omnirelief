@@ -241,7 +241,7 @@ export function BilahMassal({
 }) {
   return (
     <div
-      className="sticky bottom-20 z-10 flex flex-col gap-2 rounded-none border border-[#0B1F2E] bg-[#0B1F2E] p-3 text-white shadow-lg md:bottom-4 md:flex-row md:items-center"
+       className="pudar-masuk sticky bottom-20 z-10 flex flex-col gap-2 rounded-none border border-[#0B1F2E] bg-[#0B1F2E] p-3 text-white shadow-lg md:bottom-4 md:flex-row md:items-center"
       role="status"
     >
       <p className="flex-1 text-sm font-semibold">{jumlah} snapshot dipilih</p>

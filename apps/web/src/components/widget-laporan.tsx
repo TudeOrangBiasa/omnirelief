@@ -184,7 +184,7 @@ export type AktivitasItem = {
 export function DaftarAktivitas({ item }: { item: AktivitasItem[] }) {
   if (item.length === 0) return null;
   return (
-    <ul className="mt-3 flex flex-col gap-2">
+     <ul className="pudar-masuk mt-3 flex flex-col gap-2">
       {item.map((a) => (
         <li key={a.id}>
           <Card className="rounded-none">
@@ -231,7 +231,7 @@ export function KotakKosong({
 }) {
   const router = useRouter();
   return (
-    <div className="rounded-none border border-dashed border-[#0B1F2E]/25 bg-white/60 p-8">
+     <div className="pudar-masuk rounded-none border border-dashed border-[#0B1F2E]/25 bg-white/60 p-8">
       <p className="t-label text-[#0B1F2E]/70">{label}</p>
       <p className="mt-1 text-lg font-bold text-[#0B1F2E]">{judul}</p>
       <p className="mt-1 text-sm text-muted-foreground">{deskripsi}</p>
