@@ -62,9 +62,12 @@ export async function POST(
     baris<BatchRow>(mentahBatch).map((b) => [b.id, b] as const)
   );
 
+  // Reservasi draf sendiri tidak dihitung sebagai stok terpakai,
+  // kalau tidak publikasi selalu gagal saat draf memakai sisa terakhir.
   const { data: mentahAlokasi } = await admin
     .from("manifest_item")
-    .select("batch_id,jumlah,manifest:manifest_id(status)");
+    .select("batch_id,jumlah,manifest:manifest_id(status)")
+    .neq("manifest_id", manifestId);
   const terpakai = petaTerpakai(
     baris<AlokasiRow>(mentahAlokasi).map((a) => ({
       batch_id: a.batch_id,

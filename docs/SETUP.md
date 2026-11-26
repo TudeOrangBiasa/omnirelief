@@ -28,13 +28,15 @@ Kunci API dan DB password tersimpan di Vercel env dan `apps/web/.env` lokal, tid
 
 ## 3. Akun demo
 
-Buat di Authentication, Users, lalu tambah baris di `profil`:
+Buat di Authentication, Users (centang auto-confirm email), lalu tambah baris di `profil`.
+Atau otomatis: buat user via Auth Admin API lalu jalankan `supabase/seed.sql` + `supabase/akun-demo.sql`.
 
 1. `bpbd@demo` peran BPBD.
 2. `gudang@demo` peran GUDANG.
 3. `posko-a@demo` peran POSKO, posko_id Posko Balai Desa Sari.
 4. `posko-b@demo` peran POSKO, posko_id Posko Sekolah Harapan.
 5. `tim@demo` peran TIM.
+6. `admin@demo` peran ADMIN.
 
 Password bagikan internal saja, jangan commit.
 
