@@ -75,6 +75,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@omnirelief/ui/components/dropdown-menu";
+import { Drawer, DrawerContent, DrawerTitle } from "@omnirelief/ui/components/drawer";
 import { createClient } from "@/lib/supabase/client";
 import { bacaIdentitas, type Identitas } from "@/lib/identitas";
 
@@ -285,15 +286,7 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
       window.removeEventListener("offline", segarkanLokal);
     };
   }, [pathname]);
-
-  useEffect(() => {
-    if (!lainnyaBuka) return;
-    function saatTombol(e: KeyboardEvent) {
-      if (e.key === "Escape") setLainnyaBuka(false);
-    }
-    window.addEventListener("keydown", saatTombol);
-    return () => window.removeEventListener("keydown", saatTombol);
-  }, [lainnyaBuka]);
+  // Escape + jebakan fokus sheet Lainnya ditangani Drawer modal bawaan.
 
   const path = pathname ?? "/";
   const gelap = path === "/";
@@ -549,46 +542,33 @@ export default function BilahNav({ peran, nama }: { peran: NavPeran; nama: strin
         </nav>
       )}
 
-      {lainnyaBuka && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Menu lainnya"
-          className="fixed inset-0 z-50 md:hidden"
-        >
+      <Drawer open={lainnyaBuka} onOpenChange={setLainnyaBuka}>
+        <DrawerContent className={cn("rounded-none border-t p-4 pb-6 md:hidden", publik ? "border-white/15 bg-[#030D14]/80 text-white backdrop-blur-md" : "border-border bg-background")}>
+          <DrawerTitle className="sr-only">Menu lainnya</DrawerTitle>
+          {lainnya.map((item) => {
+            const Ikon = IKON_LIN[item.ikon];
+            return (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={() => setLainnyaBuka(false)}
+                className="flex min-h-12 items-center gap-3 rounded-none px-4 text-sm font-medium"
+              >
+                <Ikon aria-hidden="true" className={cn("size-5", publik ? "text-white/70" : "text-muted-foreground")} />
+                {item.label}
+              </a>
+            );
+          })}
           <button
             type="button"
-            aria-label="Tutup menu lainnya"
             onClick={() => setLainnyaBuka(false)}
-            className="absolute inset-0 cursor-default bg-foreground/40"
-          />
-          <div className={cn("absolute inset-x-0 bottom-0 flex flex-col gap-1 rounded-none border-t p-4 pb-6", publik ? "border-white/15 bg-[#030D14]/80 text-white backdrop-blur-md" : "border-border bg-background")}>
-            {lainnya.map((item) => {
-              const Ikon = IKON_LIN[item.ikon];
-              return (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setLainnyaBuka(false)}
-                  className="flex min-h-12 items-center gap-3 rounded-none px-4 text-sm font-medium"
-                >
-                  <Ikon aria-hidden="true" className={cn("size-5", publik ? "text-white/70" : "text-muted-foreground")} />
-                  {item.label}
-                </a>
-              );
-            })}
-            <button
-              type="button"
-              onClick={() => setLainnyaBuka(false)}
-              autoFocus
-              className="mt-2 flex min-h-12 items-center justify-center gap-2 rounded-none bg-secondary text-sm font-semibold text-secondary-foreground"
-            >
-              <CloseCircleIcon aria-hidden="true" className="size-5" />
-              Tutup
-            </button>
-          </div>
-        </div>
-      )}
+            className="mt-2 flex min-h-12 items-center justify-center gap-2 rounded-none bg-secondary text-sm font-semibold text-secondary-foreground"
+          >
+            <CloseCircleIcon aria-hidden="true" className="size-5" />
+            Tutup
+          </button>
+        </DrawerContent>
+      </Drawer>
     </>
   );
 }

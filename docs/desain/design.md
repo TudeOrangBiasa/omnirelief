@@ -213,7 +213,7 @@ log audit, danger ketik.
   Why: keputusan eksplisit user, menggantikan "Online" 2026-11-23.
   <!-- 2026-11-24: /whips "ganti teks Online menjadi Daring"; write all -->
 - **Keputusan konflik 2026-11-25 (final sampai diubah user): kotak hairline TIDAK pakai `border`, melainkan cincin bayangan `garis-rambut`/`garis-rambut-diam` (`box-shadow` 1px). Token bayangan sudah ada di `globals.css` sejak awal; yang salah adalah 41 pemakaian `border-[#0B1F2E]/15` manual di komponen — sudah dimigrasi. `border` tersisa hanya untuk pemisah 1px fungsional (thead lengket, hairline tabel, divider) dan blok aksen solid.**
-- **Label mikro operasional = `t-label` (mono 11px uppercase tracking 0.1em). 103 pemakaian `font-mono text-[11px] uppercase tracking-widest` dimigrasi tanpa ubah visual. Tracking `[0.15em]`/`[0.2em]` dan literal tinta/es tetap diputihkan di lint (bukan target nol).**
+- **Lembar "Lainnya" di dock mobile = Drawer shadcn (swipe bawah untuk tutup + backdrop + Escape + fokus-terkunci). Primitif HANYA dari `bunx shadcn add`; dilarang pasang Vaul/paralel kedua (satu sistem drawer). Gestur mulai dari area non-interaktif agar ketuk tombol tidak batal jadi seret.**
 
 ## Garis tepi (gridlines 2026-11-24, diukur probe + mata)
 
