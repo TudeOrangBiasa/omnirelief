@@ -1,49 +1,56 @@
-# Kontribusi
+# Panduan Kontribusi
 
-Dokumen ini untuk anggota tim OmniRelief. Repo ini tertutup untuk tim. Tidak ada proses kontribusi publik.
+Terima kasih sudah tertarik berkontribusi pada OmniRelief. Proyek ini bersifat sumber terbuka (open source) di bawah lisensi MIT, dan kami menyambut kontribusi berupa perbaikan bug, peningkatan aksesibilitas, dokumentasi, maupun fitur baru yang selaras dengan [Peta Produk](ROADMAP.md).
 
-## Bahasa
+## 1. Alur Kerja Kontribusi
 
-Tulis Bahasa Indonesia. Ikuti istilah di `GLOSSARY.md`. Satu gagasan per kalimat. Tanpa em-dash. Istilah yang dilarang ada di tiap entri glosarium pada baris Avoid.
+1. Lakukan fork repositori ini ke akun GitHub Anda, lalu clone ke lingkungan lokal.
+2. Buat branch baru dari `main` dengan nama yang jelas, misalnya `feat/filter-posko` atau `fix/validasi-batch`.
+3. Siapkan lingkungan lokal sesuai [docs/SETUP.md](docs/SETUP.md) dan pahami struktur repositori melalui [Peta Codebase](docs/CODEBASE-MAP.md).
+4. Lakukan perubahan secara terfokus pada satu topik per pull request.
+5. Pastikan seluruh pemeriksaan lokal lolos sebelum membuka pull request.
 
-## Sebelum push
+## 2. Pemeriksaan Sebelum Mengajukan PR
 
-Jalankan lima perintah ini dari root. Semua harus hijau.
+Jalankan enam perintah berikut dari direktori root dan pastikan semuanya berhasil tanpa galat:
 
 ```bash
 bun --filter web check-types
 bun --filter web test
 bun --filter web lint
 bun run check:loc
+bun run verify:formal
 bun run build
 ```
 
-Satu file maksimal 1000 baris. Perintah `check:loc` menolak file yang lewat batas. Pecah file sebelum push.
+Setiap berkas dibatasi maksimal 1000 baris (`check:loc`), sedangkan `verify:formal` memverifikasi invarian hash chain, mesin status, dan alokasi FEFO.
 
-## Aturan repo
+## 3. Prinsip Teknis yang Wajib Dijaga
 
-Aturan lengkap ada di `AGENTS.md`. Poin yang paling sering dilanggar:
+1. **Tulis database melalui server:** Seluruh operasi tulis ke database harus melewati API route Next.js menggunakan `service_role`. Browser tidak pernah menulis langsung ke Supabase.
+2. **Pertahankan sifat append-only dan hash chain:** Manifest yang sudah dipublikasikan dan log riwayat tidak boleh diedit atau dihapus. Setiap baris riwayat wajib mempertahankan integritas hash SHA-256 (`apps/web/src/lib/hash.ts`).
+3. **Pisahkan validasi dan tipe batas:** Aturan validasi murni berada di `apps/web/src/lib/validasi.ts`, dan pembacaan data Supabase menggunakan tipe batas di `apps/web/src/lib/supabase/baris.ts` tanpa cast `as` inline.
+4. **Ikuti Design System dan Glosarium:** Gunakan token semantik dari `packages/ui/src/styles/globals.css` dan istilah baku di [GLOSSARY.md](GLOSSARY.md) dengan kalimat pendek tanpa em-dash.
+5. **Jaga aksesibilitas:** Kontrol interaktif memiliki ukuran area sentuh minimal 48px, kontras memenuhi standar WCAG 2.2 AA, fokus keyboard terlihat jelas, dan status selalu menampilkan warna bersama label teks.
 
-1. Stack dikunci pada Next.js plus Supabase plus Vercel. Jangan ganti di tengah jalan.
-2. Semua tulis ke database lewat API route Next.js dengan service role. Browser tidak pernah tulis langsung.
-3. Data terkunci hanya tambah riwayat. Manifest terpublikasi dan log status bersifat append-only. Tiap baris memakai hash SHA-256 yang terikat ke hash sebelumnya.
-4. Hasil baca Supabase memakai tipe batas di `apps/web/src/lib/supabase/baris.ts`. Dilarang `as` inline saat membaca anggota data.
-5. Validator murni ada di `apps/web/src/lib/validasi.ts`. Rute hanya memanggil.
-6. Secret tidak masuk repo. `apps/web/.env` masuk gitignore. Contoh ada di `apps/web/.env.example`.
-7. Token visual hanya di `packages/ui/src/styles/globals.css`. Jangan duplikasi nilai token di file lain.
+## 4. Aturan Format Commit
 
-## Gaya commit
-
-Ikuti pola riwayat yang ada. Format berupa tipe, scope opsional, lalu deskripsi singkat Bahasa Indonesia.
+Gunakan format Conventional Commits berbahasa Indonesia agar riwayat perubahan mudah dibaca:
 
 ```text
-feat(web): tambah filter posko di transparansi
-fix(web): perbaiki guard halaman gudang
-docs: perbarui langkah seed di SETUP.md
+feat(web): tambah filter posko di halaman transparansi
+fix(web): perbaiki antrean sinkronisasi offline tim
+docs: lengkapi panduan instalasi lokal
 ```
 
-Tipe yang dipakai: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`.
+Tipe yang digunakan: `feat`, `fix`, `docs`, `chore`, `refactor`, dan `test`.
 
-## Aset dan aksesibilitas
+## 5. Aturan Format Pull Request (PR)
 
-Logo hanya lewat komponen `apps/web/src/components/logo.tsx`. Jangan menulis teks brand manual. Jangan ubah warna atau proporsi logo. Komponen baru wajib lolos cek aksesibilitas: kontras cukup, fokus tampak, tiap kontrol punya nama aksesibel, target sentuh minimal 48px.
+Setiap PR wajib menggunakan template di `.github/PULL_REQUEST_TEMPLATE.md` dengan struktur `Summary`, `Evidence`, `Merge Danger`, dan `Checks Lokal`:
+
+1. **Judul PR:** Gunakan format `<tipe>(<scope>): <ringkasan singkat>`, misalnya `fix(web): tangani timeout check-in tim`.
+2. **Summary:** Sketsa perubahan (file atau diagram alur) beserta tautan issue (`closes #xx`). Tulis satu kalimat per klaim tanpa basa-basi.
+3. **Evidence (Before / After):** Sertakan output sebelum dan sesudah perubahan. Untuk perubahan UI, wajib menampilkan tabel `Before | After` dengan gambar langsung di body PR, bukan di dalam `<details>`.
+4. **Merge Danger:** Tentukan sifat perubahan (`one-way` jika sulit dibatalkan seperti migrasi skema atau format hash, `two-way` jika mudah di-revert) dan tulis satu baris **Blast Radius** yang menyebut pihak terdampak serta risiko kegagalannya.
+5. **Checks Lokal:** Laporkan hasil nyata dari pemeriksaan statis (`check-types`, `lint`, `check:loc`, `build`), verifikasi formal dan unit (`verify:formal`, `web test`), serta E2E lokal jika mengubah alur utama.

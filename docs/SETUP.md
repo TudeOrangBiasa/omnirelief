@@ -1,66 +1,53 @@
-# Setup OmniRelief
+# Panduan Instalasi dan Pengaturan
 
-Setup repo satu perintah (install, env awal, generate tipe env):
+Panduan ini menjelaskan langkah menjalankan OmniRelief secara lokal maupun memeriksa konfigurasi deployment. Jalankan perintah berikut untuk menginstal dependensi dan menyiapkan file `.env` awal:
 
 ```bash
 bun run setup
 ```
 
-Panduan sekali jalan untuk fondasi hari 1 sampai 2.
+## 1. Membuat Project Supabase Baru
 
-## 0. Project Supabase live
+1. Buka [Supabase Dashboard](https://supabase.com/dashboard/projects), lalu buat project baru bernama `omnirelief`.
+2. Catat `Project URL` dan `anon public key` dari menu Settings, lalu bagian API.
+3. Salin `apps/web/.env.example` menjadi `apps/web/.env`, kemudian isi URL dan anon key tersebut.
+4. Simpan `service_role key` hanya di sisi server dengan mengisinya di `apps/web/.env` lokal dan variabel lingkungan Vercel. Jangan pernah menyimpan kunci ini di repositori.
 
-Project `omnirelief`, ref `pmckelqxvfwbiuwlftod`, region ap-south-1, URL `https://pmckelqxvfwbiuwlftod.supabase.co`.
-Schema `supabase/migrations/0001_schema.sql`, seed `supabase/seed.sql`, akun `supabase/akun-demo.sql` sudah teraplikasi.
-Kunci API dan DB password tersimpan di Vercel env dan `apps/web/.env` lokal, tidak di repo.
-## 1. Supabase project
+## 2. Menerapkan Skema dan Data Awal (Seed)
 
-1. Buka https://supabase.com/dashboard/projects, buat project baru `omnirelief`.
-2. Catat `Project URL` dan `anon public key` dari Settings, API.
-3. Salin `apps/web/.env.example` ke `apps/web/.env`, isi URL dan anon key.
-4. `service_role key` hanya untuk server: isi di `apps/web/.env` lokal dan Vercel env, jangan commit.
+1. Buka SQL Editor pada project Supabase Anda, lalu jalankan isi `supabase/migrations/0001_schema.sql`.
+2. Jalankan isi `supabase/seed.sql` untuk mengisi dua posko contoh (Posko Balai Desa Sari dan Posko Sekolah Harapan) beserta batch dan manifest awal.
+3. Lakukan verifikasi cepat dengan menjalankan `select * from v_publik_dashboard;`, dan pastikan hasil kueri menampilkan dua posko.
 
-## 2. Schema dan seed
+## 3. Menyiapkan Akun Demo
 
-1. Buka SQL Editor project, jalankan `supabase/migrations/0001_schema.sql`.
-2. Jalankan `supabase/seed.sql`.
-3. Verifikasi cepat: `select * from v_publik_dashboard;` harus tampil 2 posko.
+Buat akun pengguna di menu Authentication, bagian Users (pastikan opsi auto-confirm email dicentang), lalu tambahkan baris yang sesuai ke tabel `profil`. Sebagai alternatif otomatis, buat pengguna melalui Auth Admin API lalu jalankan `supabase/seed.sql` dan `supabase/akun-demo.sql`.
 
-## 3. Akun demo
+1. `bpbd@demo` dengan peran `BPBD`.
+2. `gudang@demo` dengan peran `GUDANG`.
+3. `posko-a@demo` dengan peran `POSKO` untuk Posko Balai Desa Sari.
+4. `posko-b@demo` dengan peran `POSKO` untuk Posko Sekolah Harapan.
+5. `tim@demo` dengan peran `TIM`.
+6. `admin@demo` dengan peran `ADMIN`.
 
-Buat di Authentication, Users (centang auto-confirm email), lalu tambah baris di `profil`.
-Atau otomatis: buat user via Auth Admin API lalu jalankan `supabase/seed.sql` + `supabase/akun-demo.sql`.
+Bagikan kata sandi hanya melalui jalur internal dan jangan pernah menyimpannya di dalam repositori.
 
-1. `bpbd@demo` peran BPBD.
-2. `gudang@demo` peran GUDANG.
-3. `posko-a@demo` peran POSKO, posko_id Posko Balai Desa Sari.
-4. `posko-b@demo` peran POSKO, posko_id Posko Sekolah Harapan.
-5. `tim@demo` peran TIM.
-6. `admin@demo` peran ADMIN.
+## 4. Menjalankan Server Lokal
 
-Password bagikan internal saja, jangan commit.
+```bash
+bun run dev
+```
 
-## 4. Vercel
+Setelah server aktif, buka `http://localhost:3001` di browser.
 
-Project `omnirelief` sudah link ke repo ini dan auto-deploy tiap push ke `main`.
-Proteksi SSO dimatikan agar URL bisa dibuka juri tanpa login.
-Env production sudah live (terbukti baca data per 26 Nov 2026); kalau rotasi kunci, ganti via dashboard Vercel → Settings → Environment Variables, lalu redeploy:
- Contoh rotasi satu variabel:
+## 5. Konfigurasi Vercel
 
-1. `bunx vercel env rm NAMA production` lalu `echo "asli" | bunx vercel env add NAMA production` untuk `DATABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`.
-2. Push commit apa pun untuk picu deploy ulang, atau `bunx vercel deploy --yes`.
-3. Cek `curl -s -o /dev/null -w "%{http_code}" https://deployment-aktif/` harus 200.
+Project `omnirelief` terhubung ke repositori ini dengan deployment otomatis setiap ada pembaruan ke branch utama. Proteksi SSO dimatikan agar juri dan publik dapat membuka aplikasi tanpa hambatan.
 
-Catatan: env harus terdaftar di `turbo.json` `globalEnv` kalau tidak build tidak melihatnya (strict mode).
+Catatan konfigurasi: setiap variabel lingkungan baru wajib didaftarkan di bagian `globalEnv` pada `turbo.json` agar terbaca saat proses build.
 
-## 5. Keepalive anti pause
+## 6. Menjaga Supabase Tetap Aktif (Keepalive)
 
-1. Isi GitHub repo secrets: `SUPABASE_URL` dan `SUPABASE_ANON_KEY`.
-2. Workflow `supabase-keepalive.yml` jalan tiap hari 07.00 WIB plus bisa manual via workflow_dispatch.
-3. Cek tab Actions setelah push pertama, pastikan run hijau.
-
-## 6. Uji anti manipulasi (Bab 16.5)
-
-1. Coba UPDATE manifest terpublikasi via API dan via SQL langsung, keduanya harus gagal.
-2. Ubah satu angka di DB lalu verifikasi hash chain gagal.
-3. Buka halaman publik tanpa login, semua tampil tanpa data pribadi.
+1. Tambahkan `SUPABASE_URL` dan `SUPABASE_ANON_KEY` ke GitHub repository secrets.
+2. Workflow `supabase-keepalive.yml` berjalan otomatis setiap hari pukul 07.00 WIB dan dapat dijalankan manual melalui `workflow_dispatch`.
+3. Periksa tab Actions setelah push pertama untuk memastikan workflow berjalan sukses.

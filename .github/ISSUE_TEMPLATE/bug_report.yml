@@ -1,0 +1,51 @@
+name: Laporan Bug
+description: Laporkan perilaku aplikasi yang salah, galat API, atau ketidaksesuaian integritas data.
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: Terima kasih telah membantu menjaga keandalan OmniRelief. Isi detail di bawah ini agar tim dan kontributor dapat mereproduksi masalahnya.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area atau Peran Terdampak
+      options:
+        - Publik (/, /transparansi, /m/[kode], /s/[kode])
+        - Gudang (/gudang)
+        - Posko (/posko)
+        - BPBD (/bpbd, /bpbd/kirim)
+        - Tim Distribusi (/tim, antrean offline)
+        - Database, RLS, atau Hash Chain
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Ringkasan Masalah
+      description: Jelaskan apa yang terjadi dan mengapa perilaku tersebut salah.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Langkah Reproduksi
+      description: Tuliskan urutan langkah untuk memicu bug ini.
+      value: |
+        1. Masuk sebagai peran ...
+        2. Buka rute ...
+        3. Lakukan aksi ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Perilaku yang Diharapkan
+      description: Apa yang seharusnya terjadi menurut aturan sistem?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Bukti atau Log Galat
+      description: Tempelkan pesan galat, kode status HTTP, atau tangkapan layar bila ada.

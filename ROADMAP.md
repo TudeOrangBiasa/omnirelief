@@ -1,37 +1,34 @@
-# Peta produk
+# Peta Produk
 
-OmniRelief adalah produk yang menyelesaikan masalah nyata. Bukan sekadar proyek lomba. Masalahnya: aliran bantuan pangan sulit dilacak dari gudang sampai posko, dan data bisa diubah diam-diam. Produk ini menjawab dengan pencatatan append-only yang bisa dicek publik per daerah.
+OmniRelief dibangun untuk menyelesaikan persoalan nyata di lapangan, yaitu aliran bantuan pangan yang sulit dilacak dari gudang ke posko serta risiko perubahan data secara diam-diam. Produk ini menjawab masalah tersebut melalui pencatatan append-only yang dapat diperiksa publik per daerah.
 
-Dokumen ini hidup dan terbuka terhadap perubahan. Fase bisa bergeser mengikuti umpan balik lapangan. Status versi ada di `CHANGELOG.md`. Versi ditahan di `0.1.x` sampai kode matang.
+Dokumen ini bersifat terbuka terhadap penyesuaian mengikuti umpan balik dari lapangan dan evaluasi penggunaan.
 
 ## Visi
 
-Setiap daerah punya catatan bantuan pangan yang bisa diperiksa siapa pun. Donatur melacak sumbangannya lewat kode. Posko membuktikan jatahnya kurang dengan angka terbuka. Pemerintah daerah mereplikasi pola ini tanpa membangun sistem baru dari nol.
+Setiap daerah memiliki catatan bantuan pangan yang dapat diperiksa oleh siapa saja. Donatur dapat melacak sumbangan mereka melalui kode sumbangan, posko dapat membuktikan kekurangan jatah dengan angka terbuka, dan pemerintah daerah dapat mereplikasi sistem ini tanpa membangun dari awal.
 
-## Fase 1: fondasi tepercaya
+## Fase 1: Fondasi Tepercaya (Saat Ini)
 
-Target: klaim kepercayaan terbukti oleh mesin, bukan oleh janji.
+Target fase ini adalah memastikan seluruh klaim integritas dan keandalan alur distribusi terbukti oleh sistem, meliputi:
 
-1. E2E hijau untuk 3 alur kritis: buat lalu publikasi lalu cek publik, antar lalu check-in lalu terima, lapor rusak lalu tampil publik.
-2. Coverage 80 persen untuk modul murni di `apps/web/src/lib`.
-3. Uji anti manipulasi Bab 16.5 lolos: update manifest terpublikasi gagal, ubah angka merusak hash chain, halaman publik tampil tanpa data pribadi.
-4. Halaman publik di bawah 1,5 MB.
+1. Alur end-to-end berjalan lengkap dari pencatatan gudang, laporan penyintas posko, verifikasi dan manifest FEFO oleh BPBD, pengantaran dengan antrean offline tim, hingga konfirmasi terima dan cek publik.
+2. Kebijakan Row Level Security (RLS) dan rantai hash SHA-256 mencegah pembaruan diam-diam pada manifest terpublikasi maupun log riwayat.
+3. Halaman publik tampil tanpa mengekspos data pribadi dan menjaga ukuran muatan tetap ringan.
 
-## Fase 2: pilot daerah
+## Fase 2: Pilot Daerah
 
-Target: dipakai nyata di 1 sampai 2 daerah bersama BPBD setempat.
+Target fase ini adalah penggunaan nyata di satu hingga dua daerah bersama BPBD setempat:
 
-1. Operasi harian oleh peran asli: gudang, posko, tim, BPBD.
-2. Kumpulkan umpan balik soal alur offline dan keterbacaan halaman publik.
-3. Perbaiki prioritas penyaluran berdasarkan data lapangan.
-4. Dokumentasikan pola replikasi: langkah membuka daerah baru dari schema sampai seed.
+1. Operasional harian dijalankan oleh peran asli di lapangan, yaitu gudang, posko, tim distribusi, dan BPBD.
+2. Pengumpulan umpan balik terkait keandalan mode offline di area minim sinyal dan keterbacaan halaman publik oleh masyarakat.
+3. Penyempurnaan logika prioritas penyaluran berdasarkan data aktual di lapangan.
+4. Penyusunan panduan replikasi untuk membuka instansi daerah baru dari tahap skema hingga data awal.
 
-## Fase 3: skala dan keberlanjutan
+## Fase 3: Skala dan Keberlanjutan
 
-Target: pola yang sama berjalan di banyak daerah tanpa beban operasional besar.
+Target fase ini adalah menjalankan pola yang sama di banyak daerah tanpa beban operasional yang besar:
 
-1. Kandidat fitur berdasarkan kebutuhan pilot: pengingat check-in, dukungan multi gudang, ringkasan per wilayah.
-2. Pengerasan operasional: keepalive, cadangan, dan runbook insiden.
-3. Tata kelola data: retensi, arsip periode lama, dan audit berkala hash chain.
-
-Urutan kandidat pada fase 3 ditentukan oleh hasil fase 2. Tidak ada janji tanggal pada dokumen ini.
+1. Pengembangan fitur lanjutan berdasarkan kebutuhan pilot, seperti pengingat check-in otomatis, dukungan multi-gudang, peta distribusi, dan ringkasan lintas wilayah.
+2. Penguatan bukti lapangan seperti lampiran foto penerimaan dan pencatatan koordinat saat konfirmasi terima.
+3. Tata kelola data jangka panjang mencakup retensi data, pengarsipan periode lama, dan audit berkala terhadap hash chain.

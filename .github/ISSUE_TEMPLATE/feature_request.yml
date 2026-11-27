@@ -1,0 +1,29 @@
+name: Usulan Fitur atau Perbaikan
+description: Ajukan fitur baru, peningkatan aksesibilitas, atau penyempurnaan dokumentasi.
+title: "[Fitur]: "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: Pastikan usulan Anda selaras dengan misi Zero Hunger dan Peta Produk OmniRelief.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Masalah Nyata yang Ingin Diselesaikan
+      description: Siapa pengguna yang terdampak (Donatur, Posko, Gudang, BPBD, Tim, atau Publik) dan hambatan apa yang mereka hadapi?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Solusi yang Diusulkan
+      description: Jelaskan perubahan alur, antarmuka, atau API yang Anda usulkan.
+    validations:
+      required: true
+  - type: textarea
+    id: invariants
+    attributes:
+      label: Dampak terhadap Integritas Data dan Aksesibilitas
+      description: Jelaskan apakah usulan ini menyentuh hash chain append-only, kebijakan RLS, atau standar aksesibilitas (target sentuh 48px, WCAG 2.2 AA).
+    validations:
+      required: false

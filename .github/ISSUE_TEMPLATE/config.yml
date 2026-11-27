@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Panduan Kontribusi
+    url: https://github.com/omnirelief/omnirelief/blob/main/CONTRIBUTING.md
+    about: Baca alur kerja, standar PR, dan aturan repositori sebelum membuka issue.
+  - name: Dokumentasi Sistem dan Fitur
+    url: https://github.com/omnirelief/omnirelief/blob/main/docs/SISTEM-DAN-FITUR.md
+    about: Pelajari arsitektur dan aturan distribusi sebelum melaporkan masalah.
